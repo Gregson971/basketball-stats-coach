@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Tests
+tests/
+coverage/
+*.test.ts
+*.test.js
+jest.config.js
+cucumber.js
+
+# Git
+.git/
+.gitignore
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+*.md
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Logs
+logs/
+*.log

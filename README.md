@@ -1,0 +1,423 @@
+# 🏀 StatCoach Pro
+
+**StatCoach Pro** est une application mobile professionnelle de suivi statistique en temps réel pour le basketball. Conçue pour les entraîneurs et analystes, elle permet d'enregistrer et d'analyser les performances des joueurs pendant les matchs.
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
+![Tests](https://img.shields.io/badge/tests-190%20passing-success)
+![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+
+---
+
+## 📋 Table des matières
+
+- [Fonctionnalités](#-fonctionnalités)
+- [Architecture](#-architecture)
+- [Technologies](#-technologies)
+- [Installation](#-installation)
+- [Utilisation](#-utilisation)
+- [Tests](#-tests)
+- [Documentation](#-documentation)
+- [Roadmap](#-roadmap)
+
+---
+
+## ✨ Fonctionnalités
+
+### Gestion des équipes et joueurs
+
+- ✅ Création et gestion d'équipes (nom, coach, saison, ligue)
+- ✅ Gestion complète des joueurs (profil, position, statistiques physiques)
+- ✅ Organisation par équipe et saison
+
+### Suivi des matchs
+
+- ✅ Création et planification de matchs
+- ✅ Gestion des statuts (non démarré, en cours, terminé)
+- ✅ Informations contextuelles (adversaire, lieu, date, notes)
+
+### Enregistrement des statistiques en temps réel
+
+- ✅ **Tirs** : Lancers francs, 2 points, 3 points (réussis/manqués)
+- ✅ **Rebonds** : Offensifs et défensifs
+- ✅ **Actions offensives** : Passes décisives
+- ✅ **Actions défensives** : Interceptions, contres
+- ✅ **Autres** : Pertes de balle, fautes personnelles
+- ✅ **Fonction Undo** : Annulation de la dernière action
+
+### Analyses et statistiques
+
+- ✅ Statistiques par match (points, rebonds, assists, pourcentages)
+- ✅ Statistiques carrière (moyennes, totaux, évolution)
+- ✅ Calculs automatiques (FG%, 3P%, FT%, points totaux)
+
+---
+
+## 🏗️ Architecture
+
+Le projet suit les principes de **Clean Architecture** avec une séparation stricte des responsabilités :
+
+```
+basketball-stats-coach/
+├── backend/                    # API Node.js + TypeScript
+│   ├── src/
+│   │   ├── domain/            # Entités et logique métier
+│   │   │   ├── entities/      # Player, Team, Game, GameStats
+│   │   │   └── repositories/  # Interfaces (DIP)
+│   │   ├── application/       # Use Cases (logique applicative)
+│   │   │   ├── use-cases/
+│   │   │   │   ├── player/    # 6 use cases
+│   │   │   │   ├── team/      # 5 use cases
+│   │   │   │   ├── game/      # 8 use cases
+│   │   │   │   └── stats/     # 4 use cases
+│   │   │   └── dtos/          # Data Transfer Objects
+│   │   ├── infrastructure/    # Implémentations techniques
+│   │   │   ├── database/      # MongoDB + Mongoose
+│   │   │   ├── sync/          # Synchronisation
+│   │   │   └── repositories/  # Implémentations concrètes
+│   │   └── presentation/      # Controllers, Routes, API
+│   └── tests/
+│       ├── unit/              # Tests unitaires (183 tests)
+│       └── integration/       # Tests d'intégration (7 tests)
+└── frontend/                   # React Native (à venir)
+```
+
+### Principes SOLID
+
+- **S**ingle Responsibility : Chaque classe a une seule responsabilité
+- **O**pen/Closed : Ouvert à l'extension, fermé à la modification
+- **L**iskov Substitution : Les interfaces sont respectées
+- **I**nterface Segregation : Interfaces spécifiques et ciblées
+- **D**ependency Inversion : Dépendance sur les abstractions
+
+---
+
+## 🛠️ Technologies
+
+### Backend
+
+- **Runtime** : Node.js 18+
+- **Langage** : TypeScript 5.3
+- **Base de données** : MongoDB 7.0
+- **ODM** : Mongoose
+- **Tests** : Jest + ts-jest
+- **BDD** : Cucumber
+- **Containerisation** : Docker + Docker Compose
+
+### Frontend (à venir)
+
+- **Framework** : React Native
+- **State Management** : Redux Toolkit / Zustand
+- **UI** : React Native Paper
+
+### DevOps
+
+- **CI/CD** : GitHub Actions
+- **Qualité** : ESLint, Prettier
+- **Git** : Conventional Commits
+
+---
+
+## 📦 Installation
+
+### Prérequis
+
+- Node.js 18+ et npm
+- Docker et Docker Compose
+- Git
+
+### Installation du backend
+
+```bash
+# Cloner le repository
+git clone https://github.com/votre-username/basketball-stats-coach.git
+cd basketball-stats-coach/backend
+
+# Installer les dépendances
+npm install
+
+# Configurer les variables d'environnement
+cp .env.example .env
+
+# Démarrer MongoDB avec Docker
+npm run docker:up
+
+# Lancer les tests
+npm test
+
+# Démarrer le serveur de développement
+npm run dev
+```
+
+### Variables d'environnement
+
+Créer un fichier `.env` dans le dossier `backend/` :
+
+```env
+# MongoDB
+MONGODB_URI=mongodb://statcoach:statcoach_secret@localhost:27017/statcoach_pro?authSource=admin
+
+# Server
+PORT=3000
+NODE_ENV=development
+
+# JWT (à venir)
+JWT_SECRET=your-secret-key
+```
+
+---
+
+## 🚀 Utilisation
+
+### Commandes npm disponibles
+
+```bash
+# Backend
+npm run dev          # Démarrer en mode développement
+npm test            # Lancer tous les tests
+npm run test:watch  # Tests en mode watch
+npm run test:cov    # Tests avec couverture
+npm run build       # Build pour production
+npm start           # Démarrer en production
+
+# Docker
+npm run docker:up      # Démarrer MongoDB
+npm run docker:down    # Arrêter MongoDB
+npm run docker:logs    # Voir les logs
+npm run docker:clean   # Nettoyer volumes
+```
+
+### Exemple d'utilisation des Use Cases
+
+```typescript
+// 1. Créer une équipe
+const createTeam = new CreateTeam(teamRepository);
+const { success, team } = await createTeam.execute({
+  name: 'Wild Cats',
+  coach: 'Coach Smith',
+  season: '2024-2025',
+});
+
+// 2. Ajouter des joueurs
+const createPlayer = new CreatePlayer(playerRepository);
+await createPlayer.execute({
+  firstName: 'Ryan',
+  lastName: 'Evans',
+  teamId: team.id,
+  position: 'Guard',
+  height: 185,
+  weight: 80,
+});
+
+// 3. Créer et démarrer un match
+const createGame = new CreateGame(gameRepository);
+const { game } = await createGame.execute({
+  teamId: team.id,
+  opponent: 'Tigers',
+  location: 'Main Arena',
+});
+
+const startGame = new StartGame(gameRepository);
+await startGame.execute(game.id);
+
+// 4. Enregistrer des actions
+const recordAction = new RecordGameAction(gameStatsRepository, gameRepository);
+await recordAction.execute({
+  gameId: game.id,
+  playerId: player.id,
+  actionType: 'twoPoint',
+  made: true,
+});
+
+// 5. Consulter les statistiques
+const getStats = new GetPlayerGameStats(gameStatsRepository);
+const { gameStats } = await getStats.execute(game.id, player.id);
+
+console.log(`Points: ${gameStats.getTotalPoints()}`);
+console.log(`FG%: ${gameStats.getFieldGoalPercentage()}%`);
+```
+
+---
+
+## 🧪 Tests
+
+Le projet suit une approche **Test-Driven Development (TDD)** stricte.
+
+### Statistiques des tests
+
+- **Total** : 190 tests
+- **Test Suites** : 28 suites
+- **Couverture** : ~90%
+- **Status** : ✅ 100% passing
+
+### Répartition des tests
+
+| Catégorie        | Fichiers | Tests | Status |
+| ---------------- | -------- | ----- | ------ |
+| Player Use Cases | 5        | 18    | ✅     |
+| Team Use Cases   | 5        | 18    | ✅     |
+| Game Use Cases   | 8        | 33    | ✅     |
+| Stats Use Cases  | 4        | 25    | ✅     |
+| Domain Entities  | 4        | 89    | ✅     |
+| Integration      | 2        | 7     | ✅     |
+
+### Lancer les tests
+
+```bash
+# Tous les tests
+npm test
+
+# Tests en mode watch
+npm run test:watch
+
+# Tests avec couverture
+npm run test:cov
+
+# Tests spécifiques
+npm test -- player
+npm test -- CreatePlayer.test.ts
+```
+
+### Structure des tests
+
+```typescript
+describe('CreatePlayer Use Case', () => {
+  let mockRepository: MockPlayerRepository;
+  let createPlayer: CreatePlayer;
+
+  beforeEach(() => {
+    mockRepository = new MockPlayerRepository();
+    createPlayer = new CreatePlayer(mockRepository);
+  });
+
+  test('should create a player successfully', async () => {
+    const result = await createPlayer.execute({
+      firstName: 'John',
+      lastName: 'Doe',
+      teamId: 'team-123',
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.player?.firstName).toBe('John');
+  });
+});
+```
+
+---
+
+## 📚 Documentation
+
+### Documents disponibles
+
+- **[USE_CASES.md](backend/USE_CASES.md)** : Liste complète des 23 use cases avec exemples
+- **[ARCHITECTURE.md](backend/ARCHITECTURE.md)** : Documentation de l'architecture (à créer)
+- **[API.md](backend/API.md)** : Documentation de l'API REST (à créer)
+
+### Use Cases implémentés
+
+#### Player (6)
+
+- CreatePlayer, UpdatePlayer, DeletePlayer
+- GetPlayer, GetPlayersByTeam, SearchPlayersByName
+
+#### Team (5)
+
+- CreateTeam, UpdateTeam, DeleteTeam
+- GetTeam, GetAllTeams
+
+#### Game (8)
+
+- CreateGame, UpdateGame, DeleteGame
+- GetGame, GetGamesByTeam, GetGamesByStatus
+- StartGame, CompleteGame
+
+#### Stats (4)
+
+- RecordGameAction, UndoLastGameAction
+- GetPlayerGameStats, GetPlayerCareerStats
+
+---
+
+## 🎯 Roadmap
+
+### Phase 1 : Backend API ✅ (Complété)
+
+- [x] Architecture Clean Architecture
+- [x] 23 use cases avec TDD
+- [x] MongoDB + Mongoose
+- [x] 190 tests (100% passing)
+
+### Phase 2 : Frontend Mobile (En cours)
+
+- [ ] Configuration React Native
+- [ ] Écrans de gestion d'équipes
+- [ ] Interface de match en temps réel
+- [ ] Visualisation des statistiques
+- [ ] Synchronisation offline
+
+### Phase 3 : Fonctionnalités avancées
+
+- [ ] Authentification JWT
+- [ ] Gestion multi-utilisateurs
+- [ ] Export PDF des statistiques
+- [ ] Graphiques et analyses avancées
+- [ ] Mode hors-ligne avec sync
+
+### Phase 4 : Déploiement
+
+- [ ] API déployée (Heroku/Railway)
+- [ ] Application iOS (App Store)
+- [ ] Application Android (Play Store)
+- [ ] Documentation complète
+
+---
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! Voici comment contribuer :
+
+1. **Fork** le projet
+2. **Créer** une branche (`git checkout -b feature/amazing-feature`)
+3. **Commit** vos changements (`git commit -m 'Add amazing feature'`)
+4. **Push** vers la branche (`git push origin feature/amazing-feature`)
+5. **Ouvrir** une Pull Request
+
+### Standards de code
+
+- TypeScript strict mode
+- ESLint + Prettier
+- Tests obligatoires (TDD)
+- Coverage minimum : 80%
+- Conventional Commits
+
+---
+
+## 📄 License
+
+Ce projet est sous licence **MIT**. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+## 🙏 Remerciements
+
+- Architecture inspirée de Clean Architecture (Robert C. Martin)
+- Approche TDD/BDD pour la qualité du code
+- Communauté TypeScript et Node.js
+
+---
+
+## 📞 Support
+
+Pour toute question ou suggestion :
+
+- **Issues** : [GitHub Issues](https://github.com/votre-username/basketball-stats-coach/issues)
+
+---
+
+<div align="center">
+
+**Fait avec ❤️ pour les passionnés de basketball**
+
+⭐ Si ce projet vous plaît, n'hésitez pas à lui donner une étoile !
+
+</div>

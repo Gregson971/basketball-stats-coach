@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: statcoach-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: statcoach
+      MONGO_INITDB_ROOT_PASSWORD: statcoach_secret
+      MONGO_INITDB_DATABASE: statcoach_pro
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - statcoach-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  # API backend (optionnel - décommenter pour lancer l'API avec Docker)
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: statcoach-api
+  #   restart: unless-stopped
+  #   environment:
+  #     NODE_ENV: development
+  #     PORT: 3000
+  #     MONGODB_URI: mongodb://statcoach:statcoach_secret@mongodb:27017/statcoach_pro?authSource=admin
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     mongodb:
+  #       condition: service_healthy
+  #   networks:
+  #     - statcoach-network
+  #   volumes:
+  #     - ./src:/app/src
+  #     - ./node_modules:/app/node_modules
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+
+networks:
+  statcoach-network:
+    driver: bridge
