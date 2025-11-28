@@ -1,0 +1,71 @@
+version: 2
+updates:
+  # Mises à jour npm pour le backend
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "Gregson971" # Remplacer par votre username GitHub
+    assignees:
+      - "Gregson971" # Remplacer par votre username GitHub
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "backend"
+    ignore:
+      # Ignorer les mises à jour majeures de certains packages critiques
+      - dependency-name: "mongoose"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "express"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Grouper les mises à jour TypeScript
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/*"
+          - "ts-*"
+      # Grouper les mises à jour ESLint
+      eslint:
+        patterns:
+          - "eslint"
+          - "@typescript-eslint/*"
+      # Grouper les mises à jour Jest
+      jest:
+        patterns:
+          - "jest"
+          - "@types/jest"
+          - "ts-jest"
+      # Grouper les mises à jour Swagger
+      swagger:
+        patterns:
+          - "swagger-*"
+          - "@types/swagger-*"
+
+  # Mises à jour des GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - "ci/cd"
+      - "dependencies"
+
+  # Mises à jour Docker (si vous utilisez des images de base)
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "chore(docker)"
+    labels:
+      - "docker"
+      - "dependencies"

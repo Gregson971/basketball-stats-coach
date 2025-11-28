@@ -2,6 +2,11 @@
 
 Backend API pour **StatCoach Pro**, l'application mobile professionnelle de suivi de statistiques de basketball en temps réel, construite avec **Clean Architecture**, **TDD** et **BDD**.
 
+![Backend CI](https://github.com/Gregson971/basketball-stats-coach/workflows/Backend%20CI/badge.svg)
+![Coverage](https://codecov.io/gh/Gregson971/basketball-stats-coach/branch/main/graph/badge.svg)
+![Tests](https://img.shields.io/badge/tests-246%20passing-success)
+![Docker](https://img.shields.io/docker/pulls/gregson97/statcoach-backend)
+
 ## 🏗️ Architecture
 
 Ce projet suit les principes de **Clean Architecture** pour assurer une séparation claire des responsabilités et faciliter la maintenabilité.
@@ -58,21 +63,25 @@ backend/
 ## 🎯 Principes de Clean Architecture
 
 ### 1. **Domain Layer** (Domaine)
+
 - Contient la logique métier pure
 - Indépendant des frameworks et technologies
 - Définit les entités et les règles métier
 
 ### 2. **Application Layer** (Application)
+
 - Contient les use cases (cas d'utilisation)
 - Orchestre les entités du domaine
 - Indépendant de l'UI et de l'infrastructure
 
 ### 3. **Infrastructure Layer** (Infrastructure)
+
 - Implémentation concrète des repositories
 - Accès aux bases de données
 - Services externes
 
 ### 4. **Presentation Layer** (Présentation)
+
 - API REST avec Express
 - Contrôleurs et routes
 - Validation des requêtes
@@ -80,38 +89,47 @@ backend/
 ## 📊 Entités du domaine
 
 ### Player (Joueur)
+
 Représente un joueur de basketball avec ses informations personnelles et physiques.
 
 **Attributs:**
+
 - `firstName`, `lastName`, `nickname`
 - `height` (cm), `weight` (kg), `age`
 - `gender`, `grade`, `position`
 - `teamId`
 
 ### Team (Équipe)
+
 Représente une équipe de basketball.
 
 **Attributs:**
+
 - `name`, `coach`, `season`, `league`
 
 ### Game (Match)
+
 Représente un match de basketball.
 
 **Attributs:**
+
 - `teamId`, `opponent`, `gameDate`, `location`
 - `status`: `not_started` | `in_progress` | `completed`
 - `startedAt`, `completedAt`
 
 ### GameStats (Statistiques de match)
+
 Représente les statistiques d'un joueur pour un match donné.
 
 **Statistiques:**
+
 - **Tirs:** Free Throws, 2-Points, 3-Points (made/attempted)
 - **Rebonds:** Offensifs, Défensifs
 - **Autres:** Assists, Steals, Blocks, Turnovers, Personal Fouls
 - **Temps:** Minutes jouées
 
 **Méthodes calculées:**
+
 - `getTotalPoints()`, `getTotalRebounds()`
 - `getFieldGoalPercentage()`, `getFreeThrowPercentage()`, `getThreePointPercentage()`
 
@@ -129,17 +147,20 @@ Ce projet suit une approche TDD (Test Driven Development) stricte avec une couve
 ### Types de tests
 
 **Tests unitaires** (94 tests) - Tests des use cases et entités du domaine
+
 - Tests isolés des use cases (Player, Team, Game, Stats)
 - Tests des entités et de la logique métier (96 tests)
 - Mock des dépendances
 
 **Tests d'intégration** (26 tests) - Tests des repositories avec MongoDB
+
 - Tests avec base de données en mémoire (MongoDB Memory Server)
 - Validation de la persistance des données
 - Tests des requêtes complexes
 - 4 repository test suites
 
 **Tests API** (56 tests) - Tests des endpoints Express avec Supertest
+
 - Tests de toutes les routes REST (24 endpoints)
 - Validation des codes HTTP et réponses JSON
 - Tests des middlewares et gestion d'erreurs
@@ -149,6 +170,7 @@ Ce projet suit une approche TDD (Test Driven Development) stricte avec une couve
 - Stats API: 12 tests
 
 ### Commandes de test
+
 ```bash
 # Lancer tous les tests
 npm test
@@ -281,20 +303,24 @@ cp .env.example .env
 ### Variables d'environnement principales
 
 **Serveur:**
+
 - `PORT`: Port du serveur (défaut: 3000)
 - `NODE_ENV`: Environnement (development/production)
 
 **MongoDB (avec Docker):**
+
 ```env
 MONGODB_URI=mongodb://statcoach:statcoach_secret@localhost:27017/statcoach_pro?authSource=admin
 ```
 
 **MongoDB (local sans Docker):**
+
 ```env
 MONGODB_URI=mongodb://localhost:27017/statcoach_pro
 ```
 
 **MongoDB (Atlas):**
+
 ```env
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/statcoach_pro
 ```
@@ -359,6 +385,7 @@ docker-compose down -v
 Le projet dispose de deux configurations Docker:
 
 1. **Production** (`Dockerfile`):
+
    - Build multi-stage optimisé
    - Image Node.js Alpine légère
    - Compilation TypeScript
@@ -375,6 +402,7 @@ Voir `docker-compose.yml` pour les détails de configuration.
 ## 📱 Support du mode hors-ligne
 
 L'application supporte le mode hors-ligne avec synchronisation automatique:
+
 - Les statistiques peuvent être enregistrées sans connexion internet
 - Synchronisation automatique quand la connexion revient
 - Gestion des conflits et retry automatique
@@ -409,7 +437,7 @@ async function startServer() {
     playerRepository: new MongoPlayerRepository(),
     teamRepository: new MongoTeamRepository(),
     gameRepository: new MongoGameRepository(),
-    gameStatsRepository: new MongoGameStatsRepository()
+    gameStatsRepository: new MongoGameStatsRepository(),
   };
 
   const app = createApp(repositories);
@@ -420,6 +448,7 @@ async function startServer() {
 ### Gestion de la connexion MongoDB
 
 Le module `src/infrastructure/database/mongodb/connection.ts` gère:
+
 - Connexion à MongoDB avec Mongoose
 - Event handlers (connected, error, disconnected)
 - Graceful shutdown (SIGINT)
@@ -428,21 +457,25 @@ Le module `src/infrastructure/database/mongodb/connection.ts` gère:
 ## 🛠️ Technologies
 
 ### Backend
+
 - **TypeScript** - Typage statique strict
 - **Node.js / Express** - Serveur API REST
 - **MongoDB / Mongoose** - Base de données NoSQL
 
 ### Tests
+
 - **Jest** - Framework de tests (unitaires, intégration, API)
 - **Supertest** - Tests HTTP pour Express
 - **MongoDB Memory Server** - Base de données en mémoire pour les tests
 
 ### Documentation
+
 - **Swagger / OpenAPI 3.0** - Documentation interactive de l'API
 - **swagger-jsdoc** - Génération de spec OpenAPI depuis JSDoc
 - **swagger-ui-express** - Interface Swagger UI
 
 ### DevOps
+
 - **Docker / Docker Compose** - Conteneurisation (Production + Dev)
 - **ESLint** - Linting du code
 - **ts-node-dev** - Hot reload en développement
@@ -480,6 +513,7 @@ npm run dev
 ```
 
 La documentation Swagger permet de:
+
 - Visualiser tous les endpoints disponibles
 - Voir les schémas de données et les modèles
 - Tester directement les endpoints depuis l'interface
@@ -488,6 +522,7 @@ La documentation Swagger permet de:
 ### Endpoints disponibles
 
 **Players (Joueurs)** - `/api/players`
+
 - `POST /api/players` - Créer un joueur
 - `GET /api/players` - Liste de tous les joueurs
 - `GET /api/players/:id` - Détails d'un joueur
@@ -496,6 +531,7 @@ La documentation Swagger permet de:
 - `GET /api/players/team/:teamId` - Joueurs d'une équipe
 
 **Teams (Équipes)** - `/api/teams`
+
 - `POST /api/teams` - Créer une équipe
 - `GET /api/teams` - Liste de toutes les équipes
 - `GET /api/teams/:id` - Détails d'une équipe
@@ -503,6 +539,7 @@ La documentation Swagger permet de:
 - `DELETE /api/teams/:id` - Supprimer une équipe
 
 **Games (Matchs)** - `/api/games`
+
 - `POST /api/games` - Créer un match
 - `GET /api/games/:id` - Détails d'un match
 - `PUT /api/games/:id` - Modifier un match
@@ -513,15 +550,18 @@ La documentation Swagger permet de:
 - `POST /api/games/:id/complete` - Terminer un match
 
 **Stats (Statistiques)** - `/api/stats`
+
 - `POST /api/stats/games/:gameId/actions` - Enregistrer une action
 - `DELETE /api/stats/games/:gameId/actions/:playerId` - Annuler la dernière action
 - `GET /api/stats/games/:gameId/players/:playerId` - Stats d'un joueur pour un match
 - `GET /api/stats/players/:playerId/career` - Stats de carrière d'un joueur
 
 **Health Check** - `/health`
+
 - `GET /health` - Vérifier l'état de l'API
 
 Pour plus de détails sur chaque endpoint, consultez:
+
 - **Documentation Swagger UI**: http://localhost:3000/api-docs (quand le serveur est lancé)
 - **Documentation détaillée**: Voir [docs/API.md](./docs/API.md)
 - **Architecture**: Voir [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
@@ -541,6 +581,7 @@ Le projet dispose d'une documentation complète dans le dossier `docs/`:
 ### Documentation technique
 
 - **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Architecture Clean Architecture détaillée
+
   - Explication des 4 couches (Domain, Application, Infrastructure, Presentation)
   - Patterns et principes (SOLID, DI, Repository Pattern)
   - Flux de données et exemples concrets
@@ -555,6 +596,7 @@ Le projet dispose d'une documentation complète dans le dossier `docs/`:
 ### Swagger / OpenAPI
 
 Documentation interactive accessible quand le serveur est lancé:
+
 - **URL**: http://localhost:3000/api-docs
 - **Format**: OpenAPI 3.0
 - **Fonctionnalités**: Tester les endpoints directement depuis l'interface
@@ -600,6 +642,7 @@ Pour contribuer au projet:
 ## 📞 Support
 
 Pour toute question ou problème:
+
 - **Documentation**: Consultez les fichiers dans `docs/`
 - **API**: Swagger UI à http://localhost:3000/api-docs
 - **Architecture**: Voir [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)

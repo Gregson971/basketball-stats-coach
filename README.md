@@ -3,9 +3,12 @@
 **StatCoach Pro** est une application mobile professionnelle de suivi statistique en temps réel pour le basketball. Conçue pour les entraîneurs et analystes, elle permet d'enregistrer et d'analyser les performances des joueurs pendant les matchs.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
 ![Tests](https://img.shields.io/badge/tests-246%20passing-success)
 ![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+
+[![Backend CI](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml)
+[![PR Checks](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/pr-checks.yml)
 
 ---
 
@@ -114,8 +117,7 @@ basketball-stats-coach/
 - **Langage** : TypeScript 5.3
 - **Base de données** : MongoDB 7.0
 - **ODM** : Mongoose
-- **Tests** : Jest + ts-jest
-- **BDD** : Cucumber
+- **Tests** : Jest + ts-jest + Supertest
 - **Containerisation** : Docker + Docker Compose
 
 ### Frontend (à venir)
