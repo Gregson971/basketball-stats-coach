@@ -30,11 +30,9 @@ Thumbs.db
 .git
 .gitignore
 
-# Docker (pas utilisé sur Railway)
-Dockerfile
+# Docker
 Dockerfile.dev
 docker-compose.yml
-.dockerignore
 
 # Development
 .env.local
