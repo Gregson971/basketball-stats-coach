@@ -1,6 +1,6 @@
 # 🔄 CI/CD Workflows - Vue d'ensemble
 
-## 📊 Architecture CI/CD
+## 📊 Architecture CI/CD Simplifiée
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -17,16 +17,16 @@
                     │   Pull Request  │
                     └─────────────────┘
                               │
-                    ┌─────────┴─────────┐
-                    ▼                   ▼
-            ┌──────────────┐    ┌──────────────┐
-            │  pr-checks   │    │  backend-ci  │
-            │              │    │              │
-            │ • Quality    │    │ • Lint       │
-            │ • Tests      │    │ • Tests      │
-            │ • Coverage   │    │ • Coverage   │
-            │ • Security   │    │ • Build      │
-            └──────────────┘    └──────────────┘
+                              ▼
+                    ┌─────────────────┐
+                    │   backend-ci    │
+                    │                 │
+                    │ • Lint          │
+                    │ • Tests         │
+                    │ • Coverage      │
+                    │ • Build         │
+                    │ • Docker (main) │
+                    └─────────────────┘
                               │
                     ┌─────────┴─────────┐
                     │   Merge to main   │
@@ -35,40 +35,30 @@
                     ┌─────────┴─────────┐
                     ▼                   ▼
             ┌──────────────┐    ┌──────────────┐
-            │  backend-ci  │    │  backend-cd  │
+            │  backend-ci  │    │   Railway    │
             │              │    │              │
-            │ • Full tests │    │ • Build      │
-            │ • Docker img │    │ • Deploy     │
+            │ • Full tests │    │ • Auto-build │
+            │ • Docker img │    │ • Auto-deploy│
             └──────────────┘    └──────────────┘
-                              │
-                    ┌─────────┴─────────┐
-                    │   Create tag      │
-                    │   (v1.0.0)        │
-                    └─────────────────────┘
                               │
                               ▼
                     ┌─────────────────┐
-                    │    release      │
-                    │                 │
-                    │ • GitHub Release│
-                    │ • Docker Hub    │
-                    │ • Changelog     │
+                    │   PRODUCTION    │
                     └─────────────────┘
 ```
 
 ---
 
-## 🚀 Workflows détaillés
-
-### 1. Backend CI (Intégration Continue)
+## 🚀 Workflow Backend CI
 
 **Fichier** : `.github/workflows/backend-ci.yml`
 
-**Triggers** :
-- Push sur `main` ou `develop` (chemin `backend/**`)
-- Pull Request vers `main` ou `develop`
+### Triggers
 
-**Jobs** :
+- **Push** sur `main` ou `develop` (chemin `backend/**`)
+- **Pull Request** vers `main` ou `develop`
+
+### Jobs
 
 | Job | Description | Temps | Status |
 |-----|-------------|-------|--------|
@@ -78,191 +68,97 @@
 | **build** | Compilation TypeScript | ~45s | ✅ Required |
 | **docker** | Build images Docker | ~3m | ℹ️ Main only |
 
-**Artifacts** :
-- `dist/` - Code compilé (7 jours)
-- Coverage reports → Codecov
+### Détails des jobs
+
+#### 1. Lint
+- Exécute ESLint sur tout le code backend
+- Valide le respect des standards de code
+- **Échec si** : Erreurs de linting détectées
+
+#### 2. Test
+- Exécute la suite complète de tests (246 tests)
+- Tests unitaires, d'intégration et API
+- Matrices : Node.js 18 et 20
+- **Échec si** : Au moins un test échoue
+
+#### 3. Coverage
+- Génère les rapports de couverture de code
+- Upload vers Codecov (optionnel)
+- Crée un rapport HTML des tests
+- **Informatif** : N'empêche pas le merge
+
+#### 4. Build
+- Compile le code TypeScript vers JavaScript
+- Crée le dossier `dist/`
+- Upload des artifacts (conservés 7 jours)
+- **Échec si** : Erreurs de compilation
+
+#### 5. Docker
+- Build des images Docker (production + dev)
+- **Uniquement sur la branche `main`**
+- Optionnel : Push vers Docker Hub (décommenté)
+- **Informatif** : N'empêche pas le merge
 
 ---
 
-### 2. Pull Request Checks
+## 🚂 Déploiement avec Railway
 
-**Fichier** : `.github/workflows/pr-checks.yml`
+### Configuration automatique
 
-**Triggers** :
-- Ouverture de PR
-- Nouveau commit sur PR
-- Réouverture de PR
+Railway est configuré pour déployer automatiquement depuis GitHub :
 
-**Jobs** :
+1. **Connexion GitHub ↔ Railway** : Votre projet Railway surveille le repository
+2. **Détection automatique** : Railway détecte les push sur `main`
+3. **Build automatique** : Railway utilise Nixpacks pour compiler TypeScript
+4. **Déploiement automatique** : L'application est déployée automatiquement
 
-| Job | Description | Checks |
-|-----|-------------|--------|
-| **quality-checks** | Qualité du code | TypeScript compilation, ESLint, Prettier |
-| **tests** | Tests par catégorie | Unit, Integration, API (parallèle) |
-| **coverage-report** | Rapport de couverture | Commentaire automatique sur PR |
-| **build-check** | Vérification build | TypeScript build + taille |
-| **dependency-review** | Revue dépendances | Vulnérabilités et licences |
-| **security-audit** | Audit sécurité | npm audit |
-| **pr-summary** | Résumé | Statut global des checks |
+### Fichiers de configuration Railway
 
-**Protection de branche recommandée** :
-```yaml
-required_status_checks:
-  - quality-checks
-  - tests (unit)
-  - tests (integration)
-  - tests (api)
-  - build-check
+| Fichier | Rôle |
+|---------|------|
+| `backend/railway.json` | Configuration build et déploiement |
+| `backend/nixpacks.toml` | Instructions de build TypeScript |
+| `backend/.railwayignore` | Exclusions de déploiement |
+
+### Processus de déploiement
+
+```
+Push sur main
+    │
+    ├─► GitHub Actions (backend-ci)
+    │   ├─► Lint ✓
+    │   ├─► Tests ✓
+    │   ├─► Build ✓
+    │   └─► Docker ✓
+    │
+    └─► Railway (auto-detect)
+        ├─► Pull from GitHub
+        ├─► npm ci (install dependencies)
+        ├─► npm run build (compile TypeScript)
+        ├─► npm start (start server)
+        └─► Deploy ✓ → Production URL
 ```
 
 ---
 
-### 3. Backend CD (Déploiement Continu)
-
-**Fichier** : `.github/workflows/backend-cd.yml`
-
-**Triggers** :
-- Push sur `main` (automatique)
-- Déclenchement manuel
-
-**Environments** :
-
-| Environment | Branch | Approval | URL |
-|-------------|--------|----------|-----|
-| **Staging** | `develop` | Auto | À configurer |
-| **Production** | `main` | Manual | À configurer |
-
-**Jobs** :
-
-| Job | Environment | Platform |
-|-----|-------------|----------|
-| **deploy-staging** | Staging | Railway/Render/Heroku |
-| **deploy-production** | Production | Railway/Render/Heroku |
-
-**Configuration requise** :
-- Décommenter la plateforme choisie
-- Configurer les secrets (tokens, IDs)
-- Activer les environments dans GitHub
-
----
-
-### 4. Release & Publish
-
-**Fichier** : `.github/workflows/release.yml`
-
-**Triggers** :
-- Push de tag `v*.*.*` (ex: `v1.0.0`)
-
-**Jobs** :
-
-| Job | Description | Output |
-|-----|-------------|--------|
-| **create-release** | Création release GitHub | Release notes + changelog |
-| **publish-docker** | Publication Docker Hub | Multi-arch (amd64, arm64) |
-| **publish-npm** | GitHub Packages | Optionnel |
-
-**Tags Docker créés** :
-- `username/statcoach-backend:latest`
-- `username/statcoach-backend:v1.0.0`
-- `username/statcoach-backend:dev`
-- `username/statcoach-backend:dev-v1.0.0`
-
-**Workflow de release** :
-```bash
-# 1. Créer le tag
-git tag -a v1.0.0 -m "Release v1.0.0"
-
-# 2. Pusher le tag
-git push origin v1.0.0
-
-# 3. GitHub Actions :
-#    - Génère le changelog automatiquement
-#    - Crée la release GitHub
-#    - Publie les images Docker
-#    - Archive les artifacts
-```
-
----
-
-## 🤖 Dependabot
-
-**Fichier** : `.github/dependabot.yml`
-
-**Configuration** :
-
-| Ecosystem | Fréquence | Groupes |
-|-----------|-----------|---------|
-| npm (backend) | Hebdomadaire (Lundi 9h) | TypeScript, ESLint, Jest, Swagger |
-| GitHub Actions | Mensuel | - |
-| Docker | Mensuel | - |
-
-**Limites** :
-- 10 PR ouvertes max
-- Ignore les mises à jour majeures de Mongoose et Express
-- Auto-assign aux reviewers configurés
-
-**Labels automatiques** :
-- `dependencies`
-- `backend` / `ci/cd` / `docker`
-
----
-
-## 📊 Métriques et monitoring
+## 📊 Métriques
 
 ### Temps d'exécution moyens
 
 | Workflow | Temps moyen | Coût (minutes) |
 |----------|-------------|----------------|
 | Backend CI (complet) | ~5-7 min | 5-7 |
-| PR Checks | ~4-6 min | 4-6 |
-| Backend CD | ~8-10 min | 8-10 |
-| Release | ~6-8 min | 6-8 |
+| Railway Deploy | ~3-5 min | 0 (gratuit) |
 
-**Total mensuel estimé** :
-- ~100 PR/mois × 5min = 500 min
+**Total mensuel estimé (GitHub Actions)** :
+- ~50 PR/mois × 5min = 250 min
 - ~20 merges/mois × 7min = 140 min
-- ~4 releases/mois × 8min = 32 min
-- **Total : ~672 minutes/mois** (gratuit sur plan GitHub Free : 2000 min/mois)
+- **Total : ~390 minutes/mois** (gratuit sur plan GitHub Free : 2000 min/mois)
 
 ### Success rate attendu
 
 - ✅ CI : >95% (tests stables)
-- ✅ PR Checks : >90% (dépend des PR)
-- ✅ CD : >98% (déploiements fiables)
-- ✅ Release : 100% (contrôlé manuellement)
-
----
-
-## 🔐 Secrets requis par plateforme
-
-### Railway
-```
-RAILWAY_TOKEN
-```
-
-### Render
-```
-RENDER_TOKEN
-RENDER_STAGING_SERVICE_ID
-RENDER_PRODUCTION_SERVICE_ID
-```
-
-### Heroku
-```
-HEROKU_API_KEY
-HEROKU_EMAIL
-```
-
-### Docker Hub
-```
-DOCKERHUB_USERNAME
-DOCKERHUB_TOKEN
-```
-
-### Codecov (optionnel)
-```
-CODECOV_TOKEN
-```
+- ✅ Railway Deploy : >98% (déploiements fiables)
 
 ---
 
@@ -283,19 +179,10 @@ test(unit): add tests for GameStats entity
 
 ```
 main          → Production (protégée)
-develop       → Staging (protégée)
+develop       → Développement (optionnel)
 feature/*     → Nouvelles fonctionnalités
 fix/*         → Corrections de bugs
 hotfix/*      → Corrections urgentes
-```
-
-### Tags
-
-```bash
-# Semantic Versioning : MAJOR.MINOR.PATCH
-v1.0.0        → Release majeure
-v1.1.0        → Nouvelle fonctionnalité
-v1.1.1        → Correction de bug
 ```
 
 ---
@@ -306,68 +193,163 @@ Recommandations pour protéger `main` :
 
 **Required status checks** :
 - ✅ `lint`
-- ✅ `test (unit)`
-- ✅ `test (integration)`
-- ✅ `test (api)`
+- ✅ `test (18.x)`
+- ✅ `test (20.x)`
 - ✅ `build`
-- ✅ `quality-checks`
 
 **Optionnel** :
 - ℹ️ `coverage` (informatif)
-- ℹ️ `security-audit` (peut échouer)
-- ℹ️ `dependency-review`
+- ℹ️ `docker` (main uniquement)
+
+### Configuration dans GitHub
+
+Settings → Branches → Branch protection rules → `main` :
+
+```yaml
+Require status checks to pass before merging: ✓
+  - lint
+  - test (18.x)
+  - test (20.x)
+  - build
+
+Require branches to be up to date before merging: ✓
+Require pull request reviews before merging: ✓
+Include administrators: ✓
+```
 
 ---
 
-## 📈 Amélioration continues
+## 🆘 Troubleshooting
 
-### Phase 1 (Actuel)
-- ✅ CI/CD complet
-- ✅ Tests automatisés
-- ✅ Docker builds
-- ✅ Dependabot
+### Les tests échouent sur CI mais pas localement
 
-### Phase 2 (À venir)
-- [ ] Performance benchmarks
-- [ ] E2E tests avec Playwright
-- [ ] Visual regression tests
-- [ ] Automatic changelog generation
+```bash
+# Vérifier la version Node.js
+node --version  # Doit être 18 ou 20
 
-### Phase 3 (Future)
-- [ ] Canary deployments
-- [ ] Blue-green deployment
-- [ ] Load testing (k6)
-- [ ] Infrastructure as Code (Terraform)
+# Nettoyer et réinstaller
+rm -rf node_modules package-lock.json
+npm install
+npm test
+```
+
+### Le workflow GitHub Actions est lent
+
+- Les jobs `test` et `coverage` s'exécutent en parallèle
+- Le job `docker` ne s'exécute que sur `main`
+- Vérifiez que vos tests ne font pas d'appels réseau inutiles
+
+### Railway ne déploie pas
+
+1. **Vérifier la connexion GitHub ↔ Railway** :
+   - Railway → Settings → GitHub → Reconnect if needed
+
+2. **Vérifier les fichiers de configuration** :
+   ```bash
+   ls backend/railway.json backend/nixpacks.toml backend/.railwayignore
+   ```
+
+3. **Consulter les logs Railway** :
+   - Railway Dashboard → Deployments → Cliquer sur le déploiement
+
+### Erreur "Cannot find module '/app/dist/index.js'" sur Railway
+
+**Cause** : TypeScript non compilé
+**Solution** : Vérifiez que `railway.json` contient :
+
+```json
+{
+  "build": {
+    "buildCommand": "npm ci && npm run build"
+  }
+}
+```
 
 ---
 
-## 🆘 Support et troubleshooting
+## 📚 Documentation complémentaire
 
-### Workflow échoue sur CI mais pas localement
+### Liens utiles
 
-1. Vérifier la version Node.js (18 ou 20)
-2. Nettoyer le cache : `npm ci`
-3. Vérifier les variables d'environnement
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Railway Documentation](https://docs.railway.app/)
+- [Nixpacks Documentation](https://nixpacks.com/docs)
+- [Workflows syntax](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)
 
-### Déploiement bloqué
-
-1. Vérifier les secrets GitHub
-2. Vérifier les environments (approval)
-3. Consulter les logs détaillés
-
-### Docker build échoue
-
-1. Tester localement : `docker build -t test .`
-2. Vérifier le Dockerfile
-3. Vérifier `.dockerignore`
-
----
-
-## 📚 Documentation complète
+### Documentation du projet
 
 - [README CI/CD](.github/README.md) - Documentation détaillée
-- [Backend CI](.github/workflows/backend-ci.yml) - Workflow CI
-- [Backend CD](.github/workflows/backend-cd.yml) - Workflow CD
-- [PR Checks](.github/workflows/pr-checks.yml) - Checks PR
-- [Release](.github/workflows/release.yml) - Releases
-- [Dependabot](.github/dependabot.yml) - Mises à jour auto
+- [Backend CI Workflow](.github/workflows/backend-ci.yml) - Configuration du workflow
+- [Backend README](../backend/README.md) - Documentation backend
+- [API Documentation](../backend/docs/API.md) - Endpoints REST
+
+---
+
+## 🔄 Workflow de développement quotidien
+
+### 1. Créer une branche
+
+```bash
+git checkout -b feature/ma-nouvelle-fonctionnalite
+```
+
+### 2. Développer et tester localement
+
+```bash
+npm test           # Tests
+npm run lint       # Linting
+npm run build      # Build
+```
+
+### 3. Commit et push
+
+```bash
+git add .
+git commit -m "feat(api): add new feature"
+git push origin feature/ma-nouvelle-fonctionnalite
+```
+
+### 4. Créer une Pull Request
+
+- Allez sur GitHub
+- Créez une PR vers `main`
+- Le workflow `backend-ci` se déclenche automatiquement
+- Vérifiez que tous les checks passent
+
+### 5. Merger la PR
+
+- Une fois les reviews approuvées et les checks passés
+- Merge vers `main`
+- Le workflow `backend-ci` s'exécute sur `main`
+- Railway déploie automatiquement
+
+### 6. Vérifier le déploiement
+
+- Consultez les logs sur Railway Dashboard
+- Testez l'API déployée sur l'URL Railway
+- Vérifiez les métriques et logs
+
+---
+
+## 📈 Évolution future
+
+### Phase 1 (Actuel) ✅
+- ✅ CI automatique avec tests
+- ✅ Build Docker
+- ✅ Déploiement Railway auto
+
+### Phase 2 (À venir)
+- [ ] Tests E2E avec Playwright
+- [ ] Performance benchmarks
+- [ ] Monitoring et alertes (Sentry)
+- [ ] Gestion des releases (tags + changelog)
+
+### Phase 3 (Future)
+- [ ] Multiple environnements (staging + production)
+- [ ] Blue-green deployment
+- [ ] Load testing (k6)
+- [ ] Infrastructure as Code
+
+---
+
+**Dernière mise à jour** : 2024-11-28

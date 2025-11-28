@@ -17,17 +17,19 @@ Configuration complète de CI/CD pour StatCoach Pro Backend avec GitHub Actions.
 ### 1. Backend CI (`backend-ci.yml`)
 
 **Déclenché sur:**
+
 - Push sur `main` ou `develop` (dossier `backend/`)
 - Pull request vers `main` ou `develop` (dossier `backend/`)
 
 **Jobs:**
+
 - ✅ **Lint** : Vérification du code avec ESLint
 - ✅ **Test** : Exécution de tous les tests (Node 18 & 20)
   - Tests unitaires
   - Tests d'intégration
   - Tests API
 - ✅ **Coverage** : Génération du rapport de couverture
-  - Upload vers Codecov (optionnel)
+  - Upload vers Codecov
 - ✅ **Build** : Compilation TypeScript
   - Upload des artifacts de build
 - 🐳 **Docker** : Construction des images Docker (production + dev)
@@ -36,21 +38,58 @@ Configuration complète de CI/CD pour StatCoach Pro Backend avec GitHub Actions.
 ### 2. Backend CD (`backend-cd.yml`)
 
 **Déclenché sur:**
-- Push sur `main` ou `develop` (dossier `backend/`)
+
+- Push sur `main` (dossier `backend/`)
 - Déclenchement manuel (`workflow_dispatch`)
 
 **Jobs:**
+
 - 🚀 **Deploy Staging** : Déploiement sur l'environnement de staging
   - Uniquement sur `develop`
 - 🚀 **Deploy Production** : Déploiement en production
   - Uniquement sur `main`
-  - Nécessite l'approbation manuelle via environments
+  - Nécessite l'approbation manuelle
 
-**Plateformes supportées** :
-- ✅ Railway (configuré et activé)
-- Render (à décommenter si besoin)
-- Heroku (à décommenter si besoin)
-- Autres : AWS, DigitalOcean, etc.
+**Plateformes supportées** (à configurer) :
+
+- Railway
+- Render
+- Heroku
+- AWS / DigitalOcean / etc.
+
+### 3. Pull Request Checks (`pr-checks.yml`)
+
+**Déclenché sur:**
+
+- Ouverture, synchronisation ou réouverture d'une PR
+
+**Jobs:**
+
+- 🔍 **Quality Checks** : Vérifications de qualité du code
+  - Compilation TypeScript
+  - Linting ESLint
+  - Formatting (Prettier)
+- 🧪 **Tests** : Exécution des tests par catégorie
+- 📊 **Coverage Report** : Rapport de couverture dans la PR
+- 🏗️ **Build Check** : Vérification du build
+- 🔒 **Dependency Review** : Revue des dépendances
+- 🛡️ **Security Audit** : Audit de sécurité npm
+- 📝 **PR Summary** : Résumé des vérifications
+
+### 4. Release & Publish (`release.yml`)
+
+**Déclenché sur:**
+
+- Push de tags de version (`v*.*.*`)
+
+**Jobs:**
+
+- 📦 **Create Release** : Création de la release GitHub
+  - Génération automatique du changelog
+- 🐳 **Publish Docker** : Publication des images Docker
+  - Docker Hub (multi-arch: amd64, arm64)
+  - Tags: `latest`, `dev`, version spécifique
+- 📦 **Publish npm** : Publication sur GitHub Packages (optionnel)
 
 ---
 
@@ -58,35 +97,29 @@ Configuration complète de CI/CD pour StatCoach Pro Backend avec GitHub Actions.
 
 ### Secrets GitHub
 
-Pour activer tous les workflows, configurez ces secrets dans **Settings → Secrets and variables → Actions** :
+Aucun secret GitHub n'est requis pour le workflow CI actuel.
 
-#### Pour le déploiement (CD)
+#### Pour Docker Hub (optionnel)
 
-| Secret | Description | Requis pour |
-|--------|-------------|-------------|
-| `RAILWAY_TOKEN` | Token d'API Railway | Déploiement Railway |
-| `RENDER_TOKEN` | Token d'API Render | Déploiement Render |
-| `RENDER_STAGING_SERVICE_ID` | ID du service Render (staging) | Déploiement Render |
-| `RENDER_PRODUCTION_SERVICE_ID` | ID du service Render (production) | Déploiement Render |
-| `HEROKU_API_KEY` | Clé API Heroku | Déploiement Heroku |
-| `HEROKU_EMAIL` | Email Heroku | Déploiement Heroku |
+Si vous souhaitez activer la publication automatique des images Docker sur Docker Hub :
 
-#### Pour Docker Hub
-
-| Secret | Description |
-|--------|-------------|
+| Secret               | Description                  |
+| -------------------- | ---------------------------- |
 | `DOCKERHUB_USERNAME` | Nom d'utilisateur Docker Hub |
-| `DOCKERHUB_TOKEN` | Token d'accès Docker Hub |
+| `DOCKERHUB_TOKEN`    | Token d'accès Docker Hub     |
+
+Décommentez ensuite la section Docker dans `backend-ci.yml`.
 
 #### Pour Codecov (optionnel)
 
-| Secret | Description |
-|--------|-------------|
+| Secret          | Description                                   |
+| --------------- | --------------------------------------------- |
 | `CODECOV_TOKEN` | Token Codecov pour les rapports de couverture |
 
 ### Variables d'environnement
 
 Les workflows utilisent automatiquement :
+
 - `GITHUB_TOKEN` : Fourni automatiquement par GitHub
 - `GITHUB_REF` : Référence git (branche/tag)
 - `GITHUB_SHA` : Hash du commit
@@ -98,9 +131,10 @@ Les workflows utilisent automatiquement :
 Ajoutez ces badges à votre README principal :
 
 ```markdown
-[![Backend CI](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml)
+![Backend CI](https://github.com/Gregson971/basketball-stats-coach/workflows/Backend%20CI/badge.svg)
+![Coverage](https://codecov.io/gh/Gregson971/basketball-stats-coach/branch/main/graph/badge.svg)
 ![Tests](https://img.shields.io/badge/tests-246%20passing-success)
-![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+![Docker](https://img.shields.io/docker/pulls/gregson97/statcoach-backend)
 ```
 
 ---
@@ -110,11 +144,13 @@ Ajoutez ces badges à votre README principal :
 ### Développement quotidien
 
 1. **Créer une branche** :
+
    ```bash
    git checkout -b feature/ma-fonctionnalite
    ```
 
 2. **Développer et tester localement** :
+
    ```bash
    npm test
    npm run lint
@@ -122,71 +158,66 @@ Ajoutez ces badges à votre README principal :
    ```
 
 3. **Pusher et créer une PR** :
+
    ```bash
    git push origin feature/ma-fonctionnalite
    ```
-   → Les workflows `pr-checks.yml` se déclenchent automatiquement
+
+   → Le workflow `backend-ci.yml` se déclenche automatiquement pour valider le code
 
 4. **Merger la PR** :
-   → Le workflow `backend-ci.yml` se déclenche sur `main`
+   → Le workflow `backend-ci.yml` se déclenche sur `main` et Railway déploie automatiquement
 
-### Créer une release
+### Vérifier le déploiement
 
-1. **Créer et pusher un tag de version** :
-   ```bash
-   git tag -a v1.0.0 -m "Release version 1.0.0"
-   git push origin v1.0.0
-   ```
+1. **Suivre les workflows GitHub Actions** :
+   - Actions → Backend CI → Voir les résultats des tests
 
-2. **Le workflow `release.yml` se déclenche** :
-   - Crée une release GitHub
-   - Publie les images Docker
-   - Génère le changelog automatiquement
-
-### Déploiement manuel
-
-1. **Via l'interface GitHub** :
-   - Actions → Backend CD → Run workflow
-   - Choisir la branche
-   - Cliquer sur "Run workflow"
-
-2. **Vérifier le déploiement** :
-   - Suivre les logs dans Actions
-   - Vérifier l'environnement déployé
+2. **Vérifier le déploiement Railway** :
+   - Connectez-vous à Railway
+   - Surveillez les logs de déploiement
+   - Testez l'API déployée
 
 ---
 
-## 🔧 Configuration des plateformes de déploiement
+## 🔧 Configuration Railway
 
-### Railway
+### Configuration initiale
 
-1. Créer un projet Railway
-2. Installer Railway CLI : `npm install -g @railway/cli`
-3. Obtenir un token : `railway login`
-4. Ajouter `RAILWAY_TOKEN` aux secrets GitHub
-5. Décommenter la section Railway dans `backend-cd.yml`
+1. **Créer un compte Railway** : https://railway.app
+2. **Créer un nouveau projet** : New Project → Deploy from GitHub repo
+3. **Connecter votre repository GitHub** : Sélectionner `basketball-stats-coach`
+4. **Configurer le service** :
+   - Root Directory : `backend`
+   - Build Command : (Auto-détecté via `railway.json`)
+   - Start Command : (Auto-détecté via `railway.json`)
 
-### Render
+### Configuration de MongoDB
 
-1. Créer un service Web sur Render
-2. Obtenir le token API : Settings → API Keys
-3. Obtenir l'ID du service : URL du service
-4. Ajouter les secrets à GitHub
-5. Décommenter la section Render dans `backend-cd.yml`
+1. **Ajouter une base de données MongoDB** :
+   - Dans votre projet Railway : New → Database → Add MongoDB
 
-### Heroku
+2. **Configurer les variables d'environnement** :
+   - Railway génère automatiquement `MONGO_URL`
+   - Ajoutez les autres variables nécessaires :
+     - `PORT` : 3000
+     - `NODE_ENV` : production
 
-1. Créer une app Heroku
-2. Obtenir la clé API : Account Settings → API Key
-3. Ajouter les secrets à GitHub
-4. Décommenter la section Heroku dans `backend-cd.yml`
+### Auto-deploy
 
-### Docker Hub
+Railway détecte automatiquement les push sur votre branche principale et déclenche un nouveau déploiement :
 
-1. Créer un compte Docker Hub
-2. Créer un Access Token : Account Settings → Security
-3. Ajouter `DOCKERHUB_USERNAME` et `DOCKERHUB_TOKEN` aux secrets
-4. Les images seront publiées automatiquement sur les releases
+1. Push sur `main` → GitHub Actions exécute les tests
+2. Si les tests passent → Railway build et déploie automatiquement
+3. Vous recevez une URL de production Railway (ex: `https://yourapp.up.railway.app`)
+
+### Fichiers de configuration Railway
+
+Trois fichiers configurent le déploiement Railway (déjà présents dans `backend/`) :
+
+- **`railway.json`** : Configuration du build et du déploiement
+- **`nixpacks.toml`** : Instructions de build TypeScript
+- **`.railwayignore`** : Fichiers à exclure du déploiement
 
 ---
 
@@ -216,16 +247,18 @@ gh run view <run-id> --log
 ### Protection des branches
 
 Recommandations pour `main` :
+
 - ✅ Require pull request reviews
 - ✅ Require status checks to pass (tous les workflows CI)
 - ✅ Require branches to be up to date
 - ✅ Include administrators
 
-### Environments
+### Gestion des environnements
 
-Deux environnements configurés :
-- **staging** : Déploiement automatique depuis `develop`
-- **production** : Déploiement sur `main` avec approbation manuelle
+Les environnements sont gérés directement dans Railway :
+
+- Créez des projets Railway séparés pour staging et production
+- Configurez Railway pour déployer depuis différentes branches (`develop` pour staging, `main` pour production)
 
 ---
 
@@ -254,9 +287,25 @@ docker build -t test-build .
 docker build --no-cache -t test-build .
 ```
 
-### Secrets non configurés
+### Le déploiement Railway échoue
 
-Vérifier dans **Settings → Secrets and variables → Actions** que tous les secrets requis sont présents.
+```bash
+# Vérifier les logs Railway
+# 1. Connectez-vous à Railway
+# 2. Ouvrez votre projet
+# 3. Consultez l'onglet "Deployments"
+# 4. Cliquez sur le déploiement échoué pour voir les logs
+
+# Erreur commune : "Cannot find module '/app/dist/index.js'"
+# Solution : Vérifiez que railway.json et nixpacks.toml sont présents
+```
+
+### Variables d'environnement manquantes
+
+Vérifier dans Railway → Variables que toutes les variables sont configurées :
+- `MONGODB_URI` ou `MONGO_URL`
+- `PORT`
+- `NODE_ENV`
 
 ---
 
@@ -264,7 +313,8 @@ Vérifier dans **Settings → Secrets and variables → Actions** que tous les s
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Workflows syntax](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions)
-- [Dependabot configuration](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates)
+- [Railway Documentation](https://docs.railway.app/)
+- [Nixpacks Documentation](https://nixpacks.com/docs)
 - [Docker Actions](https://github.com/docker/build-push-action)
 
 ---
