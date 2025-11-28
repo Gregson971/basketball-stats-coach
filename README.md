@@ -5,9 +5,12 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
 ![Tests](https://img.shields.io/badge/tests-246%20passing-success)
-![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-70%25-brightgreen)
+![Deployment](https://img.shields.io/badge/deployment-Railway-purple)
 
 [![Backend CI](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml)
+
+**🚀 API en production :** [https://basketball-stats-coach-production.up.railway.app/api-docs](https://basketball-stats-coach-production.up.railway.app/api-docs)
 
 ---
 
@@ -373,7 +376,9 @@ describe('CreatePlayer Use Case', () => {
 - [x] 23 use cases avec TDD
 - [x] 24 endpoints API REST avec Swagger
 - [x] MongoDB + Mongoose + Repositories
-- [x] 246 tests (100% passing)
+- [x] 246 tests (100% passing, coverage 70%+)
+- [x] CI/CD avec GitHub Actions
+- [x] Déploiement en production sur Railway
 - [x] Docker (Production + Dev avec hot reload)
 - [x] Documentation complète (API, Architecture, Use Cases)
 
@@ -395,10 +400,10 @@ describe('CreatePlayer Use Case', () => {
 
 ### Phase 4 : Déploiement
 
-- [ ] API déployée (Heroku/Railway)
+- [x] API déployée sur Railway (https://basketball-stats-coach-production.up.railway.app)
 - [ ] Application iOS (App Store)
 - [ ] Application Android (Play Store)
-- [ ] Documentation complète
+- [x] Documentation API complète (Swagger UI)
 
 ---
 
