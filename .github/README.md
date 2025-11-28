@@ -27,7 +27,7 @@ Configuration complète de CI/CD pour StatCoach Pro Backend avec GitHub Actions.
   - Tests d'intégration
   - Tests API
 - ✅ **Coverage** : Génération du rapport de couverture
-  - Upload vers Codecov
+  - Upload vers Codecov (optionnel)
 - ✅ **Build** : Compilation TypeScript
   - Upload des artifacts de build
 - 🐳 **Docker** : Construction des images Docker (production + dev)
@@ -36,7 +36,7 @@ Configuration complète de CI/CD pour StatCoach Pro Backend avec GitHub Actions.
 ### 2. Backend CD (`backend-cd.yml`)
 
 **Déclenché sur:**
-- Push sur `main` (dossier `backend/`)
+- Push sur `main` ou `develop` (dossier `backend/`)
 - Déclenchement manuel (`workflow_dispatch`)
 
 **Jobs:**
@@ -44,43 +44,13 @@ Configuration complète de CI/CD pour StatCoach Pro Backend avec GitHub Actions.
   - Uniquement sur `develop`
 - 🚀 **Deploy Production** : Déploiement en production
   - Uniquement sur `main`
-  - Nécessite l'approbation manuelle
+  - Nécessite l'approbation manuelle via environments
 
-**Plateformes supportées** (à configurer) :
-- Railway
-- Render
-- Heroku
-- AWS / DigitalOcean / etc.
-
-### 3. Pull Request Checks (`pr-checks.yml`)
-
-**Déclenché sur:**
-- Ouverture, synchronisation ou réouverture d'une PR
-
-**Jobs:**
-- 🔍 **Quality Checks** : Vérifications de qualité du code
-  - Compilation TypeScript
-  - Linting ESLint
-  - Formatting (Prettier)
-- 🧪 **Tests** : Exécution des tests par catégorie
-- 📊 **Coverage Report** : Rapport de couverture dans la PR
-- 🏗️ **Build Check** : Vérification du build
-- 🔒 **Dependency Review** : Revue des dépendances
-- 🛡️ **Security Audit** : Audit de sécurité npm
-- 📝 **PR Summary** : Résumé des vérifications
-
-### 4. Release & Publish (`release.yml`)
-
-**Déclenché sur:**
-- Push de tags de version (`v*.*.*`)
-
-**Jobs:**
-- 📦 **Create Release** : Création de la release GitHub
-  - Génération automatique du changelog
-- 🐳 **Publish Docker** : Publication des images Docker
-  - Docker Hub (multi-arch: amd64, arm64)
-  - Tags: `latest`, `dev`, version spécifique
-- 📦 **Publish npm** : Publication sur GitHub Packages (optionnel)
+**Plateformes supportées** :
+- ✅ Railway (configuré et activé)
+- Render (à décommenter si besoin)
+- Heroku (à décommenter si besoin)
+- Autres : AWS, DigitalOcean, etc.
 
 ---
 
@@ -128,10 +98,9 @@ Les workflows utilisent automatiquement :
 Ajoutez ces badges à votre README principal :
 
 ```markdown
-![Backend CI](https://github.com/Gregson971/basketball-stats-coach/workflows/Backend%20CI/badge.svg)
-![Coverage](https://codecov.io/gh/Gregson971/basketball-stats-coach/branch/main/graph/badge.svg)
+[![Backend CI](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml)
 ![Tests](https://img.shields.io/badge/tests-246%20passing-success)
-![Docker](https://img.shields.io/docker/pulls/username/statcoach-backend)
+![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
 ```
 
 ---

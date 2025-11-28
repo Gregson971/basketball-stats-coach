@@ -8,7 +8,6 @@
 ![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
 
 [![Backend CI](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml)
-[![PR Checks](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/pr-checks.yml)
 
 ---
 
