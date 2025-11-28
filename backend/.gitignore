@@ -4,4 +4,4 @@ coverage/
 *.log
 .DS_Store
 tests/features/reports/
-dist/
+/dist/
