@@ -36,6 +36,10 @@ COPY package*.json ./
 RUN npm ci --only=production && \
     npm cache clean --force
 
+# Force cache invalidation for dist copy
+ARG CACHEBUST=1
+RUN echo "Production cache bust: $CACHEBUST"
+
 # Copier le code compilé depuis le builder
 COPY --from=builder /app/dist ./dist
 
