@@ -38,7 +38,7 @@ docker ps | grep statcoach
 npm test
 ```
 
-✅ **115 tests devraient passer !**
+✅ **246 tests devraient passer !**
 
 ## Commandes utiles
 
@@ -67,6 +67,15 @@ docker exec -it statcoach-mongodb mongosh -u statcoach -p statcoach_secret --aut
 # Tous les tests
 npm test
 
+# Tests unitaires uniquement
+npm run test:unit
+
+# Tests d'intégration uniquement
+npm run test:integration
+
+# Tests API uniquement
+npm run test:api
+
 # Tests en mode watch
 npm run test:watch
 
@@ -74,11 +83,14 @@ npm run test:watch
 npm run test:coverage
 ```
 
-### Développement (quand l'API sera prête)
+### Développement
 
 ```bash
 # Mode développement avec hot reload
 npm run dev
+
+# L'API est disponible sur: http://localhost:3000
+# Documentation Swagger: http://localhost:3000/api-docs
 
 # Build production
 npm run build
@@ -91,11 +103,15 @@ npm start
 
 ```
 ✅ Domain Layer (Entités + Repositories)
-✅ Application Layer (Use Cases)
+✅ Application Layer (23 Use Cases)
 ✅ Infrastructure Layer (MongoDB implémentation)
-✅ Tests (115 tests : 89 unitaires + 26 intégration)
+✅ Presentation Layer (API REST avec Express)
+   ✅ 24 endpoints REST
+   ✅ Controllers et Routes
+   ✅ Middleware (validation, erreurs)
+   ✅ Documentation Swagger/OpenAPI
+✅ Tests (246 tests : 190 unitaires + 56 intégration/API)
 ✅ Configuration Docker
-⏳ Presentation Layer (API REST) - À venir
 ⏳ Système de synchronisation hors-ligne - À venir
 ```
 
@@ -137,6 +153,14 @@ ports:
 
 1. ✅ Backend avec Clean Architecture
 2. ✅ MongoDB avec Docker
-3. ⏳ API REST (Express + contrôleurs)
+3. ✅ API REST (Express + contrôleurs + Swagger)
 4. ⏳ Système de synchronisation offline
 5. ⏳ Frontend React Native
+
+## 📚 Documentation
+
+- **[README.md](../README.md)** - Vue d'ensemble du projet
+- **[API.md](./API.md)** - Documentation complète de l'API
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Explication de l'architecture Clean Architecture
+- **[USE_CASES.md](./USE_CASES.md)** - Liste des 23 use cases implémentés
+- **[Swagger UI](http://localhost:3000/api-docs)** - Documentation interactive (serveur lancé)

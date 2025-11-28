@@ -1,0 +1,207 @@
+import { Player } from '../../../src/domain/entities/Player';
+import { Team } from '../../../src/domain/entities/Team';
+import { Game, GameStatus } from '../../../src/domain/entities/Game';
+import { GameStats } from '../../../src/domain/entities/GameStats';
+import { IPlayerRepository } from '../../../src/domain/repositories/PlayerRepository';
+import { ITeamRepository } from '../../../src/domain/repositories/TeamRepository';
+import { IGameRepository } from '../../../src/domain/repositories/GameRepository';
+import { IGameStatsRepository, PlayerAggregateStats } from '../../../src/domain/repositories/GameStatsRepository';
+
+export class MockPlayerRepository implements IPlayerRepository {
+  players: Player[] = [];
+
+  async findById(id: string): Promise<Player | null> {
+    return this.players.find(p => p.id === id) || null;
+  }
+
+  async save(player: Player): Promise<Player> {
+    const existingIndex = this.players.findIndex(p => p.id === player.id);
+    if (existingIndex >= 0) {
+      this.players[existingIndex] = player;
+    } else {
+      this.players.push(player);
+    }
+    return player;
+  }
+
+  async findByTeamId(teamId: string): Promise<Player[]> {
+    return this.players.filter(p => p.teamId === teamId);
+  }
+
+  async findAll(): Promise<Player[]> {
+    return this.players;
+  }
+
+  async searchByName(_query: string): Promise<Player[]> {
+    return [];
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const index = this.players.findIndex(p => p.id === id);
+    if (index >= 0) {
+      this.players.splice(index, 1);
+      return true;
+    }
+    return false;
+  }
+}
+
+export class MockTeamRepository implements ITeamRepository {
+  teams: Team[] = [];
+
+  async findById(id: string): Promise<Team | null> {
+    return this.teams.find(t => t.id === id) || null;
+  }
+
+  async save(team: Team): Promise<Team> {
+    const existingIndex = this.teams.findIndex(t => t.id === team.id);
+    if (existingIndex >= 0) {
+      this.teams[existingIndex] = team;
+    } else {
+      this.teams.push(team);
+    }
+    return team;
+  }
+
+  async findAll(): Promise<Team[]> {
+    return this.teams;
+  }
+
+  async searchByName(_query: string): Promise<Team[]> {
+    return [];
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const index = this.teams.findIndex(t => t.id === id);
+    if (index >= 0) {
+      this.teams.splice(index, 1);
+      return true;
+    }
+    return false;
+  }
+}
+
+export class MockGameRepository implements IGameRepository {
+  games: Game[] = [];
+
+  async findById(id: string): Promise<Game | null> {
+    return this.games.find(g => g.id === id) || null;
+  }
+
+  async save(game: Game): Promise<Game> {
+    const existingIndex = this.games.findIndex(g => g.id === game.id);
+    if (existingIndex >= 0) {
+      this.games[existingIndex] = game;
+    } else {
+      this.games.push(game);
+    }
+    return game;
+  }
+
+  async findByTeamId(teamId: string): Promise<Game[]> {
+    return this.games.filter(g => g.teamId === teamId);
+  }
+
+  async findAll(): Promise<Game[]> {
+    return this.games;
+  }
+
+  async findByStatus(status: GameStatus): Promise<Game[]> {
+    return this.games.filter(g => g.status === status);
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const index = this.games.findIndex(g => g.id === id);
+    if (index >= 0) {
+      this.games.splice(index, 1);
+      return true;
+    }
+    return false;
+  }
+}
+
+export class MockGameStatsRepository implements IGameStatsRepository {
+  stats: GameStats[] = [];
+
+  async findById(_id: string): Promise<GameStats | null> {
+    return null;
+  }
+
+  async findByGameId(gameId: string): Promise<GameStats[]> {
+    return this.stats.filter(s => s.gameId === gameId);
+  }
+
+  async findByPlayerId(playerId: string): Promise<GameStats[]> {
+    return this.stats.filter(s => s.playerId === playerId);
+  }
+
+  async findByGameAndPlayer(gameId: string, playerId: string): Promise<GameStats | null> {
+    return this.stats.find(s => s.gameId === gameId && s.playerId === playerId) || null;
+  }
+
+  async save(gameStats: GameStats): Promise<GameStats> {
+    const existingIndex = this.stats.findIndex(
+      s => s.gameId === gameStats.gameId && s.playerId === gameStats.playerId
+    );
+    if (existingIndex >= 0) {
+      this.stats[existingIndex] = gameStats;
+    } else {
+      this.stats.push(gameStats);
+    }
+    return gameStats;
+  }
+
+  async delete(_id: string): Promise<boolean> {
+    return false;
+  }
+
+  async getPlayerAggregateStats(playerId: string): Promise<PlayerAggregateStats> {
+    const playerStats = this.stats.filter(s => s.playerId === playerId);
+
+    if (playerStats.length === 0) {
+      return {
+        playerId,
+        gamesPlayed: 0,
+        totalPoints: 0,
+        totalRebounds: 0,
+        totalAssists: 0,
+        totalSteals: 0,
+        totalBlocks: 0,
+        totalTurnovers: 0,
+        averagePoints: 0,
+        averageRebounds: 0,
+        averageAssists: 0,
+        fieldGoalPercentage: 0,
+        freeThrowPercentage: 0,
+        threePointPercentage: 0
+      };
+    }
+
+    const totals = playerStats.reduce((acc, stats) => ({
+      points: acc.points + stats.getTotalPoints(),
+      rebounds: acc.rebounds + stats.getTotalRebounds(),
+      assists: acc.assists + stats.assists
+    }), {
+      points: 0,
+      rebounds: 0,
+      assists: 0
+    });
+
+    return {
+      playerId,
+      gamesPlayed: playerStats.length,
+      totalPoints: totals.points,
+      totalRebounds: totals.rebounds,
+      totalAssists: totals.assists,
+      totalSteals: 0,
+      totalBlocks: 0,
+      totalTurnovers: 0,
+      averagePoints: Math.round((totals.points / playerStats.length) * 10) / 10,
+      averageRebounds: Math.round((totals.rebounds / playerStats.length) * 10) / 10,
+      averageAssists: Math.round((totals.assists / playerStats.length) * 10) / 10,
+      fieldGoalPercentage: 0,
+      freeThrowPercentage: 0,
+      threePointPercentage: 0
+    };
+  }
+}

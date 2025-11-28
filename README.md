@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![Tests](https://img.shields.io/badge/tests-190%20passing-success)
+![Tests](https://img.shields.io/badge/tests-246%20passing-success)
 ![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
 
 ---
@@ -59,7 +59,7 @@ Le projet suit les principes de **Clean Architecture** avec une séparation stri
 
 ```
 basketball-stats-coach/
-├── backend/                    # API Node.js + TypeScript
+├── backend/                    # API Node.js + TypeScript ✅
 │   ├── src/
 │   │   ├── domain/            # Entités et logique métier
 │   │   │   ├── entities/      # Player, Team, Game, GameStats
@@ -73,12 +73,26 @@ basketball-stats-coach/
 │   │   │   └── dtos/          # Data Transfer Objects
 │   │   ├── infrastructure/    # Implémentations techniques
 │   │   │   ├── database/      # MongoDB + Mongoose
-│   │   │   ├── sync/          # Synchronisation
-│   │   │   └── repositories/  # Implémentations concrètes
-│   │   └── presentation/      # Controllers, Routes, API
-│   └── tests/
-│       ├── unit/              # Tests unitaires (183 tests)
-│       └── integration/       # Tests d'intégration (7 tests)
+│   │   │   │   ├── mongodb/   # Connection, Models, Mappers
+│   │   │   │   └── repositories/  # Implémentations concrètes
+│   │   │   └── sync/          # Synchronisation (à venir)
+│   │   └── presentation/      # API REST ✅
+│   │       ├── controllers/   # Controllers HTTP
+│   │       ├── routes/        # 24 endpoints REST
+│   │       ├── middlewares/   # Validation, Error handling
+│   │       └── swagger.ts     # OpenAPI 3.0 documentation
+│   ├── tests/
+│   │   ├── unit/              # Tests unitaires (94 tests)
+│   │   ├── integration/       # Tests d'intégration (26 tests)
+│   │   └── api/               # Tests API (56 tests)
+│   ├── docs/                  # Documentation complète
+│   │   ├── API.md            # Documentation API REST
+│   │   ├── ARCHITECTURE.md   # Architecture détaillée
+│   │   ├── QUICK_START.md    # Guide de démarrage
+│   │   └── USE_CASES.md      # Liste des use cases
+│   ├── Dockerfile            # Production
+│   ├── Dockerfile.dev        # Développement avec hot reload
+│   └── docker-compose.yml    # MongoDB + API (prod/dev)
 └── frontend/                   # React Native (à venir)
 ```
 
@@ -140,7 +154,7 @@ npm install
 cp .env.example .env
 
 # Démarrer MongoDB avec Docker
-npm run docker:up
+docker-compose up -d mongodb
 
 # Lancer les tests
 npm test
@@ -173,18 +187,22 @@ JWT_SECRET=your-secret-key
 
 ```bash
 # Backend
-npm run dev          # Démarrer en mode développement
-npm test            # Lancer tous les tests
-npm run test:watch  # Tests en mode watch
-npm run test:cov    # Tests avec couverture
-npm run build       # Build pour production
-npm start           # Démarrer en production
+npm run dev                # Démarrer en mode développement
+npm test                  # Lancer tous les tests
+npm run test:watch        # Tests en mode watch
+npm run test:coverage     # Tests avec couverture
+npm run build             # Build pour production
+npm start                 # Démarrer en production
 
-# Docker
-npm run docker:up      # Démarrer MongoDB
-npm run docker:down    # Arrêter MongoDB
-npm run docker:logs    # Voir les logs
-npm run docker:clean   # Nettoyer volumes
+# Docker - Development
+npm run docker:build      # Construire les images Docker
+npm run docker:up:dev     # API + MongoDB avec hot reload
+npm run docker:logs:api   # Voir les logs de l'API
+
+# Docker - Production
+npm run docker:up:all     # API + MongoDB en production
+npm run docker:restart:api # Redémarrer l'API
+npm run docker:rebuild    # Rebuild complet
 ```
 
 ### Exemple d'utilisation des Use Cases
@@ -245,21 +263,26 @@ Le projet suit une approche **Test-Driven Development (TDD)** stricte.
 
 ### Statistiques des tests
 
-- **Total** : 190 tests
-- **Test Suites** : 28 suites
+- **Total** : 246 tests
+- **Test Suites** : 32 suites
 - **Couverture** : ~90%
 - **Status** : ✅ 100% passing
 
 ### Répartition des tests
 
-| Catégorie        | Fichiers | Tests | Status |
-| ---------------- | -------- | ----- | ------ |
-| Player Use Cases | 5        | 18    | ✅     |
-| Team Use Cases   | 5        | 18    | ✅     |
-| Game Use Cases   | 8        | 33    | ✅     |
-| Stats Use Cases  | 4        | 25    | ✅     |
-| Domain Entities  | 4        | 89    | ✅     |
-| Integration      | 2        | 7     | ✅     |
+| Catégorie            | Tests | Status |
+| -------------------- | ----- | ------ |
+| Player Use Cases     | 18    | ✅     |
+| Team Use Cases       | 18    | ✅     |
+| Game Use Cases       | 33    | ✅     |
+| Stats Use Cases      | 25    | ✅     |
+| Domain Entities      | 96    | ✅     |
+| MongoDB Repositories | 26    | ✅     |
+| API REST (Supertest) | 56    | ✅     |
+| - Players API        | 12    | ✅     |
+| - Teams API          | 14    | ✅     |
+| - Games API          | 18    | ✅     |
+| - Stats API          | 12    | ✅     |
 
 ### Lancer les tests
 
@@ -309,9 +332,12 @@ describe('CreatePlayer Use Case', () => {
 
 ### Documents disponibles
 
-- **[USE_CASES.md](backend/USE_CASES.md)** : Liste complète des 23 use cases avec exemples
-- **[ARCHITECTURE.md](backend/ARCHITECTURE.md)** : Documentation de l'architecture (à créer)
-- **[API.md](backend/API.md)** : Documentation de l'API REST (à créer)
+- **[backend/README.md](backend/README.md)** : Documentation complète du backend
+- **[backend/docs/USE_CASES.md](backend/docs/USE_CASES.md)** : Liste complète des 23 use cases avec exemples
+- **[backend/docs/ARCHITECTURE.md](backend/docs/ARCHITECTURE.md)** : Documentation détaillée de la Clean Architecture
+- **[backend/docs/API.md](backend/docs/API.md)** : Documentation complète de l'API REST (24 endpoints)
+- **[backend/docs/QUICK_START.md](backend/docs/QUICK_START.md)** : Guide de démarrage rapide avec TDD
+- **Swagger UI** : http://localhost:3000/api-docs (documentation interactive)
 
 ### Use Cases implémentés
 
@@ -342,10 +368,13 @@ describe('CreatePlayer Use Case', () => {
 
 ### Phase 1 : Backend API ✅ (Complété)
 
-- [x] Architecture Clean Architecture
+- [x] Architecture Clean Architecture (4 couches)
 - [x] 23 use cases avec TDD
-- [x] MongoDB + Mongoose
-- [x] 190 tests (100% passing)
+- [x] 24 endpoints API REST avec Swagger
+- [x] MongoDB + Mongoose + Repositories
+- [x] 246 tests (100% passing)
+- [x] Docker (Production + Dev avec hot reload)
+- [x] Documentation complète (API, Architecture, Use Cases)
 
 ### Phase 2 : Frontend Mobile (En cours)
 
@@ -398,19 +427,11 @@ Ce projet est sous licence **MIT**. Voir le fichier [LICENSE](LICENSE) pour plus
 
 ---
 
-## 🙏 Remerciements
-
-- Architecture inspirée de Clean Architecture (Robert C. Martin)
-- Approche TDD/BDD pour la qualité du code
-- Communauté TypeScript et Node.js
-
----
-
 ## 📞 Support
 
 Pour toute question ou suggestion :
 
-- **Issues** : [GitHub Issues](https://github.com/votre-username/basketball-stats-coach/issues)
+- **Issues** : [GitHub Issues](https://github.com/Gregson971/basketball-stats-coach/issues)
 
 ---
 

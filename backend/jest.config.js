@@ -4,10 +4,13 @@ export default {
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
     '**/tests/unit/**/*.test.ts',
-    '**/tests/integration/**/*.test.ts'
+    '**/tests/integration/**/*.test.ts',
+    '**/tests/api/**/*.test.ts'
   ],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.ts$': ['ts-jest', {
+      tsconfig: 'tsconfig.test.json'
+    }],
   },
   moduleFileExtensions: ['ts', 'js', 'json'],
   collectCoverageFrom: [
@@ -22,11 +25,6 @@ export default {
       functions: 80,
       lines: 80,
       statements: 80
-    }
-  },
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.test.json'
     }
   }
 };

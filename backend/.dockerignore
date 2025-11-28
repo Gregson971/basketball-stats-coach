@@ -1,53 +1,50 @@
-# Dependencies
-node_modules/
+# Dépendances
+node_modules
 npm-debug.log
-package-lock.json
+yarn-error.log
 
-# Build outputs
-dist/
-build/
+# Build
+dist
 *.tsbuildinfo
 
 # Tests
-tests/
-coverage/
-*.test.ts
-*.test.js
-jest.config.js
-cucumber.js
+coverage
+.nyc_output
 
-# Git
-.git/
-.gitignore
-
-# Environment
+# Environnement
 .env
 .env.local
 .env.*.local
 
 # IDE
-.vscode/
-.idea/
+.vscode
+.idea
 *.swp
 *.swo
 *~
+
+# Logs
+logs
+*.log
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Documentation
-README.md
-*.md
+# Git
+.git
+.gitignore
 
 # Docker
-docker-compose*.yml
-Dockerfile*
+Dockerfile
+Dockerfile.dev
+docker-compose.yml
+.dockerignore
 
-# CI/CD
-.github/
-.gitlab-ci.yml
+# Documentation
+*.md
+docs
 
-# Logs
-logs/
-*.log
+# Tests
+tests
+jest.config.js
