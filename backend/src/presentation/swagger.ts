@@ -22,7 +22,7 @@ const options: swaggerJsdoc.Options = {
         description: 'Serveur de développement'
       },
       {
-        url: 'https://api.statcoach.pro',
+        url: 'https://basketball-stats-coach-production.up.railway.app',
         description: 'Serveur de production'
       }
     ],

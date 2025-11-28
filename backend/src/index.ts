@@ -35,9 +35,12 @@ async function startServer() {
     // Start server
     app.listen(PORT, () => {
       console.log('🚀 Server started successfully!');
-      console.log(`📍 API running at: http://localhost:${PORT}`);
-      console.log(`📚 Swagger docs: http://localhost:${PORT}/api-docs`);
-      console.log(`🏥 Health check: http://localhost:${PORT}/health`);
+      const apiUrl = process.env.NODE_ENV === 'production'
+        ? process.env.API_URL || 'https://basketball-stats-coach-production.up.railway.app'
+        : `http://localhost:${PORT}`;
+      console.log(`📍 API running at: ${apiUrl}`);
+      console.log(`📚 Swagger docs: ${apiUrl}/api-docs`);
+      console.log(`🏥 Health check: ${apiUrl}/health`);
       console.log('\n✨ Ready to accept requests!\n');
     });
   } catch (error) {

@@ -3,9 +3,8 @@
 Backend API pour **StatCoach Pro**, l'application mobile professionnelle de suivi de statistiques de basketball en temps réel, construite avec **Clean Architecture**, **TDD** et **BDD**.
 
 ![Backend CI](https://github.com/Gregson971/basketball-stats-coach/workflows/Backend%20CI/badge.svg)
-![Coverage](https://codecov.io/gh/Gregson971/basketball-stats-coach/branch/main/graph/badge.svg)
+[![codecov](https://codecov.io/github/Gregson971/basketball-stats-coach/graph/badge.svg?token=RH60FEVC1C)](https://codecov.io/github/Gregson971/basketball-stats-coach)
 ![Tests](https://img.shields.io/badge/tests-246%20passing-success)
-![Docker](https://img.shields.io/docker/pulls/gregson97/statcoach-backend)
 
 ## 🏗️ Architecture
 
