@@ -13,6 +13,10 @@ RUN npm ci
 # Copier le code source
 COPY src ./src
 
+# Force cache invalidation (change this value to rebuild)
+ARG CACHEBUST=1
+RUN echo "Cache bust: $CACHEBUST"
+
 # Build l'application TypeScript
 RUN npm run build
 
