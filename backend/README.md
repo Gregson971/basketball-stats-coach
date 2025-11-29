@@ -2,9 +2,13 @@
 
 Backend API pour **StatCoach Pro**, l'application mobile professionnelle de suivi de statistiques de basketball en temps réel, construite avec **Clean Architecture**, **TDD** et **BDD**.
 
-![Backend CI](https://github.com/Gregson971/basketball-stats-coach/workflows/Backend%20CI/badge.svg)
+[![Backend CI](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml)
 [![codecov](https://codecov.io/github/Gregson971/basketball-stats-coach/graph/badge.svg?token=RH60FEVC1C)](https://codecov.io/github/Gregson971/basketball-stats-coach)
 ![Tests](https://img.shields.io/badge/tests-246%20passing-success)
+![Coverage](https://img.shields.io/badge/coverage-70%25-brightgreen)
+![Deployment](https://img.shields.io/badge/deployment-Railway-purple)
+
+**🚀 API en production :** [https://basketball-stats-coach-production.up.railway.app/api-docs](https://basketball-stats-coach-production.up.railway.app/api-docs)
 
 ## 🏗️ Architecture
 
@@ -140,7 +144,7 @@ Ce projet suit une approche TDD (Test Driven Development) stricte avec une couve
 
 - **Tests totaux**: 246 tests passing
 - **Test Suites**: 32 suites
-- **Coverage**: ~90%
+- **Coverage**: ~70%
 - **Statut**: ✅ Tous les tests passent
 
 ### Types de tests
@@ -484,7 +488,7 @@ Le module `src/infrastructure/database/mongodb/connection.ts` gère:
 - Clean Architecture stricte
 - TDD/BDD obligatoire
 - Typage TypeScript strict
-- Coverage minimum: 80%
+- Coverage minimum: 70%
 
 ## 🔄 Workflow de développement
 
@@ -492,10 +496,11 @@ Le module `src/infrastructure/database/mongodb/connection.ts` gère:
 2. Écrire les tests en premier (TDD)
 3. Implémenter la fonctionnalité
 4. Vérifier que tous les tests passent
-5. Vérifier le coverage (minimum 80%)
+5. Vérifier le coverage (minimum 70%)
 6. Build TypeScript sans erreurs
 7. Code review
-8. Merge
+8. Merge vers main
+9. Déploiement automatique sur Railway
 
 ## 📚 Documentation API
 
@@ -503,6 +508,7 @@ Le module `src/infrastructure/database/mongodb/connection.ts` gère:
 
 Une documentation interactive complète de l'API est disponible via Swagger UI:
 
+**Environnement de développement:**
 ```bash
 # Démarrer le serveur
 npm run dev
@@ -510,6 +516,10 @@ npm run dev
 # Accéder à la documentation Swagger
 # Ouvrir dans le navigateur: http://localhost:3000/api-docs
 ```
+
+**Environnement de production:**
+- **API Docs**: https://basketball-stats-coach-production.up.railway.app/api-docs
+- **Health Check**: https://basketball-stats-coach-production.up.railway.app/health
 
 La documentation Swagger permet de:
 
@@ -592,11 +602,19 @@ Le projet dispose d'une documentation complète dans le dossier `docs/`:
   - Codes HTTP et gestion des erreurs
   - Workflows complets (création équipe, match, stats)
 
+- **[docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)** - Guide de déploiement sur Railway
+  - Configuration Railway (projet, service, MongoDB)
+  - Variables d'environnement
+  - Processus de déploiement automatique
+  - Vérification et monitoring
+  - Dépannage et rollback
+
 ### Swagger / OpenAPI
 
 Documentation interactive accessible quand le serveur est lancé:
 
-- **URL**: http://localhost:3000/api-docs
+- **URL Locale**: http://localhost:3000/api-docs
+- **URL Production**: https://basketball-stats-coach-production.up.railway.app/api-docs
 - **Format**: OpenAPI 3.0
 - **Fonctionnalités**: Tester les endpoints directement depuis l'interface
 
@@ -613,7 +631,9 @@ Documentation interactive accessible quand le serveur est lancé:
 - ✅ **Docker** production et développement
 - ✅ **MongoDB** avec repositories
 - ✅ **TypeScript** strict
-- ✅ **TDD/BDD** avec coverage ~90%
+- ✅ **TDD/BDD** avec coverage ~70%
+- ✅ **CI/CD** avec GitHub Actions
+- ✅ **Déploiement** en production sur Railway
 
 ### Prochaines étapes
 
@@ -632,9 +652,10 @@ Pour contribuer au projet:
 
 1. Suivre l'architecture Clean Architecture
 2. Écrire les tests en premier (TDD)
-3. Maintenir la couverture de tests > 80%
+3. Maintenir la couverture de tests > 70%
 4. Respecter les conventions de code TypeScript
 5. Documenter les nouveaux endpoints dans Swagger
+6. S'assurer que la CI passe avant de merge
 
 ---
 

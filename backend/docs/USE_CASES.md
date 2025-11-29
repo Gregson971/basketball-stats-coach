@@ -353,7 +353,7 @@ type ActionType =
     - Games API: 18 tests
     - Stats API: 12 tests
 - **Test Suites:** 32 suites
-- **Coverage:** ~90%
+- **Coverage:** ~70%
 - **Tous les tests:** ✅ **PASSING**
 
 ---

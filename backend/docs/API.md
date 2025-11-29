@@ -17,11 +17,15 @@
 
 ## Vue d'ensemble
 
-**Base URL**: `http://localhost:3000`
+**Base URL**:
+- **Développement**: `http://localhost:3000`
+- **Production**: `https://basketball-stats-coach-production.up.railway.app`
 
 **Format**: JSON
 
-**Documentation interactive**: `http://localhost:3000/api-docs` (Swagger UI)
+**Documentation interactive (Swagger UI)**:
+- **Développement**: `http://localhost:3000/api-docs`
+- **Production**: `https://basketball-stats-coach-production.up.railway.app/api-docs`
 
 Tous les endpoints de l'API retournent des réponses JSON avec un format standardisé incluant un champ `success` pour indiquer le succès ou l'échec de la requête.
 
