@@ -36,7 +36,7 @@ class ApiClient {
 
       return {
         success: true,
-        data: data.data || data.players || data.player || data,
+        data: data.data || data.players || data.player || data.teams || data.team || data,
       };
     } catch (error) {
       return {
@@ -70,7 +70,7 @@ class ApiClient {
 
       return {
         success: true,
-        data: data.data || data.players || data.player || data,
+        data: data.data || data.players || data.player || data.teams || data.team || data,
       };
     } catch (error) {
       return {
@@ -104,7 +104,7 @@ class ApiClient {
 
       return {
         success: true,
-        data: data.data || data.players || data.player || data,
+        data: data.data || data.players || data.player || data.teams || data.team || data,
       };
     } catch (error) {
       return {
@@ -137,7 +137,7 @@ class ApiClient {
 
       return {
         success: true,
-        data: data.data || data.players || data.player || data,
+        data: data.data || data.players || data.player || data.teams || data.team || data,
       };
     } catch (error) {
       return {

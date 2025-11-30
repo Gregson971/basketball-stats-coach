@@ -21,6 +21,8 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="players/create" options={{ title: 'Nouveau joueur' }} />
           <Stack.Screen name="players/[id]" options={{ title: 'Détails du joueur' }} />
+          <Stack.Screen name="teams/create" options={{ title: 'Nouvelle équipe' }} />
+          <Stack.Screen name="teams/[id]" options={{ title: 'Détails de l\'équipe' }} />
         </Stack>
       </PaperProvider>
     </SafeAreaProvider>
