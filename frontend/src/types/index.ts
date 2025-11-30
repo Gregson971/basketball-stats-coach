@@ -1,0 +1,106 @@
+/**
+ * Type definitions for the application
+ * These should match the backend DTOs
+ */
+
+export type Position = 'Guard' | 'Forward' | 'Center';
+export type Gender = 'M' | 'F';
+export type GameStatus = 'not_started' | 'in_progress' | 'completed';
+
+export interface Player {
+  id: string;
+  firstName: string;
+  lastName: string;
+  teamId: string;
+  nickname?: string;
+  position?: Position;
+  height?: number; // cm
+  weight?: number; // kg
+  age?: number;
+  gender?: Gender;
+  grade?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  coach?: string;
+  season?: string;
+  league?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Game {
+  id: string;
+  teamId: string;
+  opponent: string;
+  gameDate?: Date;
+  location?: string;
+  notes?: string;
+  status: GameStatus;
+  startedAt?: Date;
+  completedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface GameStats {
+  gameId: string;
+  playerId: string;
+  freeThrowsMade: number;
+  freeThrowsAttempted: number;
+  twoPointsMade: number;
+  twoPointsAttempted: number;
+  threePointsMade: number;
+  threePointsAttempted: number;
+  offensiveRebounds: number;
+  defensiveRebounds: number;
+  assists: number;
+  steals: number;
+  blocks: number;
+  turnovers: number;
+  personalFouls: number;
+}
+
+export interface CareerStats {
+  playerId: string;
+  gamesPlayed: number;
+  totalPoints: number;
+  totalRebounds: number;
+  totalAssists: number;
+  averagePoints: number;
+  averageRebounds: number;
+  averageAssists: number;
+  fieldGoalPercentage: number;
+  freeThrowPercentage: number;
+  threePointPercentage: number;
+}
+
+export type ActionType =
+  | 'freeThrow'
+  | 'twoPoint'
+  | 'threePoint'
+  | 'offensiveRebound'
+  | 'defensiveRebound'
+  | 'assist'
+  | 'steal'
+  | 'block'
+  | 'turnover'
+  | 'personalFoul';
+
+export interface RecordActionPayload {
+  gameId: string;
+  playerId: string;
+  actionType: ActionType;
+  made?: boolean; // For shots only
+}
+
+// API Response types
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
