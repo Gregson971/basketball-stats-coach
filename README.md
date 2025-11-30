@@ -98,7 +98,19 @@ basketball-stats-coach/
 │   ├── Dockerfile            # Production
 │   ├── Dockerfile.dev        # Développement avec hot reload
 │   └── docker-compose.yml    # MongoDB + API (prod/dev)
-└── frontend/                   # React Native (à venir)
+└── frontend/                   # React Native + Expo ✅
+    ├── app/                    # Navigation Expo Router (file-based)
+    │   ├── _layout.tsx         # Layout racine
+    │   ├── (tabs)/            # Navigation par tabs
+    │   └── players/           # Routes des joueurs
+    ├── src/
+    │   ├── api/               # Client API
+    │   ├── services/          # Services métier
+    │   ├── stores/            # Zustand stores
+    │   ├── components/        # Composants réutilisables
+    │   ├── types/             # Types TypeScript
+    │   └── constants/         # Configuration
+    └── .env                   # Variables d'environnement (gitignored)
 ```
 
 ### Principes SOLID
@@ -122,11 +134,14 @@ basketball-stats-coach/
 - **Tests** : Jest + ts-jest + Supertest
 - **Containerisation** : Docker + Docker Compose
 
-### Frontend (à venir)
+### Frontend ✅
 
-- **Framework** : React Native
-- **State Management** : Redux Toolkit / Zustand
-- **UI** : React Native Paper
+- **Framework** : React Native 0.81
+- **Platform** : Expo 54
+- **Navigation** : Expo Router 6.0 (file-based routing)
+- **State Management** : Zustand 5.0
+- **Styling** : NativeWind 4.2 (Tailwind CSS) + React Native Paper 5.14
+- **Animations** : React Native Reanimated 3.x
 
 ### DevOps
 
@@ -384,8 +399,16 @@ describe('CreatePlayer Use Case', () => {
 
 ### Phase 2 : Frontend Mobile (En cours)
 
-- [ ] Configuration React Native
-- [ ] Écrans de gestion d'équipes
+- [x] Configuration React Native + Expo
+- [x] Navigation avec Expo Router (file-based)
+- [x] Configuration NativeWind v4 (Tailwind CSS)
+- [x] Client API avec gestion d'erreurs
+- [x] Gestion des joueurs (CRUD complet)
+  - [x] Liste des joueurs avec auto-refresh
+  - [x] Création de joueur (formulaire complet)
+  - [x] Détails du joueur
+  - [x] Suppression de joueur
+- [ ] Gestion des équipes
 - [ ] Interface de match en temps réel
 - [ ] Visualisation des statistiques
 - [ ] Synchronisation offline

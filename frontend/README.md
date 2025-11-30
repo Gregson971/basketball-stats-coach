@@ -56,6 +56,7 @@ Application mobile React Native pour le suivi statistique de basketball en temps
 - Expo CLI (installé automatiquement)
 - iOS Simulator (macOS) ou Android Studio
 - Expo Go app (pour tester sur device physique)
+- Backend API en cours d'exécution (voir [../backend/README.md](../backend/README.md))
 
 ### Installation des dépendances
 
@@ -63,6 +64,27 @@ Application mobile React Native pour le suivi statistique de basketball en temps
 cd frontend
 npm install
 ```
+
+### Configuration des variables d'environnement
+
+1. **Copier le fichier d'exemple :**
+```bash
+cp .env.example .env
+```
+
+2. **Configurer votre IP locale :**
+```bash
+# Trouver votre IP locale
+ifconfig | grep "inet " | grep -v 127.0.0.1
+
+# Éditer .env et remplacer par votre IP
+# EXPO_PUBLIC_API_URL=http://VOTRE_IP:3000
+```
+
+**Important :**
+- Le fichier `.env` est gitignored (ne sera pas commité)
+- Pour tester sur **simulateur iOS** : `http://localhost:3000` fonctionne
+- Pour tester sur **appareil physique** : utilisez votre IP locale (ex: `http://192.168.1.89:3000`)
 
 ---
 
@@ -318,6 +340,22 @@ await apiClient.delete('/api/players/123');
 
 ## 💻 Développement
 
+### Configuration NativeWind v4
+
+NativeWind v4 nécessite une configuration spécifique qui a été mise en place :
+
+**Fichiers de configuration :**
+- `tailwind.config.js` - Scanne `app/` et `src/` pour les classes Tailwind
+- `metro.config.js` - Configure Metro pour compiler le CSS avec NativeWind
+- `babel.config.js` - Inclut les presets NativeWind et Reanimated
+- `nativewind-env.d.ts` - Support TypeScript pour NativeWind
+- `global.css` - Importé dans `app/_layout.tsx`
+
+**Dépendances requises :**
+- `nativewind` - Tailwind CSS pour React Native
+- `react-native-reanimated` - Animations (requis par NativeWind v4)
+- `react-native-worklets` - Worklets pour les animations
+
 ### Utiliser NativeWind (Tailwind CSS)
 
 ```tsx
@@ -431,6 +469,96 @@ npm run clean               # Supprimer node_modules, .expo, dist
 
 ---
 
+## 🔧 Dépannage
+
+### Les styles NativeWind ne s'appliquent pas
+
+**Symptômes :** Les classes Tailwind (`className="..."`) n'ont aucun effet.
+
+**Solutions :**
+1. Vérifier que `tailwind.config.js` scanne bien `app/` et `src/`
+2. Vérifier que `metro.config.js` utilise `withNativeWind`
+3. Vérifier que `global.css` est importé dans `app/_layout.tsx`
+4. Redémarrer avec cache vidé : `npm start -- --clear`
+
+### Erreur "Cannot find module 'react-native-worklets/plugin'"
+
+**Solution :**
+```bash
+npm install react-native-worklets@0.5.1 --legacy-peer-deps
+npm start -- --clear
+```
+
+### Erreur "Cannot find module 'react-native-reanimated'"
+
+**Solution :**
+```bash
+npx expo install react-native-reanimated
+# Ajouter le plugin dans babel.config.js (déjà fait)
+npm start -- --clear
+```
+
+### La liste des joueurs ne se recharge pas
+
+**Symptômes :** Les joueurs créés n'apparaissent pas dans la liste.
+
+**Causes possibles :**
+1. **API non accessible** - Vérifier que le backend tourne et que l'URL dans `.env` est correcte
+2. **Format de réponse API** - Le client API cherche `data.players` dans la réponse (déjà corrigé)
+3. **Pas de refresh automatique** - La liste utilise `useFocusEffect` pour se recharger (déjà implémenté)
+
+**Test de l'API :**
+```bash
+# Vérifier que l'API répond
+curl http://VOTRE_IP:3000/health
+
+# Vérifier les joueurs
+curl http://VOTRE_IP:3000/api/players
+```
+
+### L'app ne peut pas se connecter au backend
+
+**Pour simulateur iOS :**
+- Utiliser `http://localhost:3000` dans `.env`
+
+**Pour appareil physique :**
+- Utiliser votre IP locale : `http://192.168.x.x:3000`
+- Vérifier que le téléphone et le Mac sont sur le même réseau WiFi
+- Vérifier que le pare-feu n'bloque pas le port 3000
+
+**Trouver votre IP locale :**
+```bash
+ifconfig | grep "inet " | grep -v 127.0.0.1
+```
+
+### Warnings npm lors de l'installation
+
+**Warnings de peer dependencies :**
+- Ajouté `legacy-peer-deps=true` dans `.npmrc` (déjà fait)
+
+**Warnings de packages deprecated :**
+- Ces warnings viennent de dépendances indirectes (Expo/React Native)
+- Ils sont informatifs et n'affectent pas le fonctionnement
+
+### Metro Bundler ne démarre pas
+
+**Solution :**
+```bash
+# Nettoyer complètement
+npm run clean
+npm install
+npm start -- --clear
+```
+
+### Expo Go ne se connecte pas au serveur de développement
+
+**Solutions :**
+1. Scanner le QR code avec l'appareil photo (iOS) ou Expo Go (Android)
+2. Vérifier que le téléphone et le Mac sont sur le même WiFi
+3. Essayer de se connecter manuellement avec l'URL affichée dans le terminal
+
+---
+
 ## 🔗 Liens utiles
 
 - **Expo Docs**: https://docs.expo.dev/
@@ -438,6 +566,7 @@ npm run clean               # Supprimer node_modules, .expo, dist
 - **NativeWind v4**: https://www.nativewind.dev/v4/overview
 - **Zustand**: https://zustand-demo.pmnd.rs/
 - **React Native Paper**: https://reactnativepaper.com/
+- **React Native Reanimated**: https://docs.swmansion.com/react-native-reanimated/
 
 ---
 
@@ -446,6 +575,8 @@ npm run clean               # Supprimer node_modules, .expo, dist
 Pour toute question ou problème :
 
 - **GitHub Issues**: https://github.com/Gregson971/basketball-stats-coach/issues
+- **Backend Docs**: ../backend/README.md
+- **API Documentation**: https://basketball-stats-coach-production.up.railway.app/api-docs
 
 ---
 
