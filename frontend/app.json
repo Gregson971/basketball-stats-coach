@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "statcoach-pro-frontend",
+    "name": "StatCoach Pro",
     "slug": "statcoach-pro-frontend",
     "version": "1.0.0",
+    "scheme": "statcoach",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,6 +26,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": ["expo-router"]
   }
 }

@@ -3,8 +3,8 @@
  */
 
 export const API_CONFIG = {
-  // Development
-  DEV_URL: 'http://localhost:3000',
+  // Development - Use environment variable or fallback to localhost
+  DEV_URL: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000',
 
   // Production
   PROD_URL: 'https://basketball-stats-coach-production.up.railway.app',

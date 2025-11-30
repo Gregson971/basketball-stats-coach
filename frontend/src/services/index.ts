@@ -1,0 +1,1 @@
+export { playerService } from './playerService';
