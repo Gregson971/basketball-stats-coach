@@ -16,7 +16,7 @@ export class PlayerMapper {
       grade: doc.grade,
       position: doc.position,
       createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt
+      updatedAt: doc.updatedAt,
     });
   }
 
@@ -34,7 +34,7 @@ export class PlayerMapper {
       grade: player.grade || undefined,
       position: player.position || undefined,
       createdAt: player.createdAt,
-      updatedAt: player.updatedAt
+      updatedAt: player.updatedAt,
     };
   }
 }

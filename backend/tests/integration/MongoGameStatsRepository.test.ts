@@ -22,7 +22,7 @@ describe('MongoGameStatsRepository Integration Tests', () => {
     test('should save and retrieve game stats', async () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordTwoPoint(true);
@@ -40,7 +40,7 @@ describe('MongoGameStatsRepository Integration Tests', () => {
     test('should update existing game stats', async () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordTwoPoint(true);
@@ -60,7 +60,7 @@ describe('MongoGameStatsRepository Integration Tests', () => {
     test('should find stats by game and player', async () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordTwoPoint(true);
@@ -81,19 +81,19 @@ describe('MongoGameStatsRepository Integration Tests', () => {
     test('should find all stats for a game', async () => {
       const stats1 = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-1'
+        playerId: 'player-1',
       });
       stats1.recordTwoPoint(true);
 
       const stats2 = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-2'
+        playerId: 'player-2',
       });
       stats2.recordThreePoint(true);
 
       const stats3 = new GameStats({
         gameId: 'game-456',
-        playerId: 'player-1'
+        playerId: 'player-1',
       });
 
       await repository.save(stats1);
@@ -109,17 +109,17 @@ describe('MongoGameStatsRepository Integration Tests', () => {
     test('should find all stats for a player', async () => {
       const stats1 = new GameStats({
         gameId: 'game-1',
-        playerId: 'player-123'
+        playerId: 'player-123',
       });
 
       const stats2 = new GameStats({
         gameId: 'game-2',
-        playerId: 'player-123'
+        playerId: 'player-123',
       });
 
       const stats3 = new GameStats({
         gameId: 'game-3',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       await repository.save(stats1);
@@ -136,9 +136,9 @@ describe('MongoGameStatsRepository Integration Tests', () => {
       // Game 1
       const game1Stats = new GameStats({
         gameId: 'game-1',
-        playerId: 'player-123'
+        playerId: 'player-123',
       });
-      game1Stats.recordTwoPoint(true);   // 2 points
+      game1Stats.recordTwoPoint(true); // 2 points
       game1Stats.recordThreePoint(true); // 3 points
       game1Stats.recordAssist();
       game1Stats.recordOffensiveRebound();
@@ -147,10 +147,10 @@ describe('MongoGameStatsRepository Integration Tests', () => {
       // Game 2
       const game2Stats = new GameStats({
         gameId: 'game-2',
-        playerId: 'player-123'
+        playerId: 'player-123',
       });
-      game2Stats.recordTwoPoint(true);  // 2 points
-      game2Stats.recordTwoPoint(true);  // 2 points
+      game2Stats.recordTwoPoint(true); // 2 points
+      game2Stats.recordTwoPoint(true); // 2 points
       game2Stats.recordAssist();
       game2Stats.recordAssist();
       game2Stats.recordDefensiveRebound();
@@ -179,7 +179,7 @@ describe('MongoGameStatsRepository Integration Tests', () => {
     test('should calculate shooting percentages correctly', async () => {
       const stats = new GameStats({
         gameId: 'game-1',
-        playerId: 'player-123'
+        playerId: 'player-123',
       });
 
       // 50% FG (1/2)
@@ -208,7 +208,7 @@ describe('MongoGameStatsRepository Integration Tests', () => {
     test('should delete game stats', async () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       await repository.save(stats);

@@ -3,11 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 /**
  * Type pour les handlers async
  */
-type AsyncHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => Promise<void> | void;
+type AsyncHandler = (req: Request, res: Response, next: NextFunction) => Promise<void> | void;
 
 /**
  * Wrapper pour gérer les erreurs async dans les controllers

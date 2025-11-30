@@ -1,6 +1,9 @@
 import { GetPlayerCareerStats } from '../../../../../src/application/use-cases/stats/GetPlayerCareerStats';
 import { GameStats } from '../../../../../src/domain/entities/GameStats';
-import { IGameStatsRepository, PlayerAggregateStats } from '../../../../../src/domain/repositories/GameStatsRepository';
+import {
+  IGameStatsRepository,
+  PlayerAggregateStats,
+} from '../../../../../src/domain/repositories/GameStatsRepository';
 
 class MockGameStatsRepository implements IGameStatsRepository {
   private stats: GameStats[] = [];
@@ -14,7 +17,7 @@ class MockGameStatsRepository implements IGameStatsRepository {
   }
 
   async findByPlayerId(playerId: string): Promise<GameStats[]> {
-    return this.stats.filter(s => s.playerId === playerId);
+    return this.stats.filter((s) => s.playerId === playerId);
   }
 
   async findByGameAndPlayer(_gameId: string, _playerId: string): Promise<GameStats | null> {
@@ -31,7 +34,7 @@ class MockGameStatsRepository implements IGameStatsRepository {
   }
 
   async getPlayerAggregateStats(playerId: string): Promise<PlayerAggregateStats> {
-    const playerStats = this.stats.filter(s => s.playerId === playerId);
+    const playerStats = this.stats.filter((s) => s.playerId === playerId);
 
     if (playerStats.length === 0) {
       return {
@@ -48,19 +51,22 @@ class MockGameStatsRepository implements IGameStatsRepository {
         averageAssists: 0,
         fieldGoalPercentage: 0,
         freeThrowPercentage: 0,
-        threePointPercentage: 0
+        threePointPercentage: 0,
       };
     }
 
-    const totals = playerStats.reduce((acc, stats) => ({
-      points: acc.points + stats.getTotalPoints(),
-      rebounds: acc.rebounds + stats.getTotalRebounds(),
-      assists: acc.assists + stats.assists
-    }), {
-      points: 0,
-      rebounds: 0,
-      assists: 0
-    });
+    const totals = playerStats.reduce(
+      (acc, stats) => ({
+        points: acc.points + stats.getTotalPoints(),
+        rebounds: acc.rebounds + stats.getTotalRebounds(),
+        assists: acc.assists + stats.assists,
+      }),
+      {
+        points: 0,
+        rebounds: 0,
+        assists: 0,
+      }
+    );
 
     return {
       playerId,
@@ -76,7 +82,7 @@ class MockGameStatsRepository implements IGameStatsRepository {
       averageAssists: Math.round((totals.assists / playerStats.length) * 10) / 10,
       fieldGoalPercentage: 0,
       freeThrowPercentage: 0,
-      threePointPercentage: 0
+      threePointPercentage: 0,
     };
   }
 }
@@ -92,7 +98,7 @@ describe('GetPlayerCareerStats Use Case', () => {
     // Game 1
     const game1Stats = new GameStats({
       gameId: 'game-1',
-      playerId: 'player-123'
+      playerId: 'player-123',
     });
     game1Stats.recordTwoPoint(true);
     game1Stats.recordThreePoint(true);
@@ -102,7 +108,7 @@ describe('GetPlayerCareerStats Use Case', () => {
     // Game 2
     const game2Stats = new GameStats({
       gameId: 'game-2',
-      playerId: 'player-123'
+      playerId: 'player-123',
     });
     game2Stats.recordTwoPoint(true);
     game2Stats.recordTwoPoint(true);

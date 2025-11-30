@@ -57,7 +57,11 @@ export const createTeamRoutes = (teamRepository: ITeamRepository): Router => {
    *             schema:
    *               $ref: '#/components/schemas/Error'
    */
-  router.post('/', validateRequiredFields(['name']), asyncHandler(controller.create.bind(controller)));
+  router.post(
+    '/',
+    validateRequiredFields(['name']),
+    asyncHandler(controller.create.bind(controller))
+  );
 
   /**
    * @swagger

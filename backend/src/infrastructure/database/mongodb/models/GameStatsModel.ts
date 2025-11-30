@@ -24,25 +24,28 @@ export interface IGameStatsDocument {
   updatedAt: Date;
 }
 
-const ActionHistorySchema = new Schema({
-  type: {
-    type: String,
-    required: true,
-    enum: [
-      'freeThrow',
-      'twoPoint',
-      'threePoint',
-      'offensiveRebound',
-      'defensiveRebound',
-      'assist',
-      'steal',
-      'block',
-      'turnover',
-      'personalFoul'
-    ]
+const ActionHistorySchema = new Schema(
+  {
+    type: {
+      type: String,
+      required: true,
+      enum: [
+        'freeThrow',
+        'twoPoint',
+        'threePoint',
+        'offensiveRebound',
+        'defensiveRebound',
+        'assist',
+        'steal',
+        'block',
+        'turnover',
+        'personalFoul',
+      ],
+    },
+    made: { type: Boolean },
   },
-  made: { type: Boolean }
-}, { _id: false });
+  { _id: false }
+);
 
 const GameStatsSchema = new Schema<IGameStatsDocument>(
   {
@@ -63,11 +66,11 @@ const GameStatsSchema = new Schema<IGameStatsDocument>(
     turnovers: { type: Number, default: 0, min: 0 },
     personalFouls: { type: Number, default: 0, min: 0 },
     minutesPlayed: { type: Number, default: 0, min: 0 },
-    actionHistory: [ActionHistorySchema]
+    actionHistory: [ActionHistorySchema],
   },
   {
     timestamps: true,
-    collection: 'game_stats'
+    collection: 'game_stats',
   }
 );
 

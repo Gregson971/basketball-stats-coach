@@ -11,27 +11,27 @@ export class MongoGameRepository implements IGameRepository {
 
   async findByTeamId(teamId: string): Promise<Game[]> {
     const docs = await GameModel.find({ teamId }).sort({ gameDate: -1, createdAt: -1 }).exec();
-    return docs.map(doc => GameMapper.toDomain(doc));
+    return docs.map((doc) => GameMapper.toDomain(doc));
   }
 
   async findAll(): Promise<Game[]> {
     const docs = await GameModel.find().sort({ gameDate: -1, createdAt: -1 }).exec();
-    return docs.map(doc => GameMapper.toDomain(doc));
+    return docs.map((doc) => GameMapper.toDomain(doc));
   }
 
   async findByStatus(status: GameStatus): Promise<Game[]> {
     const docs = await GameModel.find({ status }).sort({ gameDate: -1, createdAt: -1 }).exec();
-    return docs.map(doc => GameMapper.toDomain(doc));
+    return docs.map((doc) => GameMapper.toDomain(doc));
   }
 
   async save(game: Game): Promise<Game> {
     const data = GameMapper.toPersistence(game);
 
-    const doc = await GameModel.findByIdAndUpdate(
-      game.id,
-      data,
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    ).exec();
+    const doc = await GameModel.findByIdAndUpdate(game.id, data, {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+    }).exec();
 
     if (!doc) {
       throw new Error('Failed to save game');

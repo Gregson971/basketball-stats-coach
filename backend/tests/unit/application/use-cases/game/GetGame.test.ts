@@ -6,7 +6,7 @@ class MockGameRepository implements IGameRepository {
   public games: Game[] = [];
 
   async findById(id: string): Promise<Game | null> {
-    return this.games.find(g => g.id === id) || null;
+    return this.games.find((g) => g.id === id) || null;
   }
 
   async save(game: Game): Promise<Game> {
@@ -44,7 +44,7 @@ describe('GetGame Use Case', () => {
     const game = new Game({
       teamId: 'team-123',
       opponent: 'Tigers',
-      location: 'Main Arena'
+      location: 'Main Arena',
     });
     mockRepository.games.push(game);
 

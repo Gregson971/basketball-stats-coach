@@ -5,7 +5,7 @@ import {
   MockPlayerRepository,
   MockTeamRepository,
   MockGameRepository,
-  MockGameStatsRepository
+  MockGameStatsRepository,
 } from './setup/mockRepositories';
 
 describe('Team API Endpoints', () => {
@@ -22,7 +22,7 @@ describe('Team API Endpoints', () => {
       playerRepository,
       teamRepository,
       gameRepository,
-      gameStatsRepository
+      gameStatsRepository,
     });
   });
 
@@ -33,13 +33,10 @@ describe('Team API Endpoints', () => {
   describe('POST /api/teams', () => {
     it('should create a new team', async () => {
       const teamData = {
-        name: 'Wild Cats'
+        name: 'Wild Cats',
       };
 
-      const response = await request(app)
-        .post('/api/teams')
-        .send(teamData)
-        .expect(201);
+      const response = await request(app).post('/api/teams').send(teamData).expect(201);
 
       expect(response.body.success).toBe(true);
       expect(response.body.team).toBeDefined();
@@ -48,10 +45,7 @@ describe('Team API Endpoints', () => {
     });
 
     it('should return 400 when name is missing', async () => {
-      const response = await request(app)
-        .post('/api/teams')
-        .send({})
-        .expect(400);
+      const response = await request(app).post('/api/teams').send({}).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toContain('required');
@@ -62,13 +56,10 @@ describe('Team API Endpoints', () => {
         name: 'Tigers',
         coach: 'Coach Johnson',
         season: '2024-2025',
-        league: 'Youth League'
+        league: 'Youth League',
       };
 
-      const response = await request(app)
-        .post('/api/teams')
-        .send(teamData)
-        .expect(201);
+      const response = await request(app).post('/api/teams').send(teamData).expect(201);
 
       expect(response.body.team.name).toBe('Tigers');
       expect(response.body.team.coach).toBe('Coach Johnson');
@@ -79,15 +70,11 @@ describe('Team API Endpoints', () => {
 
   describe('GET /api/teams/:id', () => {
     it('should get a team by id', async () => {
-      const createResponse = await request(app)
-        .post('/api/teams')
-        .send({ name: 'Panthers' });
+      const createResponse = await request(app).post('/api/teams').send({ name: 'Panthers' });
 
       const teamId = createResponse.body.team.id;
 
-      const response = await request(app)
-        .get(`/api/teams/${teamId}`)
-        .expect(200);
+      const response = await request(app).get(`/api/teams/${teamId}`).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.team).toBeDefined();
@@ -95,9 +82,7 @@ describe('Team API Endpoints', () => {
     });
 
     it('should return 404 when team not found', async () => {
-      const response = await request(app)
-        .get('/api/teams/non-existent')
-        .expect(404);
+      const response = await request(app).get('/api/teams/non-existent').expect(404);
 
       expect(response.body.success).toBe(false);
     });
@@ -105,21 +90,16 @@ describe('Team API Endpoints', () => {
 
   describe('PUT /api/teams/:id', () => {
     it('should update a team', async () => {
-      const createResponse = await request(app)
-        .post('/api/teams')
-        .send({ name: 'Lions' });
+      const createResponse = await request(app).post('/api/teams').send({ name: 'Lions' });
 
       const teamId = createResponse.body.team.id;
 
       const updateData = {
         name: 'Super Lions',
-        coach: 'Coach Smith'
+        coach: 'Coach Smith',
       };
 
-      const response = await request(app)
-        .put(`/api/teams/${teamId}`)
-        .send(updateData)
-        .expect(200);
+      const response = await request(app).put(`/api/teams/${teamId}`).send(updateData).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.team.name).toBe('Super Lions');
@@ -136,9 +116,7 @@ describe('Team API Endpoints', () => {
     });
 
     it('should return error when trying to set empty name', async () => {
-      const createResponse = await request(app)
-        .post('/api/teams')
-        .send({ name: 'Eagles' });
+      const createResponse = await request(app).post('/api/teams').send({ name: 'Eagles' });
 
       const teamId = createResponse.body.team.id;
 
@@ -153,27 +131,19 @@ describe('Team API Endpoints', () => {
 
   describe('DELETE /api/teams/:id', () => {
     it('should delete a team', async () => {
-      const createResponse = await request(app)
-        .post('/api/teams')
-        .send({ name: 'To Delete Team' });
+      const createResponse = await request(app).post('/api/teams').send({ name: 'To Delete Team' });
 
       const teamId = createResponse.body.team.id;
 
-      const response = await request(app)
-        .delete(`/api/teams/${teamId}`)
-        .expect(200);
+      const response = await request(app).delete(`/api/teams/${teamId}`).expect(200);
 
       expect(response.body.success).toBe(true);
 
-      await request(app)
-        .get(`/api/teams/${teamId}`)
-        .expect(404);
+      await request(app).get(`/api/teams/${teamId}`).expect(404);
     });
 
     it('should return 404 when deleting non-existent team', async () => {
-      const response = await request(app)
-        .delete('/api/teams/non-existent')
-        .expect(404);
+      const response = await request(app).delete('/api/teams/non-existent').expect(404);
 
       expect(response.body.success).toBe(false);
     });
@@ -185,9 +155,7 @@ describe('Team API Endpoints', () => {
       await request(app).post('/api/teams').send({ name: 'Team 2' });
       await request(app).post('/api/teams').send({ name: 'Team 3' });
 
-      const response = await request(app)
-        .get('/api/teams')
-        .expect(200);
+      const response = await request(app).get('/api/teams').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.teams).toBeDefined();
@@ -196,9 +164,7 @@ describe('Team API Endpoints', () => {
     });
 
     it('should return empty array when no teams exist', async () => {
-      const response = await request(app)
-        .get('/api/teams')
-        .expect(200);
+      const response = await request(app).get('/api/teams').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.teams).toEqual([]);

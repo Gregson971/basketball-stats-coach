@@ -28,11 +28,11 @@ const PlayerSchema = new Schema<IPlayerDocument>(
     age: { type: Number, min: 5, max: 100 },
     gender: { type: String, enum: ['M', 'F'] },
     grade: { type: String, trim: true },
-    position: { type: String, trim: true }
+    position: { type: String, trim: true },
   },
   {
     timestamps: true,
-    collection: 'players'
+    collection: 'players',
   }
 );
 

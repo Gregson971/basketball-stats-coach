@@ -5,7 +5,7 @@ describe('GameStats Entity', () => {
     test('should create valid game stats with required fields', () => {
       const statsData: GameStatsData = {
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       };
 
       const stats = new GameStats(statsData);
@@ -20,7 +20,7 @@ describe('GameStats Entity', () => {
     test('should initialize all stats to zero', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       expect(stats.freeThrowsMade).toBe(0);
@@ -41,7 +41,7 @@ describe('GameStats Entity', () => {
 
     test('should throw error if gameId is missing', () => {
       const statsData = {
-        playerId: 'player-456'
+        playerId: 'player-456',
       } as GameStatsData;
 
       expect(() => new GameStats(statsData)).toThrow('Game ID is required');
@@ -49,7 +49,7 @@ describe('GameStats Entity', () => {
 
     test('should throw error if playerId is missing', () => {
       const statsData = {
-        gameId: 'game-123'
+        gameId: 'game-123',
       } as GameStatsData;
 
       expect(() => new GameStats(statsData)).toThrow('Player ID is required');
@@ -60,7 +60,7 @@ describe('GameStats Entity', () => {
     test('should record made free throw', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordFreeThrow(true);
@@ -72,7 +72,7 @@ describe('GameStats Entity', () => {
     test('should record missed free throw', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordFreeThrow(false);
@@ -84,7 +84,7 @@ describe('GameStats Entity', () => {
     test('should record made 2-point shot', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordTwoPoint(true);
@@ -96,7 +96,7 @@ describe('GameStats Entity', () => {
     test('should record missed 2-point shot', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordTwoPoint(false);
@@ -108,7 +108,7 @@ describe('GameStats Entity', () => {
     test('should record made 3-point shot', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordThreePoint(true);
@@ -120,7 +120,7 @@ describe('GameStats Entity', () => {
     test('should record missed 3-point shot', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordThreePoint(false);
@@ -132,7 +132,7 @@ describe('GameStats Entity', () => {
     test('should record offensive rebound', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordOffensiveRebound();
@@ -143,7 +143,7 @@ describe('GameStats Entity', () => {
     test('should record defensive rebound', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordDefensiveRebound();
@@ -154,7 +154,7 @@ describe('GameStats Entity', () => {
     test('should record assist', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordAssist();
@@ -165,7 +165,7 @@ describe('GameStats Entity', () => {
     test('should record steal', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordSteal();
@@ -176,7 +176,7 @@ describe('GameStats Entity', () => {
     test('should record block', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordBlock();
@@ -187,7 +187,7 @@ describe('GameStats Entity', () => {
     test('should record turnover', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordTurnover();
@@ -198,7 +198,7 @@ describe('GameStats Entity', () => {
     test('should record personal foul', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordPersonalFoul();
@@ -209,7 +209,7 @@ describe('GameStats Entity', () => {
     test('should add minutes played', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.addMinutes(5);
@@ -222,7 +222,7 @@ describe('GameStats Entity', () => {
     test('should calculate total points', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordFreeThrow(true);
@@ -236,7 +236,7 @@ describe('GameStats Entity', () => {
     test('should calculate total rebounds', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordOffensiveRebound();
@@ -251,7 +251,7 @@ describe('GameStats Entity', () => {
     test('should calculate field goal percentage', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordTwoPoint(true);
@@ -265,7 +265,7 @@ describe('GameStats Entity', () => {
     test('should return 0 for field goal percentage with no attempts', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       expect(stats.getFieldGoalPercentage()).toBe(0);
@@ -274,7 +274,7 @@ describe('GameStats Entity', () => {
     test('should calculate free throw percentage', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordFreeThrow(true);
@@ -288,7 +288,7 @@ describe('GameStats Entity', () => {
     test('should return 0 for free throw percentage with no attempts', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       expect(stats.getFreeThrowPercentage()).toBe(0);
@@ -297,7 +297,7 @@ describe('GameStats Entity', () => {
     test('should calculate three point percentage', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordThreePoint(true);
@@ -311,7 +311,7 @@ describe('GameStats Entity', () => {
     test('should return 0 for three point percentage with no attempts', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       expect(stats.getThreePointPercentage()).toBe(0);
@@ -322,7 +322,7 @@ describe('GameStats Entity', () => {
     test('should undo last free throw made', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordFreeThrow(true);
@@ -335,7 +335,7 @@ describe('GameStats Entity', () => {
     test('should undo last assist', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordAssist();
@@ -347,7 +347,7 @@ describe('GameStats Entity', () => {
     test('should not undo when no actions recorded', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       expect(() => stats.undoLastAction()).toThrow('No actions to undo');
@@ -358,7 +358,7 @@ describe('GameStats Entity', () => {
     test('should convert to JSON', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       stats.recordTwoPoint(true);
@@ -382,7 +382,7 @@ describe('GameStats Entity', () => {
     test('should validate stats data', () => {
       const stats = new GameStats({
         gameId: 'game-123',
-        playerId: 'player-456'
+        playerId: 'player-456',
       });
 
       expect(stats.isValid()).toBe(true);

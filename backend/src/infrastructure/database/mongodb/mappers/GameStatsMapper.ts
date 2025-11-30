@@ -23,7 +23,7 @@ export class GameStatsMapper {
       minutesPlayed: doc.minutesPlayed,
       actionHistory: doc.actionHistory,
       createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt
+      updatedAt: doc.updatedAt,
     });
   }
 
@@ -48,7 +48,7 @@ export class GameStatsMapper {
       minutesPlayed: gameStats.minutesPlayed,
       actionHistory: gameStats.actionHistory,
       createdAt: gameStats.createdAt,
-      updatedAt: gameStats.updatedAt
+      updatedAt: gameStats.updatedAt,
     };
   }
 }

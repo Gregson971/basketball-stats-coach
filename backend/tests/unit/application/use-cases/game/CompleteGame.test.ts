@@ -7,11 +7,11 @@ class MockGameRepository implements IGameRepository {
   public games: Game[] = [];
 
   async findById(id: string): Promise<Game | null> {
-    return this.games.find(g => g.id === id) || null;
+    return this.games.find((g) => g.id === id) || null;
   }
 
   async save(game: Game): Promise<Game> {
-    const existingIndex = this.games.findIndex(g => g.id === game.id);
+    const existingIndex = this.games.findIndex((g) => g.id === game.id);
     if (existingIndex >= 0) {
       this.games[existingIndex] = game;
     } else {
@@ -48,7 +48,7 @@ describe('CompleteGame Use Case', () => {
 
     game = new Game({
       teamId: 'team-123',
-      opponent: 'Tigers'
+      opponent: 'Tigers',
     });
     game.start();
     mockRepository.games.push(game);
@@ -72,7 +72,7 @@ describe('CompleteGame Use Case', () => {
   test('should return error when game not in progress', async () => {
     const notStartedGame = new Game({
       teamId: 'team-123',
-      opponent: 'Lions'
+      opponent: 'Lions',
     });
     mockRepository.games.push(notStartedGame);
 

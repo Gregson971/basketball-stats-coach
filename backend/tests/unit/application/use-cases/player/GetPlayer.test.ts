@@ -11,11 +11,11 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async findById(id: string): Promise<Player | null> {
-    return this.players.find(p => p.id === id) || null;
+    return this.players.find((p) => p.id === id) || null;
   }
 
   async findByTeamId(teamId: string): Promise<Player[]> {
-    return this.players.filter(p => p.teamId === teamId);
+    return this.players.filter((p) => p.teamId === teamId);
   }
 
   async findAll(): Promise<Player[]> {
@@ -44,7 +44,7 @@ describe('GetPlayer Use Case', () => {
       firstName: 'Ryan',
       lastName: 'Evans',
       teamId: 'team-123',
-      nickname: 'The Rocket'
+      nickname: 'The Rocket',
     });
     await mockRepository.save(existingPlayer);
   });

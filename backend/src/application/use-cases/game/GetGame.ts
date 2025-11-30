@@ -17,18 +17,18 @@ export class GetGame {
       if (!game) {
         return {
           success: false,
-          error: 'Game not found'
+          error: 'Game not found',
         };
       }
 
       return {
         success: true,
-        game
+        game,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

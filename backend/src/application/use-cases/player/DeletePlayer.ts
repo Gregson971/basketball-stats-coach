@@ -15,17 +15,17 @@ export class DeletePlayer {
       if (!deleted) {
         return {
           success: false,
-          error: 'Player not found'
+          error: 'Player not found',
         };
       }
 
       return {
-        success: true
+        success: true,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

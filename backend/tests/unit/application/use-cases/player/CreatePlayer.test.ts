@@ -12,11 +12,11 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async findByTeamId(teamId: string): Promise<Player[]> {
-    return this.players.filter(p => p.teamId === teamId);
+    return this.players.filter((p) => p.teamId === teamId);
   }
 
   async findById(id: string): Promise<Player | null> {
-    return this.players.find(p => p.id === id) || null;
+    return this.players.find((p) => p.id === id) || null;
   }
 
   async findAll(): Promise<Player[]> {
@@ -24,7 +24,7 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.players.findIndex(p => p.id === id);
+    const index = this.players.findIndex((p) => p.id === id);
     if (index >= 0) {
       this.players.splice(index, 1);
       return true;
@@ -33,9 +33,10 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async searchByName(query: string): Promise<Player[]> {
-    return this.players.filter(p =>
-      p.firstName.toLowerCase().includes(query.toLowerCase()) ||
-      p.lastName.toLowerCase().includes(query.toLowerCase())
+    return this.players.filter(
+      (p) =>
+        p.firstName.toLowerCase().includes(query.toLowerCase()) ||
+        p.lastName.toLowerCase().includes(query.toLowerCase())
     );
   }
 }
@@ -53,7 +54,7 @@ describe('CreatePlayer Use Case', () => {
     const playerData: PlayerData = {
       firstName: 'Ryan',
       lastName: 'Evans',
-      teamId: 'team-123'
+      teamId: 'team-123',
     };
 
     const result = await createPlayer.execute(playerData);
@@ -76,7 +77,7 @@ describe('CreatePlayer Use Case', () => {
       age: 24,
       gender: 'M',
       grade: '10',
-      position: 'Power Forward'
+      position: 'Power Forward',
     };
 
     const result = await createPlayer.execute(playerData);
@@ -90,7 +91,7 @@ describe('CreatePlayer Use Case', () => {
   test('should return error when required fields are missing', async () => {
     const playerData = {
       lastName: 'Evans',
-      teamId: 'team-123'
+      teamId: 'team-123',
     } as PlayerData;
 
     const result = await createPlayer.execute(playerData);
@@ -105,7 +106,7 @@ describe('CreatePlayer Use Case', () => {
       firstName: 'Ryan',
       lastName: 'Evans',
       teamId: 'team-123',
-      age: -5
+      age: -5,
     };
 
     const result = await createPlayer.execute(playerData);
@@ -119,7 +120,7 @@ describe('CreatePlayer Use Case', () => {
     const playerData: PlayerData = {
       firstName: 'Ryan',
       lastName: 'Evans',
-      teamId: 'team-123'
+      teamId: 'team-123',
     };
 
     await createPlayer.execute(playerData);

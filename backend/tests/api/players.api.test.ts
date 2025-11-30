@@ -5,7 +5,7 @@ import {
   MockPlayerRepository,
   MockTeamRepository,
   MockGameRepository,
-  MockGameStatsRepository
+  MockGameStatsRepository,
 } from './setup/mockRepositories';
 
 describe('Player API Endpoints', () => {
@@ -22,7 +22,7 @@ describe('Player API Endpoints', () => {
       playerRepository,
       teamRepository,
       gameRepository,
-      gameStatsRepository
+      gameStatsRepository,
     });
   });
 
@@ -36,13 +36,10 @@ describe('Player API Endpoints', () => {
       const playerData = {
         firstName: 'John',
         lastName: 'Doe',
-        teamId: 'team-123'
+        teamId: 'team-123',
       };
 
-      const response = await request(app)
-        .post('/api/players')
-        .send(playerData)
-        .expect(201);
+      const response = await request(app).post('/api/players').send(playerData).expect(201);
 
       expect(response.body.success).toBe(true);
       expect(response.body.player).toBeDefined();
@@ -67,13 +64,10 @@ describe('Player API Endpoints', () => {
         teamId: 'team-456',
         position: 'Guard',
         height: 175,
-        weight: 70
+        weight: 70,
       };
 
-      const response = await request(app)
-        .post('/api/players')
-        .send(playerData)
-        .expect(201);
+      const response = await request(app).post('/api/players').send(playerData).expect(201);
 
       expect(response.body.player.position).toBe('Guard');
       expect(response.body.player.height).toBe(175);
@@ -83,19 +77,15 @@ describe('Player API Endpoints', () => {
   describe('GET /api/players/:id', () => {
     it('should get a player by id', async () => {
       // Créer d'abord un joueur
-      const createResponse = await request(app)
-        .post('/api/players')
-        .send({
-          firstName: 'Test',
-          lastName: 'Player',
-          teamId: 'team-123'
-        });
+      const createResponse = await request(app).post('/api/players').send({
+        firstName: 'Test',
+        lastName: 'Player',
+        teamId: 'team-123',
+      });
 
       const playerId = createResponse.body.player.id;
 
-      const response = await request(app)
-        .get(`/api/players/${playerId}`)
-        .expect(200);
+      const response = await request(app).get(`/api/players/${playerId}`).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.player).toBeDefined();
@@ -103,9 +93,7 @@ describe('Player API Endpoints', () => {
     });
 
     it('should return 404 when player not found', async () => {
-      const response = await request(app)
-        .get('/api/players/non-existent')
-        .expect(404);
+      const response = await request(app).get('/api/players/non-existent').expect(404);
 
       expect(response.body.success).toBe(false);
     });
@@ -114,19 +102,17 @@ describe('Player API Endpoints', () => {
   describe('PUT /api/players/:id', () => {
     it('should update a player', async () => {
       // Créer d'abord un joueur
-      const createResponse = await request(app)
-        .post('/api/players')
-        .send({
-          firstName: 'John',
-          lastName: 'Doe',
-          teamId: 'team-123'
-        });
+      const createResponse = await request(app).post('/api/players').send({
+        firstName: 'John',
+        lastName: 'Doe',
+        teamId: 'team-123',
+      });
 
       const playerId = createResponse.body.player.id;
 
       const updateData = {
         firstName: 'Johnny',
-        position: 'Forward'
+        position: 'Forward',
       };
 
       const response = await request(app)
@@ -152,32 +138,24 @@ describe('Player API Endpoints', () => {
   describe('DELETE /api/players/:id', () => {
     it('should delete a player', async () => {
       // Créer d'abord un joueur
-      const createResponse = await request(app)
-        .post('/api/players')
-        .send({
-          firstName: 'To',
-          lastName: 'Delete',
-          teamId: 'team-123'
-        });
+      const createResponse = await request(app).post('/api/players').send({
+        firstName: 'To',
+        lastName: 'Delete',
+        teamId: 'team-123',
+      });
 
       const playerId = createResponse.body.player.id;
 
-      const response = await request(app)
-        .delete(`/api/players/${playerId}`)
-        .expect(200);
+      const response = await request(app).delete(`/api/players/${playerId}`).expect(200);
 
       expect(response.body.success).toBe(true);
 
       // Vérifier que le joueur a bien été supprimé
-      await request(app)
-        .get(`/api/players/${playerId}`)
-        .expect(404);
+      await request(app).get(`/api/players/${playerId}`).expect(404);
     });
 
     it('should return 404 when deleting non-existent player', async () => {
-      const response = await request(app)
-        .delete('/api/players/non-existent')
-        .expect(404);
+      const response = await request(app).delete('/api/players/non-existent').expect(404);
 
       expect(response.body.success).toBe(false);
     });
@@ -185,9 +163,7 @@ describe('Player API Endpoints', () => {
 
   describe('GET /api/players/team/:teamId', () => {
     it('should get all players of a team', async () => {
-      const response = await request(app)
-        .get('/api/players/team/team-123')
-        .expect(200);
+      const response = await request(app).get('/api/players/team/team-123').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.players).toBeDefined();
@@ -195,9 +171,7 @@ describe('Player API Endpoints', () => {
     });
 
     it('should return empty array when team has no players', async () => {
-      const response = await request(app)
-        .get('/api/players/team/empty-team')
-        .expect(200);
+      const response = await request(app).get('/api/players/team/empty-team').expect(200);
 
       expect(response.body.players).toEqual([]);
     });
@@ -205,9 +179,7 @@ describe('Player API Endpoints', () => {
 
   describe('GET /api/players', () => {
     it('should get all players', async () => {
-      const response = await request(app)
-        .get('/api/players')
-        .expect(200);
+      const response = await request(app).get('/api/players').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.players).toBeDefined();

@@ -17,18 +17,18 @@ export class GetTeam {
       if (!team) {
         return {
           success: false,
-          error: 'Team not found'
+          error: 'Team not found',
         };
       }
 
       return {
         success: true,
-        team
+        team,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

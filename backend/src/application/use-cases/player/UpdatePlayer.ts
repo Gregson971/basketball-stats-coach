@@ -18,7 +18,7 @@ export class UpdatePlayer {
       if (!player) {
         return {
           success: false,
-          error: 'Player not found'
+          error: 'Player not found',
         };
       }
 
@@ -30,12 +30,12 @@ export class UpdatePlayer {
 
       return {
         success: true,
-        player: updatedPlayer
+        player: updatedPlayer,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

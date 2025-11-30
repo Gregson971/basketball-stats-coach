@@ -12,10 +12,7 @@ export class StatsController {
   private getPlayerGameStats: GetPlayerGameStats;
   private getPlayerCareerStats: GetPlayerCareerStats;
 
-  constructor(
-    gameStatsRepository: IGameStatsRepository,
-    gameRepository: IGameRepository
-  ) {
+  constructor(gameStatsRepository: IGameStatsRepository, gameRepository: IGameRepository) {
     this.recordGameAction = new RecordGameAction(gameStatsRepository, gameRepository);
     this.undoLastGameAction = new UndoLastGameAction(gameStatsRepository);
     this.getPlayerGameStats = new GetPlayerGameStats(gameStatsRepository);
@@ -26,7 +23,7 @@ export class StatsController {
     const { gameId } = req.params;
     const actionData = {
       gameId,
-      ...req.body
+      ...req.body,
     };
 
     const result = await this.recordGameAction.execute(actionData);

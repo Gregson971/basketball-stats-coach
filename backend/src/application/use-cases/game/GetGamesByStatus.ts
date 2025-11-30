@@ -16,12 +16,12 @@ export class GetGamesByStatus {
 
       return {
         success: true,
-        games
+        games,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

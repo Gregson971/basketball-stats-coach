@@ -11,11 +11,11 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async findById(id: string): Promise<Player | null> {
-    return this.players.find(p => p.id === id) || null;
+    return this.players.find((p) => p.id === id) || null;
   }
 
   async findByTeamId(teamId: string): Promise<Player[]> {
-    return this.players.filter(p => p.teamId === teamId);
+    return this.players.filter((p) => p.teamId === teamId);
   }
 
   async findAll(): Promise<Player[]> {
@@ -23,7 +23,7 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.players.findIndex(p => p.id === id);
+    const index = this.players.findIndex((p) => p.id === id);
     if (index >= 0) {
       this.players.splice(index, 1);
       return true;
@@ -48,7 +48,7 @@ describe('DeletePlayer Use Case', () => {
     existingPlayer = new Player({
       firstName: 'Ryan',
       lastName: 'Evans',
-      teamId: 'team-123'
+      teamId: 'team-123',
     });
     await mockRepository.save(existingPlayer);
   });

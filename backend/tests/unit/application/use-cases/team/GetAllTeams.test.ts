@@ -6,7 +6,7 @@ class MockTeamRepository implements ITeamRepository {
   public teams: Team[] = [];
 
   async findById(id: string): Promise<Team | null> {
-    return this.teams.find(t => t.id === id) || null;
+    return this.teams.find((t) => t.id === id) || null;
   }
 
   async save(team: Team): Promise<Team> {

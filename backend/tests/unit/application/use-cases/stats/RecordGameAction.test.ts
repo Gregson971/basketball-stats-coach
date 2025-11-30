@@ -1,7 +1,10 @@
 import { RecordGameAction } from '../../../../../src/application/use-cases/stats/RecordGameAction';
 import { GameStats } from '../../../../../src/domain/entities/GameStats';
 import { Game } from '../../../../../src/domain/entities/Game';
-import { IGameStatsRepository, PlayerAggregateStats } from '../../../../../src/domain/repositories/GameStatsRepository';
+import {
+  IGameStatsRepository,
+  PlayerAggregateStats,
+} from '../../../../../src/domain/repositories/GameStatsRepository';
 import { IGameRepository } from '../../../../../src/domain/repositories/GameRepository';
 import { GameStatus } from '../../../../../src/domain/entities/Game';
 
@@ -10,11 +13,11 @@ class MockGameStatsRepository implements IGameStatsRepository {
   private stats: GameStats[] = [];
 
   async findByGameAndPlayer(gameId: string, playerId: string): Promise<GameStats | null> {
-    return this.stats.find(s => s.gameId === gameId && s.playerId === playerId) || null;
+    return this.stats.find((s) => s.gameId === gameId && s.playerId === playerId) || null;
   }
 
   async save(gameStats: GameStats): Promise<GameStats> {
-    const existingIndex = this.stats.findIndex(s => s.id === gameStats.id);
+    const existingIndex = this.stats.findIndex((s) => s.id === gameStats.id);
     if (existingIndex >= 0) {
       this.stats[existingIndex] = gameStats;
     } else {
@@ -24,19 +27,19 @@ class MockGameStatsRepository implements IGameStatsRepository {
   }
 
   async findById(id: string): Promise<GameStats | null> {
-    return this.stats.find(s => s.id === id) || null;
+    return this.stats.find((s) => s.id === id) || null;
   }
 
   async findByGameId(gameId: string): Promise<GameStats[]> {
-    return this.stats.filter(s => s.gameId === gameId);
+    return this.stats.filter((s) => s.gameId === gameId);
   }
 
   async findByPlayerId(playerId: string): Promise<GameStats[]> {
-    return this.stats.filter(s => s.playerId === playerId);
+    return this.stats.filter((s) => s.playerId === playerId);
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.stats.findIndex(s => s.id === id);
+    const index = this.stats.findIndex((s) => s.id === id);
     if (index >= 0) {
       this.stats.splice(index, 1);
       return true;
@@ -45,7 +48,7 @@ class MockGameStatsRepository implements IGameStatsRepository {
   }
 
   async getPlayerAggregateStats(playerId: string): Promise<PlayerAggregateStats> {
-    const playerStats = this.stats.filter(s => s.playerId === playerId);
+    const playerStats = this.stats.filter((s) => s.playerId === playerId);
 
     return {
       playerId,
@@ -61,7 +64,7 @@ class MockGameStatsRepository implements IGameStatsRepository {
       averageAssists: 0,
       fieldGoalPercentage: 0,
       freeThrowPercentage: 0,
-      threePointPercentage: 0
+      threePointPercentage: 0,
     };
   }
 }
@@ -70,11 +73,11 @@ class MockGameRepository implements IGameRepository {
   public games: Game[] = [];
 
   async findById(id: string): Promise<Game | null> {
-    return this.games.find(g => g.id === id) || null;
+    return this.games.find((g) => g.id === id) || null;
   }
 
   async save(game: Game): Promise<Game> {
-    const existingIndex = this.games.findIndex(g => g.id === game.id);
+    const existingIndex = this.games.findIndex((g) => g.id === game.id);
     if (existingIndex >= 0) {
       this.games[existingIndex] = game;
     } else {
@@ -84,7 +87,7 @@ class MockGameRepository implements IGameRepository {
   }
 
   async findByTeamId(teamId: string): Promise<Game[]> {
-    return this.games.filter(g => g.teamId === teamId);
+    return this.games.filter((g) => g.teamId === teamId);
   }
 
   async findAll(): Promise<Game[]> {
@@ -92,11 +95,11 @@ class MockGameRepository implements IGameRepository {
   }
 
   async findByStatus(status: GameStatus): Promise<Game[]> {
-    return this.games.filter(g => g.status === status);
+    return this.games.filter((g) => g.status === status);
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.games.findIndex(g => g.id === id);
+    const index = this.games.findIndex((g) => g.id === id);
     if (index >= 0) {
       this.games.splice(index, 1);
       return true;
@@ -119,7 +122,7 @@ describe('RecordGameAction Use Case', () => {
     // Create and start a game
     game = new Game({
       teamId: 'team-123',
-      opponent: 'Tigers'
+      opponent: 'Tigers',
     });
     game.start();
     mockGameRepository.games.push(game);
@@ -130,7 +133,7 @@ describe('RecordGameAction Use Case', () => {
       gameId: game.id,
       playerId: 'player-123',
       actionType: 'twoPoint' as const,
-      made: true
+      made: true,
     };
 
     const result = await recordGameAction.execute(actionData);
@@ -146,7 +149,7 @@ describe('RecordGameAction Use Case', () => {
       gameId: game.id,
       playerId: 'player-123',
       actionType: 'threePoint' as const,
-      made: false
+      made: false,
     };
 
     const result = await recordGameAction.execute(actionData);
@@ -160,7 +163,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: game.id,
       playerId: 'player-123',
-      actionType: 'assist' as const
+      actionType: 'assist' as const,
     };
 
     const result = await recordGameAction.execute(actionData);
@@ -176,19 +179,19 @@ describe('RecordGameAction Use Case', () => {
       gameId: game.id,
       playerId: player,
       actionType: 'twoPoint',
-      made: true
+      made: true,
     });
 
     await recordGameAction.execute({
       gameId: game.id,
       playerId: player,
-      actionType: 'assist'
+      actionType: 'assist',
     });
 
     await recordGameAction.execute({
       gameId: game.id,
       playerId: player,
-      actionType: 'offensiveRebound'
+      actionType: 'offensiveRebound',
     });
 
     const stats = await mockStatsRepository.findByGameAndPlayer(game.id, player);
@@ -202,7 +205,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: game.id,
       playerId: 'player-new',
-      actionType: 'steal' as const
+      actionType: 'steal' as const,
     };
 
     const result = await recordGameAction.execute(actionData);
@@ -216,7 +219,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: 'non-existent-game',
       playerId: 'player-123',
-      actionType: 'assist' as const
+      actionType: 'assist' as const,
     };
 
     const result = await recordGameAction.execute(actionData);
@@ -228,14 +231,14 @@ describe('RecordGameAction Use Case', () => {
   test('should return error if game is not in progress', async () => {
     const notStartedGame = new Game({
       teamId: 'team-123',
-      opponent: 'Lions'
+      opponent: 'Lions',
     });
     mockGameRepository.games.push(notStartedGame);
 
     const actionData = {
       gameId: notStartedGame.id,
       playerId: 'player-123',
-      actionType: 'assist' as const
+      actionType: 'assist' as const,
     };
 
     const result = await recordGameAction.execute(actionData);
@@ -248,7 +251,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: game.id,
       playerId: 'player-123',
-      actionType: 'invalidAction' as any
+      actionType: 'invalidAction' as any,
     };
 
     const result = await recordGameAction.execute(actionData);
@@ -269,7 +272,7 @@ describe('RecordGameAction Use Case', () => {
       { type: 'steal' as const },
       { type: 'block' as const },
       { type: 'turnover' as const },
-      { type: 'personalFoul' as const }
+      { type: 'personalFoul' as const },
     ];
 
     for (const action of actions) {
@@ -277,7 +280,7 @@ describe('RecordGameAction Use Case', () => {
         gameId: game.id,
         playerId: player,
         actionType: action.type,
-        made: 'made' in action ? action.made : undefined
+        made: 'made' in action ? action.made : undefined,
       });
     }
 

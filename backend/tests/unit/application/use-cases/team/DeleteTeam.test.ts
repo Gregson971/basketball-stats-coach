@@ -6,7 +6,7 @@ class MockTeamRepository implements ITeamRepository {
   public teams: Team[] = [];
 
   async findById(id: string): Promise<Team | null> {
-    return this.teams.find(t => t.id === id) || null;
+    return this.teams.find((t) => t.id === id) || null;
   }
 
   async save(team: Team): Promise<Team> {
@@ -23,7 +23,7 @@ class MockTeamRepository implements ITeamRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.teams.findIndex(t => t.id === id);
+    const index = this.teams.findIndex((t) => t.id === id);
     if (index >= 0) {
       this.teams.splice(index, 1);
       return true;

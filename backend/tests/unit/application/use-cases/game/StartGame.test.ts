@@ -8,11 +8,11 @@ class MockGameRepository implements IGameRepository {
   private games: Game[] = [];
 
   async findById(id: string): Promise<Game | null> {
-    return this.games.find(g => g.id === id) || null;
+    return this.games.find((g) => g.id === id) || null;
   }
 
   async save(game: Game): Promise<Game> {
-    const existingIndex = this.games.findIndex(g => g.id === game.id);
+    const existingIndex = this.games.findIndex((g) => g.id === game.id);
     if (existingIndex >= 0) {
       this.games[existingIndex] = game;
     } else {
@@ -22,7 +22,7 @@ class MockGameRepository implements IGameRepository {
   }
 
   async findByTeamId(teamId: string): Promise<Game[]> {
-    return this.games.filter(g => g.teamId === teamId);
+    return this.games.filter((g) => g.teamId === teamId);
   }
 
   async findAll(): Promise<Game[]> {
@@ -30,11 +30,11 @@ class MockGameRepository implements IGameRepository {
   }
 
   async findByStatus(status: GameStatus): Promise<Game[]> {
-    return this.games.filter(g => g.status === status);
+    return this.games.filter((g) => g.status === status);
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.games.findIndex(g => g.id === id);
+    const index = this.games.findIndex((g) => g.id === id);
     if (index >= 0) {
       this.games.splice(index, 1);
       return true;
@@ -55,7 +55,7 @@ describe('StartGame Use Case', () => {
   test('should start a game successfully', async () => {
     const game = new Game({
       teamId: 'team-123',
-      opponent: 'Tigers'
+      opponent: 'Tigers',
     });
     await mockRepository.save(game);
 
@@ -76,7 +76,7 @@ describe('StartGame Use Case', () => {
   test('should return error when game is already started', async () => {
     const game = new Game({
       teamId: 'team-123',
-      opponent: 'Tigers'
+      opponent: 'Tigers',
     });
     game.start();
     await mockRepository.save(game);
@@ -90,7 +90,7 @@ describe('StartGame Use Case', () => {
   test('should update game in repository', async () => {
     const game = new Game({
       teamId: 'team-123',
-      opponent: 'Tigers'
+      opponent: 'Tigers',
     });
     await mockRepository.save(game);
 

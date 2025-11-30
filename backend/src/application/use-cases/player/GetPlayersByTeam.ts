@@ -16,12 +16,12 @@ export class GetPlayersByTeam {
 
       return {
         success: true,
-        players
+        players,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

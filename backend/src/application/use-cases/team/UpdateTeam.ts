@@ -17,7 +17,7 @@ export class UpdateTeam {
       if (!team) {
         return {
           success: false,
-          error: 'Team not found'
+          error: 'Team not found',
         };
       }
 
@@ -26,12 +26,12 @@ export class UpdateTeam {
 
       return {
         success: true,
-        team: updatedTeam
+        team: updatedTeam,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

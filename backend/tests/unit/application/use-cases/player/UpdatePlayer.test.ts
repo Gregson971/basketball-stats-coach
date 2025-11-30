@@ -7,7 +7,7 @@ class MockPlayerRepository implements IPlayerRepository {
   private players: Player[] = [];
 
   async save(player: Player): Promise<Player> {
-    const existingIndex = this.players.findIndex(p => p.id === player.id);
+    const existingIndex = this.players.findIndex((p) => p.id === player.id);
     if (existingIndex >= 0) {
       this.players[existingIndex] = player;
     } else {
@@ -17,11 +17,11 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async findById(id: string): Promise<Player | null> {
-    return this.players.find(p => p.id === id) || null;
+    return this.players.find((p) => p.id === id) || null;
   }
 
   async findByTeamId(teamId: string): Promise<Player[]> {
-    return this.players.filter(p => p.teamId === teamId);
+    return this.players.filter((p) => p.teamId === teamId);
   }
 
   async findAll(): Promise<Player[]> {
@@ -29,7 +29,7 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.players.findIndex(p => p.id === id);
+    const index = this.players.findIndex((p) => p.id === id);
     if (index >= 0) {
       this.players.splice(index, 1);
       return true;
@@ -38,9 +38,10 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async searchByName(query: string): Promise<Player[]> {
-    return this.players.filter(p =>
-      p.firstName.toLowerCase().includes(query.toLowerCase()) ||
-      p.lastName.toLowerCase().includes(query.toLowerCase())
+    return this.players.filter(
+      (p) =>
+        p.firstName.toLowerCase().includes(query.toLowerCase()) ||
+        p.lastName.toLowerCase().includes(query.toLowerCase())
     );
   }
 }
@@ -57,7 +58,7 @@ describe('UpdatePlayer Use Case', () => {
     existingPlayer = new Player({
       firstName: 'Ryan',
       lastName: 'Evans',
-      teamId: 'team-123'
+      teamId: 'team-123',
     });
     await mockRepository.save(existingPlayer);
   });
@@ -66,7 +67,7 @@ describe('UpdatePlayer Use Case', () => {
     const updateData: Partial<PlayerData> = {
       nickname: 'The Rocket',
       height: 202.5,
-      age: 24
+      age: 24,
     };
 
     const result = await updatePlayer.execute(existingPlayer.id, updateData);
@@ -87,7 +88,7 @@ describe('UpdatePlayer Use Case', () => {
 
   test('should return error when validation fails', async () => {
     const updateData: Partial<PlayerData> = {
-      age: -5
+      age: -5,
     };
 
     const result = await updatePlayer.execute(existingPlayer.id, updateData);
@@ -101,7 +102,7 @@ describe('UpdatePlayer Use Case', () => {
     const updateData = {
       id: 'new-id',
       teamId: 'new-team-id',
-      createdAt: new Date()
+      createdAt: new Date(),
     } as any;
 
     const result = await updatePlayer.execute(existingPlayer.id, updateData);
@@ -113,7 +114,7 @@ describe('UpdatePlayer Use Case', () => {
 
   test('should update player in repository', async () => {
     const updateData: Partial<PlayerData> = {
-      nickname: 'The Rocket'
+      nickname: 'The Rocket',
     };
 
     await updatePlayer.execute(existingPlayer.id, updateData);
@@ -128,7 +129,7 @@ describe('UpdatePlayer Use Case', () => {
       height: 202.5,
       weight: 95.5,
       age: 24,
-      position: 'Power Forward'
+      position: 'Power Forward',
     };
 
     const result = await updatePlayer.execute(existingPlayer.id, updateData);

@@ -30,14 +30,14 @@ export class RecordGameAction {
       if (!game) {
         return {
           success: false,
-          error: 'Game not found'
+          error: 'Game not found',
         };
       }
 
       if (!game.isInProgress()) {
         return {
           success: false,
-          error: 'Game is not in progress'
+          error: 'Game is not in progress',
         };
       }
 
@@ -83,7 +83,7 @@ export class RecordGameAction {
         default:
           return {
             success: false,
-            error: `Invalid action type: ${actionType}`
+            error: `Invalid action type: ${actionType}`,
           };
       }
 
@@ -92,12 +92,12 @@ export class RecordGameAction {
 
       return {
         success: true,
-        gameStats: savedStats
+        gameStats: savedStats,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

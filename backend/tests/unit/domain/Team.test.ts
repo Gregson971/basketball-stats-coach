@@ -4,7 +4,7 @@ describe('Team Entity', () => {
   describe('Creation', () => {
     test('should create a valid team with required fields', () => {
       const teamData: TeamData = {
-        name: 'Wild Cats'
+        name: 'Wild Cats',
       };
 
       const team = new Team(teamData);
@@ -20,7 +20,7 @@ describe('Team Entity', () => {
         name: 'Wild Cats',
         coach: 'Coach Smith',
         season: '2023-2024',
-        league: 'High School League'
+        league: 'High School League',
       };
 
       const team = new Team(teamData);
@@ -38,7 +38,7 @@ describe('Team Entity', () => {
 
     test('should throw error if name is empty string', () => {
       const teamData: TeamData = {
-        name: '   '
+        name: '   ',
       };
 
       expect(() => new Team(teamData)).toThrow('Team name is required');
@@ -48,12 +48,12 @@ describe('Team Entity', () => {
   describe('Methods', () => {
     test('should update team info', async () => {
       const team = new Team({
-        name: 'Wild Cats'
+        name: 'Wild Cats',
       });
 
       const originalUpdatedAt = team.updatedAt;
 
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       team.update({ coach: 'Coach Johnson', league: 'Pro League' });
 
@@ -64,7 +64,7 @@ describe('Team Entity', () => {
 
     test('should not update immutable fields', () => {
       const team = new Team({
-        name: 'Wild Cats'
+        name: 'Wild Cats',
       });
 
       const originalId = team.id;
@@ -79,7 +79,7 @@ describe('Team Entity', () => {
     test('should convert to JSON', () => {
       const team = new Team({
         name: 'Wild Cats',
-        coach: 'Coach Smith'
+        coach: 'Coach Smith',
       });
 
       const json = team.toJSON();
@@ -96,7 +96,7 @@ describe('Team Entity', () => {
     test('should validate team data', () => {
       const team = new Team({
         name: 'Wild Cats',
-        coach: 'Coach Smith'
+        coach: 'Coach Smith',
       });
 
       expect(team.isValid()).toBe(true);

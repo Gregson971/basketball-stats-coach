@@ -11,11 +11,11 @@ class MockPlayerRepository implements IPlayerRepository {
   }
 
   async findById(id: string): Promise<Player | null> {
-    return this.players.find(p => p.id === id) || null;
+    return this.players.find((p) => p.id === id) || null;
   }
 
   async findByTeamId(teamId: string): Promise<Player[]> {
-    return this.players.filter(p => p.teamId === teamId);
+    return this.players.filter((p) => p.teamId === teamId);
   }
 
   async findAll(): Promise<Player[]> {
@@ -39,23 +39,29 @@ describe('GetPlayersByTeam Use Case', () => {
     mockRepository = new MockPlayerRepository();
     getPlayersByTeam = new GetPlayersByTeam(mockRepository);
 
-    await mockRepository.save(new Player({
-      firstName: 'Ryan',
-      lastName: 'Evans',
-      teamId: 'team-123'
-    }));
+    await mockRepository.save(
+      new Player({
+        firstName: 'Ryan',
+        lastName: 'Evans',
+        teamId: 'team-123',
+      })
+    );
 
-    await mockRepository.save(new Player({
-      firstName: 'Lilly',
-      lastName: 'Evans',
-      teamId: 'team-123'
-    }));
+    await mockRepository.save(
+      new Player({
+        firstName: 'Lilly',
+        lastName: 'Evans',
+        teamId: 'team-123',
+      })
+    );
 
-    await mockRepository.save(new Player({
-      firstName: 'Reed',
-      lastName: 'Smith',
-      teamId: 'team-456'
-    }));
+    await mockRepository.save(
+      new Player({
+        firstName: 'Reed',
+        lastName: 'Smith',
+        teamId: 'team-456',
+      })
+    );
   });
 
   test('should get all players for a team', async () => {
@@ -63,8 +69,8 @@ describe('GetPlayersByTeam Use Case', () => {
 
     expect(result.success).toBe(true);
     expect(result.players).toHaveLength(2);
-    expect(result.players?.map(p => p.firstName)).toContain('Ryan');
-    expect(result.players?.map(p => p.firstName)).toContain('Lilly');
+    expect(result.players?.map((p) => p.firstName)).toContain('Ryan');
+    expect(result.players?.map((p) => p.firstName)).toContain('Lilly');
   });
 
   test('should return empty array for team with no players', async () => {

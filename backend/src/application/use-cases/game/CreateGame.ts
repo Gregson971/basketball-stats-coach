@@ -17,12 +17,12 @@ export class CreateGame {
 
       return {
         success: true,
-        game: savedGame
+        game: savedGame,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

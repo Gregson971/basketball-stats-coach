@@ -14,7 +14,7 @@ export class GameMapper {
       startedAt: doc.startedAt,
       completedAt: doc.completedAt,
       createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt
+      updatedAt: doc.updatedAt,
     });
   }
 
@@ -30,7 +30,7 @@ export class GameMapper {
       startedAt: game.startedAt || undefined,
       completedAt: game.completedAt || undefined,
       createdAt: game.createdAt,
-      updatedAt: game.updatedAt
+      updatedAt: game.updatedAt,
     };
   }
 }

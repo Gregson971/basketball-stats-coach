@@ -6,8 +6,8 @@ export interface PlayerData {
   lastName: string;
   teamId: string;
   nickname?: string | null;
-  height?: number | null;  // in cm
-  weight?: number | null;  // in kg
+  height?: number | null; // in cm
+  weight?: number | null; // in kg
   age?: number | null;
   gender?: 'M' | 'F' | null;
   grade?: string | null;
@@ -93,7 +93,7 @@ export class Player {
   public update(data: Partial<PlayerData>): void {
     const immutableFields = ['id', 'createdAt', 'teamId'];
 
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       if (!immutableFields.includes(key) && key in this) {
         (this as any)[key] = (data as any)[key];
       }
@@ -126,7 +126,7 @@ export class Player {
       grade: this.grade,
       position: this.position,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
     };
   }
 }

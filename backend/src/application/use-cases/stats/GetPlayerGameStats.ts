@@ -17,18 +17,18 @@ export class GetPlayerGameStats {
       if (!gameStats) {
         return {
           success: false,
-          error: 'Game stats not found'
+          error: 'Game stats not found',
         };
       }
 
       return {
         success: true,
-        gameStats
+        gameStats,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

@@ -1,4 +1,3 @@
-
 import { Game, GameData } from '../../../src/domain/entities/Game';
 
 describe('Game Entity', () => {
@@ -6,7 +5,7 @@ describe('Game Entity', () => {
     test('should create a valid game with required fields', () => {
       const gameData: GameData = {
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       };
 
       const game = new Game(gameData);
@@ -26,7 +25,7 @@ describe('Game Entity', () => {
         opponent: 'Tigers',
         gameDate: gameDate,
         location: 'Home Court',
-        notes: 'Championship game'
+        notes: 'Championship game',
       };
 
       const game = new Game(gameData);
@@ -38,7 +37,7 @@ describe('Game Entity', () => {
 
     test('should throw error if teamId is missing', () => {
       const gameData = {
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       } as GameData;
 
       expect(() => new Game(gameData)).toThrow('Team ID is required');
@@ -46,7 +45,7 @@ describe('Game Entity', () => {
 
     test('should throw error if opponent is missing', () => {
       const gameData = {
-        teamId: 'team-123'
+        teamId: 'team-123',
       } as GameData;
 
       expect(() => new Game(gameData)).toThrow('Opponent is required');
@@ -56,7 +55,7 @@ describe('Game Entity', () => {
       const gameData: GameData = {
         teamId: 'team-123',
         opponent: 'Tigers',
-        status: 'invalid_status' as any
+        status: 'invalid_status' as any,
       };
 
       expect(() => new Game(gameData)).toThrow('Invalid game status');
@@ -67,7 +66,7 @@ describe('Game Entity', () => {
     test('should start a game', () => {
       const game = new Game({
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       });
 
       game.start();
@@ -79,7 +78,7 @@ describe('Game Entity', () => {
     test('should not start an already started game', () => {
       const game = new Game({
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       });
 
       game.start();
@@ -90,7 +89,7 @@ describe('Game Entity', () => {
     test('should complete a game', () => {
       const game = new Game({
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       });
 
       game.start();
@@ -103,7 +102,7 @@ describe('Game Entity', () => {
     test('should not complete a game that has not started', () => {
       const game = new Game({
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       });
 
       expect(() => game.complete()).toThrow('Game must be in progress to complete');
@@ -112,7 +111,7 @@ describe('Game Entity', () => {
     test('should check if game is in progress', () => {
       const game = new Game({
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       });
 
       expect(game.isInProgress()).toBe(false);
@@ -127,7 +126,7 @@ describe('Game Entity', () => {
     test('should check if game is completed', () => {
       const game = new Game({
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       });
 
       expect(game.isCompleted()).toBe(false);
@@ -144,14 +143,14 @@ describe('Game Entity', () => {
     test('should update game info', () => {
       const game = new Game({
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       });
 
       const newDate = new Date('2024-01-20');
       game.update({
         gameDate: newDate,
         location: 'Away Court',
-        notes: 'Important match'
+        notes: 'Important match',
       });
 
       expect(game.gameDate).toEqual(newDate);
@@ -162,7 +161,7 @@ describe('Game Entity', () => {
     test('should not update immutable fields', () => {
       const game = new Game({
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       });
 
       const originalId = game.id;
@@ -172,7 +171,7 @@ describe('Game Entity', () => {
       game.update({
         id: 'new-id',
         createdAt: new Date(),
-        teamId: 'new-team-id'
+        teamId: 'new-team-id',
       } as any);
 
       expect(game.id).toBe(originalId);
@@ -184,7 +183,7 @@ describe('Game Entity', () => {
       const game = new Game({
         teamId: 'team-123',
         opponent: 'Tigers',
-        location: 'Home Court'
+        location: 'Home Court',
       });
 
       const json = game.toJSON();
@@ -203,7 +202,7 @@ describe('Game Entity', () => {
     test('should validate game data', () => {
       const game = new Game({
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       });
 
       expect(game.isValid()).toBe(true);

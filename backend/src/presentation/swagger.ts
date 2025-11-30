@@ -9,44 +9,44 @@ const options: swaggerJsdoc.Options = {
       description: 'API REST pour le suivi statistique de basketball en temps réel',
       contact: {
         name: 'StatCoach Pro Support',
-        email: 'support@statcoach.pro'
+        email: 'support@statcoach.pro',
       },
       license: {
         name: 'MIT',
-        url: 'https://opensource.org/licenses/MIT'
-      }
+        url: 'https://opensource.org/licenses/MIT',
+      },
     },
     servers: [
       {
         url: 'http://localhost:3000',
-        description: 'Serveur de développement'
+        description: 'Serveur de développement',
       },
       {
         url: 'https://basketball-stats-coach-production.up.railway.app',
-        description: 'Serveur de production'
-      }
+        description: 'Serveur de production',
+      },
     ],
     tags: [
       {
         name: 'Players',
-        description: 'Gestion des joueurs'
+        description: 'Gestion des joueurs',
       },
       {
         name: 'Teams',
-        description: 'Gestion des équipes'
+        description: 'Gestion des équipes',
       },
       {
         name: 'Games',
-        description: 'Gestion des matchs'
+        description: 'Gestion des matchs',
       },
       {
         name: 'Stats',
-        description: 'Gestion des statistiques'
+        description: 'Gestion des statistiques',
       },
       {
         name: 'Health',
-        description: 'Santé de l\'API'
-      }
+        description: "Santé de l'API",
+      },
     ],
     components: {
       schemas: {
@@ -56,59 +56,59 @@ const options: swaggerJsdoc.Options = {
           properties: {
             id: {
               type: 'string',
-              description: 'Identifiant unique du joueur'
+              description: 'Identifiant unique du joueur',
             },
             firstName: {
               type: 'string',
-              description: 'Prénom du joueur'
+              description: 'Prénom du joueur',
             },
             lastName: {
               type: 'string',
-              description: 'Nom du joueur'
+              description: 'Nom du joueur',
             },
             teamId: {
               type: 'string',
-              description: 'Identifiant de l\'équipe'
+              description: "Identifiant de l'équipe",
             },
             nickname: {
               type: 'string',
-              description: 'Surnom du joueur'
+              description: 'Surnom du joueur',
             },
             position: {
               type: 'string',
               enum: ['Guard', 'Forward', 'Center'],
-              description: 'Position du joueur'
+              description: 'Position du joueur',
             },
             height: {
               type: 'number',
-              description: 'Taille en cm'
+              description: 'Taille en cm',
             },
             weight: {
               type: 'number',
-              description: 'Poids en kg'
+              description: 'Poids en kg',
             },
             age: {
               type: 'number',
-              description: 'Âge du joueur'
+              description: 'Âge du joueur',
             },
             gender: {
               type: 'string',
               enum: ['M', 'F'],
-              description: 'Genre du joueur'
+              description: 'Genre du joueur',
             },
             grade: {
               type: 'string',
-              description: 'Niveau scolaire'
+              description: 'Niveau scolaire',
             },
             createdAt: {
               type: 'string',
-              format: 'date-time'
+              format: 'date-time',
             },
             updatedAt: {
               type: 'string',
-              format: 'date-time'
-            }
-          }
+              format: 'date-time',
+            },
+          },
         },
         Team: {
           type: 'object',
@@ -116,33 +116,33 @@ const options: swaggerJsdoc.Options = {
           properties: {
             id: {
               type: 'string',
-              description: 'Identifiant unique de l\'équipe'
+              description: "Identifiant unique de l'équipe",
             },
             name: {
               type: 'string',
-              description: 'Nom de l\'équipe'
+              description: "Nom de l'équipe",
             },
             coach: {
               type: 'string',
-              description: 'Nom de l\'entraîneur'
+              description: "Nom de l'entraîneur",
             },
             season: {
               type: 'string',
-              description: 'Saison (ex: 2024-2025)'
+              description: 'Saison (ex: 2024-2025)',
             },
             league: {
               type: 'string',
-              description: 'Ligue ou championnat'
+              description: 'Ligue ou championnat',
             },
             createdAt: {
               type: 'string',
-              format: 'date-time'
+              format: 'date-time',
             },
             updatedAt: {
               type: 'string',
-              format: 'date-time'
-            }
-          }
+              format: 'date-time',
+            },
+          },
         },
         Game: {
           type: 'object',
@@ -150,191 +150,191 @@ const options: swaggerJsdoc.Options = {
           properties: {
             id: {
               type: 'string',
-              description: 'Identifiant unique du match'
+              description: 'Identifiant unique du match',
             },
             teamId: {
               type: 'string',
-              description: 'Identifiant de l\'équipe'
+              description: "Identifiant de l'équipe",
             },
             opponent: {
               type: 'string',
-              description: 'Nom de l\'adversaire'
+              description: "Nom de l'adversaire",
             },
             gameDate: {
               type: 'string',
               format: 'date-time',
-              description: 'Date du match'
+              description: 'Date du match',
             },
             location: {
               type: 'string',
-              description: 'Lieu du match'
+              description: 'Lieu du match',
             },
             notes: {
               type: 'string',
-              description: 'Notes sur le match'
+              description: 'Notes sur le match',
             },
             status: {
               type: 'string',
               enum: ['not_started', 'in_progress', 'completed'],
-              description: 'Statut du match'
+              description: 'Statut du match',
             },
             startedAt: {
               type: 'string',
               format: 'date-time',
-              description: 'Date de début du match'
+              description: 'Date de début du match',
             },
             completedAt: {
               type: 'string',
               format: 'date-time',
-              description: 'Date de fin du match'
+              description: 'Date de fin du match',
             },
             createdAt: {
               type: 'string',
-              format: 'date-time'
+              format: 'date-time',
             },
             updatedAt: {
               type: 'string',
-              format: 'date-time'
-            }
-          }
+              format: 'date-time',
+            },
+          },
         },
         GameStats: {
           type: 'object',
           properties: {
             gameId: {
               type: 'string',
-              description: 'Identifiant du match'
+              description: 'Identifiant du match',
             },
             playerId: {
               type: 'string',
-              description: 'Identifiant du joueur'
+              description: 'Identifiant du joueur',
             },
             freeThrowsMade: {
               type: 'number',
-              description: 'Lancers francs réussis'
+              description: 'Lancers francs réussis',
             },
             freeThrowsAttempted: {
               type: 'number',
-              description: 'Lancers francs tentés'
+              description: 'Lancers francs tentés',
             },
             twoPointsMade: {
               type: 'number',
-              description: 'Paniers à 2 points réussis'
+              description: 'Paniers à 2 points réussis',
             },
             twoPointsAttempted: {
               type: 'number',
-              description: 'Tirs à 2 points tentés'
+              description: 'Tirs à 2 points tentés',
             },
             threePointsMade: {
               type: 'number',
-              description: 'Paniers à 3 points réussis'
+              description: 'Paniers à 3 points réussis',
             },
             threePointsAttempted: {
               type: 'number',
-              description: 'Tirs à 3 points tentés'
+              description: 'Tirs à 3 points tentés',
             },
             offensiveRebounds: {
               type: 'number',
-              description: 'Rebonds offensifs'
+              description: 'Rebonds offensifs',
             },
             defensiveRebounds: {
               type: 'number',
-              description: 'Rebonds défensifs'
+              description: 'Rebonds défensifs',
             },
             assists: {
               type: 'number',
-              description: 'Passes décisives'
+              description: 'Passes décisives',
             },
             steals: {
               type: 'number',
-              description: 'Interceptions'
+              description: 'Interceptions',
             },
             blocks: {
               type: 'number',
-              description: 'Contres'
+              description: 'Contres',
             },
             turnovers: {
               type: 'number',
-              description: 'Pertes de balle'
+              description: 'Pertes de balle',
             },
             personalFouls: {
               type: 'number',
-              description: 'Fautes personnelles'
-            }
-          }
+              description: 'Fautes personnelles',
+            },
+          },
         },
         CareerStats: {
           type: 'object',
           properties: {
             playerId: {
-              type: 'string'
+              type: 'string',
             },
             gamesPlayed: {
-              type: 'number'
+              type: 'number',
             },
             totalPoints: {
-              type: 'number'
+              type: 'number',
             },
             totalRebounds: {
-              type: 'number'
+              type: 'number',
             },
             totalAssists: {
-              type: 'number'
+              type: 'number',
             },
             averagePoints: {
-              type: 'number'
+              type: 'number',
             },
             averageRebounds: {
-              type: 'number'
+              type: 'number',
             },
             averageAssists: {
-              type: 'number'
+              type: 'number',
             },
             fieldGoalPercentage: {
-              type: 'number'
+              type: 'number',
             },
             freeThrowPercentage: {
-              type: 'number'
+              type: 'number',
             },
             threePointPercentage: {
-              type: 'number'
-            }
-          }
+              type: 'number',
+            },
+          },
         },
         Error: {
           type: 'object',
           properties: {
             success: {
               type: 'boolean',
-              example: false
+              example: false,
             },
             error: {
               type: 'string',
-              description: 'Message d\'erreur'
-            }
-          }
+              description: "Message d'erreur",
+            },
+          },
         },
         Success: {
           type: 'object',
           properties: {
             success: {
               type: 'boolean',
-              example: true
+              example: true,
             },
             message: {
-              type: 'string'
-            }
-          }
-        }
-      }
-    }
+              type: 'string',
+            },
+          },
+        },
+      },
+    },
   },
   apis: [
     './src/presentation/routes/*.ts',
     './src/presentation/app.ts',
     './dist/src/presentation/routes/*.js',
-    './dist/src/presentation/app.js'
-  ]
+    './dist/src/presentation/app.js',
+  ],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

@@ -91,7 +91,7 @@ export class Game {
   public update(data: Partial<GameData>): void {
     const immutableFields = ['id', 'createdAt', 'teamId', 'startedAt', 'completedAt'];
 
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       if (!immutableFields.includes(key) && key in this) {
         (this as any)[key] = (data as any)[key];
       }
@@ -122,7 +122,7 @@ export class Game {
       startedAt: this.startedAt,
       completedAt: this.completedAt,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
     };
   }
 }

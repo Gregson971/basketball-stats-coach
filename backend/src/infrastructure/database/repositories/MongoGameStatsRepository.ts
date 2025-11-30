@@ -1,5 +1,8 @@
 import { GameStats } from '../../../domain/entities/GameStats';
-import { IGameStatsRepository, PlayerAggregateStats } from '../../../domain/repositories/GameStatsRepository';
+import {
+  IGameStatsRepository,
+  PlayerAggregateStats,
+} from '../../../domain/repositories/GameStatsRepository';
 import { GameStatsModel } from '../mongodb/models/GameStatsModel';
 import { GameStatsMapper } from '../mongodb/mappers/GameStatsMapper';
 
@@ -11,12 +14,12 @@ export class MongoGameStatsRepository implements IGameStatsRepository {
 
   async findByGameId(gameId: string): Promise<GameStats[]> {
     const docs = await GameStatsModel.find({ gameId }).exec();
-    return docs.map(doc => GameStatsMapper.toDomain(doc));
+    return docs.map((doc) => GameStatsMapper.toDomain(doc));
   }
 
   async findByPlayerId(playerId: string): Promise<GameStats[]> {
     const docs = await GameStatsModel.find({ playerId }).sort({ createdAt: -1 }).exec();
-    return docs.map(doc => GameStatsMapper.toDomain(doc));
+    return docs.map((doc) => GameStatsMapper.toDomain(doc));
   }
 
   async findByGameAndPlayer(gameId: string, playerId: string): Promise<GameStats | null> {
@@ -27,11 +30,11 @@ export class MongoGameStatsRepository implements IGameStatsRepository {
   async save(gameStats: GameStats): Promise<GameStats> {
     const data = GameStatsMapper.toPersistence(gameStats);
 
-    const doc = await GameStatsModel.findByIdAndUpdate(
-      gameStats.id,
-      data,
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    ).exec();
+    const doc = await GameStatsModel.findByIdAndUpdate(gameStats.id, data, {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+    }).exec();
 
     if (!doc) {
       throw new Error('Failed to save game stats');
@@ -63,37 +66,41 @@ export class MongoGameStatsRepository implements IGameStatsRepository {
         averageAssists: 0,
         fieldGoalPercentage: 0,
         freeThrowPercentage: 0,
-        threePointPercentage: 0
+        threePointPercentage: 0,
       };
     }
 
-    const totals = allStats.reduce((acc, stats) => ({
-      points: acc.points + stats.getTotalPoints(),
-      rebounds: acc.rebounds + stats.getTotalRebounds(),
-      assists: acc.assists + stats.assists,
-      steals: acc.steals + stats.steals,
-      blocks: acc.blocks + stats.blocks,
-      turnovers: acc.turnovers + stats.turnovers,
-      fieldGoalsMade: acc.fieldGoalsMade + stats.twoPointsMade + stats.threePointsMade,
-      fieldGoalsAttempted: acc.fieldGoalsAttempted + stats.twoPointsAttempted + stats.threePointsAttempted,
-      freeThrowsMade: acc.freeThrowsMade + stats.freeThrowsMade,
-      freeThrowsAttempted: acc.freeThrowsAttempted + stats.freeThrowsAttempted,
-      threePointsMade: acc.threePointsMade + stats.threePointsMade,
-      threePointsAttempted: acc.threePointsAttempted + stats.threePointsAttempted
-    }), {
-      points: 0,
-      rebounds: 0,
-      assists: 0,
-      steals: 0,
-      blocks: 0,
-      turnovers: 0,
-      fieldGoalsMade: 0,
-      fieldGoalsAttempted: 0,
-      freeThrowsMade: 0,
-      freeThrowsAttempted: 0,
-      threePointsMade: 0,
-      threePointsAttempted: 0
-    });
+    const totals = allStats.reduce(
+      (acc, stats) => ({
+        points: acc.points + stats.getTotalPoints(),
+        rebounds: acc.rebounds + stats.getTotalRebounds(),
+        assists: acc.assists + stats.assists,
+        steals: acc.steals + stats.steals,
+        blocks: acc.blocks + stats.blocks,
+        turnovers: acc.turnovers + stats.turnovers,
+        fieldGoalsMade: acc.fieldGoalsMade + stats.twoPointsMade + stats.threePointsMade,
+        fieldGoalsAttempted:
+          acc.fieldGoalsAttempted + stats.twoPointsAttempted + stats.threePointsAttempted,
+        freeThrowsMade: acc.freeThrowsMade + stats.freeThrowsMade,
+        freeThrowsAttempted: acc.freeThrowsAttempted + stats.freeThrowsAttempted,
+        threePointsMade: acc.threePointsMade + stats.threePointsMade,
+        threePointsAttempted: acc.threePointsAttempted + stats.threePointsAttempted,
+      }),
+      {
+        points: 0,
+        rebounds: 0,
+        assists: 0,
+        steals: 0,
+        blocks: 0,
+        turnovers: 0,
+        fieldGoalsMade: 0,
+        fieldGoalsAttempted: 0,
+        freeThrowsMade: 0,
+        freeThrowsAttempted: 0,
+        threePointsMade: 0,
+        threePointsAttempted: 0,
+      }
+    );
 
     const gamesPlayed = allStats.length;
 
@@ -109,15 +116,18 @@ export class MongoGameStatsRepository implements IGameStatsRepository {
       averagePoints: Math.round((totals.points / gamesPlayed) * 10) / 10,
       averageRebounds: Math.round((totals.rebounds / gamesPlayed) * 10) / 10,
       averageAssists: Math.round((totals.assists / gamesPlayed) * 10) / 10,
-      fieldGoalPercentage: totals.fieldGoalsAttempted > 0
-        ? Math.round((totals.fieldGoalsMade / totals.fieldGoalsAttempted) * 1000) / 10
-        : 0,
-      freeThrowPercentage: totals.freeThrowsAttempted > 0
-        ? Math.round((totals.freeThrowsMade / totals.freeThrowsAttempted) * 1000) / 10
-        : 0,
-      threePointPercentage: totals.threePointsAttempted > 0
-        ? Math.round((totals.threePointsMade / totals.threePointsAttempted) * 1000) / 10
-        : 0
+      fieldGoalPercentage:
+        totals.fieldGoalsAttempted > 0
+          ? Math.round((totals.fieldGoalsMade / totals.fieldGoalsAttempted) * 1000) / 10
+          : 0,
+      freeThrowPercentage:
+        totals.freeThrowsAttempted > 0
+          ? Math.round((totals.freeThrowsMade / totals.freeThrowsAttempted) * 1000) / 10
+          : 0,
+      threePointPercentage:
+        totals.threePointsAttempted > 0
+          ? Math.round((totals.threePointsMade / totals.threePointsAttempted) * 1000) / 10
+          : 0,
     };
   }
 }

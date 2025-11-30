@@ -6,7 +6,7 @@ class MockGameRepository implements IGameRepository {
   public games: Game[] = [];
 
   async findById(id: string): Promise<Game | null> {
-    return this.games.find(g => g.id === id) || null;
+    return this.games.find((g) => g.id === id) || null;
   }
 
   async save(game: Game): Promise<Game> {
@@ -15,7 +15,7 @@ class MockGameRepository implements IGameRepository {
   }
 
   async findByTeamId(teamId: string): Promise<Game[]> {
-    return this.games.filter(g => g.teamId === teamId);
+    return this.games.filter((g) => g.teamId === teamId);
   }
 
   async findAll(): Promise<Game[]> {
@@ -71,6 +71,6 @@ describe('GetGamesByTeam Use Case', () => {
 
     expect(result.success).toBe(true);
     expect(result.games?.length).toBe(2);
-    expect(result.games?.every(g => g.teamId === 'team-A')).toBe(true);
+    expect(result.games?.every((g) => g.teamId === 'team-A')).toBe(true);
   });
 });

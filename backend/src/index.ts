@@ -29,15 +29,16 @@ async function startServer() {
       playerRepository,
       teamRepository,
       gameRepository,
-      gameStatsRepository
+      gameStatsRepository,
     });
 
     // Start server
     app.listen(PORT, () => {
       console.log('🚀 Server started successfully!');
-      const apiUrl = process.env.NODE_ENV === 'production'
-        ? process.env.API_URL || 'https://basketball-stats-coach-production.up.railway.app'
-        : `http://localhost:${PORT}`;
+      const apiUrl =
+        process.env.NODE_ENV === 'production'
+          ? process.env.API_URL || 'https://basketball-stats-coach-production.up.railway.app'
+          : `http://localhost:${PORT}`;
       console.log(`📍 API running at: ${apiUrl}`);
       console.log(`📚 Swagger docs: ${apiUrl}/api-docs`);
       console.log(`🏥 Health check: ${apiUrl}/health`);

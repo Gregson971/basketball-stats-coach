@@ -15,19 +15,19 @@ export class DeleteTeam {
       if (!team) {
         return {
           success: false,
-          error: 'Team not found'
+          error: 'Team not found',
         };
       }
 
       await this.teamRepository.delete(teamId);
 
       return {
-        success: true
+        success: true,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

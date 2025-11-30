@@ -16,11 +16,11 @@ const TeamSchema = new Schema<ITeamDocument>(
     name: { type: String, required: true, trim: true },
     coach: { type: String, trim: true },
     season: { type: String, trim: true },
-    league: { type: String, trim: true }
+    league: { type: String, trim: true },
   },
   {
     timestamps: true,
-    collection: 'teams'
+    collection: 'teams',
   }
 );
 

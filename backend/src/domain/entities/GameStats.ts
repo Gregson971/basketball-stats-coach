@@ -186,9 +186,7 @@ export class GameStats {
   }
 
   public getTotalPoints(): number {
-    return (this.freeThrowsMade * 1) +
-           (this.twoPointsMade * 2) +
-           (this.threePointsMade * 3);
+    return this.freeThrowsMade * 1 + this.twoPointsMade * 2 + this.threePointsMade * 3;
   }
 
   public getTotalRebounds(): number {
@@ -299,7 +297,7 @@ export class GameStats {
       freeThrowPercentage: this.getFreeThrowPercentage(),
       threePointPercentage: this.getThreePointPercentage(),
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
     };
   }
 }

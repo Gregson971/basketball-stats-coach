@@ -6,7 +6,7 @@ class MockGameRepository implements IGameRepository {
   public games: Game[] = [];
 
   async findById(id: string): Promise<Game | null> {
-    return this.games.find(g => g.id === id) || null;
+    return this.games.find((g) => g.id === id) || null;
   }
 
   async save(game: Game): Promise<Game> {
@@ -27,7 +27,7 @@ class MockGameRepository implements IGameRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.games.findIndex(g => g.id === id);
+    const index = this.games.findIndex((g) => g.id === id);
     if (index >= 0) {
       this.games.splice(index, 1);
       return true;

@@ -5,7 +5,7 @@ import {
   MockPlayerRepository,
   MockTeamRepository,
   MockGameRepository,
-  MockGameStatsRepository
+  MockGameStatsRepository,
 } from './setup/mockRepositories';
 
 describe('Stats API Endpoints', () => {
@@ -23,7 +23,7 @@ describe('Stats API Endpoints', () => {
       playerRepository,
       teamRepository,
       gameRepository,
-      gameStatsRepository
+      gameStatsRepository,
     });
   });
 
@@ -45,7 +45,7 @@ describe('Stats API Endpoints', () => {
       const actionData = {
         playerId: 'player-1',
         actionType: 'twoPoint',
-        made: true
+        made: true,
       };
 
       const response = await request(app)
@@ -176,8 +176,7 @@ describe('Stats API Endpoints', () => {
         .send({ playerId: 'player-1', actionType: 'assist' });
 
       // Undo la seule action
-      await request(app)
-        .delete(`/api/stats/games/${gameId}/actions/player-1`);
+      await request(app).delete(`/api/stats/games/${gameId}/actions/player-1`);
 
       // Essayer d'undo à nouveau
       const response = await request(app)
@@ -287,9 +286,7 @@ describe('Stats API Endpoints', () => {
         .post(`/api/stats/games/${game2Id}/actions`)
         .send({ playerId: 'player-1', actionType: 'assist' });
 
-      const response = await request(app)
-        .get('/api/stats/players/player-1/career')
-        .expect(200);
+      const response = await request(app).get('/api/stats/players/player-1/career').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.stats).toBeDefined();

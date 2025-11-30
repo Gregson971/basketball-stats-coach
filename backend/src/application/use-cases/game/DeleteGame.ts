@@ -15,19 +15,19 @@ export class DeleteGame {
       if (!game) {
         return {
           success: false,
-          error: 'Game not found'
+          error: 'Game not found',
         };
       }
 
       await this.gameRepository.delete(gameId);
 
       return {
-        success: true
+        success: true,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

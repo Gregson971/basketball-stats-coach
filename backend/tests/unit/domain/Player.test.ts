@@ -6,7 +6,7 @@ describe('Player Entity', () => {
       const playerData: PlayerData = {
         firstName: 'John',
         lastName: 'Doe',
-        teamId: 'team-123'
+        teamId: 'team-123',
       };
 
       const player = new Player(playerData);
@@ -30,7 +30,7 @@ describe('Player Entity', () => {
         age: 24,
         gender: 'M',
         grade: '10',
-        position: 'Power Forward'
+        position: 'Power Forward',
       };
 
       const player = new Player(playerData);
@@ -47,7 +47,7 @@ describe('Player Entity', () => {
     test('should throw error if firstName is missing', () => {
       const playerData = {
         lastName: 'Doe',
-        teamId: 'team-123'
+        teamId: 'team-123',
       } as PlayerData;
 
       expect(() => new Player(playerData)).toThrow('First name is required');
@@ -56,7 +56,7 @@ describe('Player Entity', () => {
     test('should throw error if lastName is missing', () => {
       const playerData = {
         firstName: 'John',
-        teamId: 'team-123'
+        teamId: 'team-123',
       } as PlayerData;
 
       expect(() => new Player(playerData)).toThrow('Last name is required');
@@ -65,7 +65,7 @@ describe('Player Entity', () => {
     test('should throw error if teamId is missing', () => {
       const playerData = {
         firstName: 'John',
-        lastName: 'Doe'
+        lastName: 'Doe',
       } as PlayerData;
 
       expect(() => new Player(playerData)).toThrow('Team ID is required');
@@ -76,7 +76,7 @@ describe('Player Entity', () => {
         firstName: 'John',
         lastName: 'Doe',
         teamId: 'team-123',
-        height: -10
+        height: -10,
       };
 
       expect(() => new Player(playerData)).toThrow('Height must be positive');
@@ -87,7 +87,7 @@ describe('Player Entity', () => {
         firstName: 'John',
         lastName: 'Doe',
         teamId: 'team-123',
-        weight: -10
+        weight: -10,
       };
 
       expect(() => new Player(playerData)).toThrow('Weight must be positive');
@@ -98,7 +98,7 @@ describe('Player Entity', () => {
         firstName: 'John',
         lastName: 'Doe',
         teamId: 'team-123',
-        age: -5
+        age: -5,
       };
 
       expect(() => new Player(playerData)).toThrow('Age must be between 5 and 100');
@@ -109,7 +109,7 @@ describe('Player Entity', () => {
         firstName: 'John',
         lastName: 'Doe',
         teamId: 'team-123',
-        gender: 'X' as any
+        gender: 'X' as any,
       };
 
       expect(() => new Player(playerData)).toThrow('Gender must be M or F');
@@ -121,7 +121,7 @@ describe('Player Entity', () => {
       const player = new Player({
         firstName: 'Ryan',
         lastName: 'Evans',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       expect(player.getFullName()).toBe('Ryan Evans');
@@ -132,7 +132,7 @@ describe('Player Entity', () => {
         firstName: 'Ryan',
         lastName: 'Evans',
         teamId: 'team-123',
-        nickname: 'The Rocket'
+        nickname: 'The Rocket',
       });
 
       expect(player.getDisplayName()).toBe('The Rocket (Ryan Evans)');
@@ -142,7 +142,7 @@ describe('Player Entity', () => {
       const player = new Player({
         firstName: 'Ryan',
         lastName: 'Evans',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       expect(player.getDisplayName()).toBe('Ryan Evans');
@@ -152,13 +152,13 @@ describe('Player Entity', () => {
       const player = new Player({
         firstName: 'Ryan',
         lastName: 'Evans',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       const originalUpdatedAt = player.updatedAt;
 
       // Wait a bit to ensure timestamp changes
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       player.update({ nickname: 'The Rocket', age: 24 });
 
@@ -171,7 +171,7 @@ describe('Player Entity', () => {
       const player = new Player({
         firstName: 'Ryan',
         lastName: 'Evans',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       const originalId = player.id;
@@ -188,7 +188,7 @@ describe('Player Entity', () => {
         firstName: 'Ryan',
         lastName: 'Evans',
         teamId: 'team-123',
-        nickname: 'The Rocket'
+        nickname: 'The Rocket',
       });
 
       const json = player.toJSON();
@@ -211,7 +211,7 @@ describe('Player Entity', () => {
         height: 202.5,
         weight: 95.5,
         age: 24,
-        gender: 'M'
+        gender: 'M',
       });
 
       expect(player.isValid()).toBe(true);
@@ -221,7 +221,7 @@ describe('Player Entity', () => {
       const player = new Player({
         firstName: 'Ryan',
         lastName: 'Evans',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       // Manually set invalid data (bypassing constructor validation)

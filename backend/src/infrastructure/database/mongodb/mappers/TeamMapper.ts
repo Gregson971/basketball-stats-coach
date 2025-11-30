@@ -10,7 +10,7 @@ export class TeamMapper {
       season: doc.season,
       league: doc.league,
       createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt
+      updatedAt: doc.updatedAt,
     });
   }
 
@@ -22,7 +22,7 @@ export class TeamMapper {
       season: team.season || undefined,
       league: team.league || undefined,
       createdAt: team.createdAt,
-      updatedAt: team.updatedAt
+      updatedAt: team.updatedAt,
     };
   }
 }

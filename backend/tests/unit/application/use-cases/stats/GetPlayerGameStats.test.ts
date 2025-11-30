@@ -1,6 +1,9 @@
 import { GetPlayerGameStats } from '../../../../../src/application/use-cases/stats/GetPlayerGameStats';
 import { GameStats } from '../../../../../src/domain/entities/GameStats';
-import { IGameStatsRepository, PlayerAggregateStats } from '../../../../../src/domain/repositories/GameStatsRepository';
+import {
+  IGameStatsRepository,
+  PlayerAggregateStats,
+} from '../../../../../src/domain/repositories/GameStatsRepository';
 
 class MockGameStatsRepository implements IGameStatsRepository {
   private stats: GameStats[] = [];
@@ -18,7 +21,7 @@ class MockGameStatsRepository implements IGameStatsRepository {
   }
 
   async findByGameAndPlayer(gameId: string, playerId: string): Promise<GameStats | null> {
-    return this.stats.find(s => s.gameId === gameId && s.playerId === playerId) || null;
+    return this.stats.find((s) => s.gameId === gameId && s.playerId === playerId) || null;
   }
 
   async save(gameStats: GameStats): Promise<GameStats> {
@@ -45,7 +48,7 @@ class MockGameStatsRepository implements IGameStatsRepository {
       averageAssists: 0,
       fieldGoalPercentage: 0,
       freeThrowPercentage: 0,
-      threePointPercentage: 0
+      threePointPercentage: 0,
     };
   }
 }
@@ -62,7 +65,7 @@ describe('GetPlayerGameStats Use Case', () => {
   test('should get player game stats successfully', async () => {
     const gameStats = new GameStats({
       gameId: 'game-1',
-      playerId: 'player-1'
+      playerId: 'player-1',
     });
     gameStats.recordTwoPoint(true);
     gameStats.recordThreePoint(true);
@@ -82,7 +85,7 @@ describe('GetPlayerGameStats Use Case', () => {
   test('should return calculated stats', async () => {
     const gameStats = new GameStats({
       gameId: 'game-2',
-      playerId: 'player-2'
+      playerId: 'player-2',
     });
     gameStats.recordTwoPoint(true);
     gameStats.recordThreePoint(true);
@@ -99,7 +102,7 @@ describe('GetPlayerGameStats Use Case', () => {
   test('should return stats with shooting percentages', async () => {
     const gameStats = new GameStats({
       gameId: 'game-3',
-      playerId: 'player-3'
+      playerId: 'player-3',
     });
     gameStats.recordTwoPoint(true);
     gameStats.recordTwoPoint(false);
@@ -117,7 +120,7 @@ describe('GetPlayerGameStats Use Case', () => {
   test('should return stats with rebounds', async () => {
     const gameStats = new GameStats({
       gameId: 'game-4',
-      playerId: 'player-4'
+      playerId: 'player-4',
     });
     gameStats.recordOffensiveRebound();
     gameStats.recordOffensiveRebound();
@@ -135,7 +138,7 @@ describe('GetPlayerGameStats Use Case', () => {
   test('should return stats with defensive actions', async () => {
     const gameStats = new GameStats({
       gameId: 'game-5',
-      playerId: 'player-5'
+      playerId: 'player-5',
     });
     gameStats.recordSteal();
     gameStats.recordSteal();
@@ -152,7 +155,7 @@ describe('GetPlayerGameStats Use Case', () => {
   test('should return stats with turnovers and fouls', async () => {
     const gameStats = new GameStats({
       gameId: 'game-6',
-      playerId: 'player-6'
+      playerId: 'player-6',
     });
     gameStats.recordTurnover();
     gameStats.recordPersonalFoul();
@@ -176,7 +179,7 @@ describe('GetPlayerGameStats Use Case', () => {
   test('should return empty stats when no actions recorded', async () => {
     const gameStats = new GameStats({
       gameId: 'game-7',
-      playerId: 'player-7'
+      playerId: 'player-7',
     });
     await mockRepository.save(gameStats);
 

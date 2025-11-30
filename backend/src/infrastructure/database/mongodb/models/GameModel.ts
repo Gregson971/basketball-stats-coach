@@ -27,14 +27,14 @@ const GameSchema = new Schema<IGameDocument>(
       type: String,
       enum: ['not_started', 'in_progress', 'completed'],
       default: 'not_started',
-      required: true
+      required: true,
     },
     startedAt: { type: Date },
-    completedAt: { type: Date }
+    completedAt: { type: Date },
   },
   {
     timestamps: true,
-    collection: 'games'
+    collection: 'games',
   }
 );
 

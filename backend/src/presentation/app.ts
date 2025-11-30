@@ -46,7 +46,7 @@ export const createApp = (repositories?: RepositoryDependencies): Application =>
     res.status(200).json({
       success: true,
       message: 'StatCoach Pro API is running',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   });
 

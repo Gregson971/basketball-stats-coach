@@ -62,7 +62,11 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *             schema:
    *               $ref: '#/components/schemas/Error'
    */
-  router.post('/', validateRequiredFields(['teamId', 'opponent']), asyncHandler(controller.create.bind(controller)));
+  router.post(
+    '/',
+    validateRequiredFields(['teamId', 'opponent']),
+    asyncHandler(controller.create.bind(controller))
+  );
 
   /**
    * @swagger
@@ -222,7 +226,11 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *             schema:
    *               $ref: '#/components/schemas/Error'
    */
-  router.get('/team/:teamId', validateParam('teamId'), asyncHandler(controller.getByTeam.bind(controller)));
+  router.get(
+    '/team/:teamId',
+    validateParam('teamId'),
+    asyncHandler(controller.getByTeam.bind(controller))
+  );
 
   /**
    * @swagger
@@ -262,7 +270,11 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *             schema:
    *               $ref: '#/components/schemas/Error'
    */
-  router.get('/status/:status', validateParam('status'), asyncHandler(controller.getByStatus.bind(controller)));
+  router.get(
+    '/status/:status',
+    validateParam('status'),
+    asyncHandler(controller.getByStatus.bind(controller))
+  );
 
   /**
    * @swagger
@@ -336,7 +348,11 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *             schema:
    *               $ref: '#/components/schemas/Error'
    */
-  router.post('/:id/complete', validateParam('id'), asyncHandler(controller.complete.bind(controller)));
+  router.post(
+    '/:id/complete',
+    validateParam('id'),
+    asyncHandler(controller.complete.bind(controller))
+  );
 
   return router;
 };

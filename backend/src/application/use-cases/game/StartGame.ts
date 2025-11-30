@@ -18,7 +18,7 @@ export class StartGame {
       if (!game) {
         return {
           success: false,
-          error: 'Game not found'
+          error: 'Game not found',
         };
       }
 
@@ -30,12 +30,12 @@ export class StartGame {
 
       return {
         success: true,
-        game: updatedGame
+        game: updatedGame,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

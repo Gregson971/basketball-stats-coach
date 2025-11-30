@@ -1,4 +1,7 @@
-import { IGameStatsRepository, PlayerAggregateStats } from '../../../domain/repositories/GameStatsRepository';
+import {
+  IGameStatsRepository,
+  PlayerAggregateStats,
+} from '../../../domain/repositories/GameStatsRepository';
 
 export interface GetPlayerCareerStatsResult {
   success: boolean;
@@ -15,12 +18,12 @@ export class GetPlayerCareerStats {
 
       return {
         success: true,
-        stats
+        stats,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

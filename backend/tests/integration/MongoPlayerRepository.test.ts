@@ -23,7 +23,7 @@ describe('MongoPlayerRepository Integration Tests', () => {
       const player = new Player({
         firstName: 'John',
         lastName: 'Doe',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       const saved = await repository.save(player);
@@ -40,7 +40,7 @@ describe('MongoPlayerRepository Integration Tests', () => {
       const player = new Player({
         firstName: 'John',
         lastName: 'Doe',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       await repository.save(player);
@@ -65,19 +65,19 @@ describe('MongoPlayerRepository Integration Tests', () => {
       const player1 = new Player({
         firstName: 'John',
         lastName: 'Doe',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       const player2 = new Player({
         firstName: 'Jane',
         lastName: 'Smith',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       const player3 = new Player({
         firstName: 'Bob',
         lastName: 'Jones',
-        teamId: 'team-456'
+        teamId: 'team-456',
       });
 
       await repository.save(player1);
@@ -86,8 +86,8 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
       const team123Players = await repository.findByTeamId('team-123');
       expect(team123Players).toHaveLength(2);
-      expect(team123Players.map(p => p.id)).toContain(player1.id);
-      expect(team123Players.map(p => p.id)).toContain(player2.id);
+      expect(team123Players.map((p) => p.id)).toContain(player1.id);
+      expect(team123Players.map((p) => p.id)).toContain(player2.id);
     });
 
     test('should return empty array for team with no players', async () => {
@@ -96,23 +96,29 @@ describe('MongoPlayerRepository Integration Tests', () => {
     });
 
     test('should return players sorted by last name', async () => {
-      await repository.save(new Player({
-        firstName: 'Charlie',
-        lastName: 'Zulu',
-        teamId: 'team-123'
-      }));
+      await repository.save(
+        new Player({
+          firstName: 'Charlie',
+          lastName: 'Zulu',
+          teamId: 'team-123',
+        })
+      );
 
-      await repository.save(new Player({
-        firstName: 'Alice',
-        lastName: 'Alpha',
-        teamId: 'team-123'
-      }));
+      await repository.save(
+        new Player({
+          firstName: 'Alice',
+          lastName: 'Alpha',
+          teamId: 'team-123',
+        })
+      );
 
-      await repository.save(new Player({
-        firstName: 'Bob',
-        lastName: 'Bravo',
-        teamId: 'team-123'
-      }));
+      await repository.save(
+        new Player({
+          firstName: 'Bob',
+          lastName: 'Bravo',
+          teamId: 'team-123',
+        })
+      );
 
       const players = await repository.findByTeamId('team-123');
       expect(players[0].lastName).toBe('Alpha');
@@ -123,17 +129,21 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
   describe('findAll', () => {
     test('should find all players', async () => {
-      await repository.save(new Player({
-        firstName: 'John',
-        lastName: 'Doe',
-        teamId: 'team-123'
-      }));
+      await repository.save(
+        new Player({
+          firstName: 'John',
+          lastName: 'Doe',
+          teamId: 'team-123',
+        })
+      );
 
-      await repository.save(new Player({
-        firstName: 'Jane',
-        lastName: 'Smith',
-        teamId: 'team-456'
-      }));
+      await repository.save(
+        new Player({
+          firstName: 'Jane',
+          lastName: 'Smith',
+          teamId: 'team-456',
+        })
+      );
 
       const all = await repository.findAll();
       expect(all).toHaveLength(2);
@@ -150,7 +160,7 @@ describe('MongoPlayerRepository Integration Tests', () => {
       const player = new Player({
         firstName: 'John',
         lastName: 'Doe',
-        teamId: 'team-123'
+        teamId: 'team-123',
       });
 
       await repository.save(player);
@@ -170,24 +180,30 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
   describe('searchByName', () => {
     beforeEach(async () => {
-      await repository.save(new Player({
-        firstName: 'Ryan',
-        lastName: 'Evans',
-        teamId: 'team-123',
-        nickname: 'The Rocket'
-      }));
+      await repository.save(
+        new Player({
+          firstName: 'Ryan',
+          lastName: 'Evans',
+          teamId: 'team-123',
+          nickname: 'The Rocket',
+        })
+      );
 
-      await repository.save(new Player({
-        firstName: 'Lilly',
-        lastName: 'Evans',
-        teamId: 'team-123'
-      }));
+      await repository.save(
+        new Player({
+          firstName: 'Lilly',
+          lastName: 'Evans',
+          teamId: 'team-123',
+        })
+      );
 
-      await repository.save(new Player({
-        firstName: 'Reed',
-        lastName: 'Smith',
-        teamId: 'team-123'
-      }));
+      await repository.save(
+        new Player({
+          firstName: 'Reed',
+          lastName: 'Smith',
+          teamId: 'team-123',
+        })
+      );
     });
 
     test('should search by first name', async () => {

@@ -5,7 +5,7 @@ import {
   MockPlayerRepository,
   MockTeamRepository,
   MockGameRepository,
-  MockGameStatsRepository
+  MockGameStatsRepository,
 } from './setup/mockRepositories';
 
 describe('Game API Endpoints', () => {
@@ -22,7 +22,7 @@ describe('Game API Endpoints', () => {
       playerRepository,
       teamRepository,
       gameRepository,
-      gameStatsRepository
+      gameStatsRepository,
     });
   });
 
@@ -34,13 +34,10 @@ describe('Game API Endpoints', () => {
     it('should create a new game', async () => {
       const gameData = {
         teamId: 'team-123',
-        opponent: 'Tigers'
+        opponent: 'Tigers',
       };
 
-      const response = await request(app)
-        .post('/api/games')
-        .send(gameData)
-        .expect(201);
+      const response = await request(app).post('/api/games').send(gameData).expect(201);
 
       expect(response.body.success).toBe(true);
       expect(response.body.game).toBeDefined();
@@ -64,13 +61,10 @@ describe('Game API Endpoints', () => {
         teamId: 'team-456',
         opponent: 'Panthers',
         location: 'Main Arena',
-        notes: 'Championship game'
+        notes: 'Championship game',
       };
 
-      const response = await request(app)
-        .post('/api/games')
-        .send(gameData)
-        .expect(201);
+      const response = await request(app).post('/api/games').send(gameData).expect(201);
 
       expect(response.body.game.location).toBe('Main Arena');
       expect(response.body.game.notes).toBe('Championship game');
@@ -79,18 +73,14 @@ describe('Game API Endpoints', () => {
 
   describe('GET /api/games/:id', () => {
     it('should get a game by id', async () => {
-      const createResponse = await request(app)
-        .post('/api/games')
-        .send({
-          teamId: 'team-123',
-          opponent: 'Lions'
-        });
+      const createResponse = await request(app).post('/api/games').send({
+        teamId: 'team-123',
+        opponent: 'Lions',
+      });
 
       const gameId = createResponse.body.game.id;
 
-      const response = await request(app)
-        .get(`/api/games/${gameId}`)
-        .expect(200);
+      const response = await request(app).get(`/api/games/${gameId}`).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.game).toBeDefined();
@@ -98,9 +88,7 @@ describe('Game API Endpoints', () => {
     });
 
     it('should return 404 when game not found', async () => {
-      const response = await request(app)
-        .get('/api/games/non-existent')
-        .expect(404);
+      const response = await request(app).get('/api/games/non-existent').expect(404);
 
       expect(response.body.success).toBe(false);
     });
@@ -108,24 +96,19 @@ describe('Game API Endpoints', () => {
 
   describe('PUT /api/games/:id', () => {
     it('should update a game', async () => {
-      const createResponse = await request(app)
-        .post('/api/games')
-        .send({
-          teamId: 'team-123',
-          opponent: 'Eagles'
-        });
+      const createResponse = await request(app).post('/api/games').send({
+        teamId: 'team-123',
+        opponent: 'Eagles',
+      });
 
       const gameId = createResponse.body.game.id;
 
       const updateData = {
         opponent: 'Super Eagles',
-        location: 'Arena 2'
+        location: 'Arena 2',
       };
 
-      const response = await request(app)
-        .put(`/api/games/${gameId}`)
-        .send(updateData)
-        .expect(200);
+      const response = await request(app).put(`/api/games/${gameId}`).send(updateData).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.game.opponent).toBe('Super Eagles');
@@ -144,30 +127,22 @@ describe('Game API Endpoints', () => {
 
   describe('DELETE /api/games/:id', () => {
     it('should delete a game', async () => {
-      const createResponse = await request(app)
-        .post('/api/games')
-        .send({
-          teamId: 'team-123',
-          opponent: 'To Delete'
-        });
+      const createResponse = await request(app).post('/api/games').send({
+        teamId: 'team-123',
+        opponent: 'To Delete',
+      });
 
       const gameId = createResponse.body.game.id;
 
-      const response = await request(app)
-        .delete(`/api/games/${gameId}`)
-        .expect(200);
+      const response = await request(app).delete(`/api/games/${gameId}`).expect(200);
 
       expect(response.body.success).toBe(true);
 
-      await request(app)
-        .get(`/api/games/${gameId}`)
-        .expect(404);
+      await request(app).get(`/api/games/${gameId}`).expect(404);
     });
 
     it('should return 404 when deleting non-existent game', async () => {
-      const response = await request(app)
-        .delete('/api/games/non-existent')
-        .expect(404);
+      const response = await request(app).delete('/api/games/non-existent').expect(404);
 
       expect(response.body.success).toBe(false);
     });
@@ -179,9 +154,7 @@ describe('Game API Endpoints', () => {
       await request(app).post('/api/games').send({ teamId: 'team-A', opponent: 'Team 2' });
       await request(app).post('/api/games').send({ teamId: 'team-B', opponent: 'Team 3' });
 
-      const response = await request(app)
-        .get('/api/games/team/team-A')
-        .expect(200);
+      const response = await request(app).get('/api/games/team/team-A').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.games).toBeDefined();
@@ -191,9 +164,7 @@ describe('Game API Endpoints', () => {
     });
 
     it('should return empty array when team has no games', async () => {
-      const response = await request(app)
-        .get('/api/games/team/empty-team')
-        .expect(200);
+      const response = await request(app).get('/api/games/team/empty-team').expect(200);
 
       expect(response.body.games).toEqual([]);
     });
@@ -204,9 +175,7 @@ describe('Game API Endpoints', () => {
       await request(app).post('/api/games').send({ teamId: 'team-1', opponent: 'A' });
       await request(app).post('/api/games').send({ teamId: 'team-1', opponent: 'B' });
 
-      const response = await request(app)
-        .get('/api/games/status/not_started')
-        .expect(200);
+      const response = await request(app).get('/api/games/status/not_started').expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.games.length).toBe(2);
@@ -222,9 +191,7 @@ describe('Game API Endpoints', () => {
 
       await request(app).post(`/api/games/${gameId}/start`);
 
-      const response = await request(app)
-        .get('/api/games/status/in_progress')
-        .expect(200);
+      const response = await request(app).get('/api/games/status/in_progress').expect(200);
 
       expect(response.body.games.length).toBe(1);
       expect(response.body.games[0].status).toBe('in_progress');
@@ -233,9 +200,7 @@ describe('Game API Endpoints', () => {
     it('should return empty array when no games match status', async () => {
       await request(app).post('/api/games').send({ teamId: 'team-1', opponent: 'Test' });
 
-      const response = await request(app)
-        .get('/api/games/status/completed')
-        .expect(200);
+      const response = await request(app).get('/api/games/status/completed').expect(200);
 
       expect(response.body.games).toEqual([]);
     });
@@ -249,9 +214,7 @@ describe('Game API Endpoints', () => {
 
       const gameId = createResponse.body.game.id;
 
-      const response = await request(app)
-        .post(`/api/games/${gameId}/start`)
-        .expect(200);
+      const response = await request(app).post(`/api/games/${gameId}/start`).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.game.status).toBe('in_progress');
@@ -259,9 +222,7 @@ describe('Game API Endpoints', () => {
     });
 
     it('should return error when game not found', async () => {
-      const response = await request(app)
-        .post('/api/games/non-existent/start')
-        .expect(400);
+      const response = await request(app).post('/api/games/non-existent/start').expect(400);
 
       expect(response.body.success).toBe(false);
     });
@@ -275,9 +236,7 @@ describe('Game API Endpoints', () => {
 
       await request(app).post(`/api/games/${gameId}/start`);
 
-      const response = await request(app)
-        .post(`/api/games/${gameId}/start`)
-        .expect(400);
+      const response = await request(app).post(`/api/games/${gameId}/start`).expect(400);
 
       expect(response.body.success).toBe(false);
     });
@@ -293,9 +252,7 @@ describe('Game API Endpoints', () => {
 
       await request(app).post(`/api/games/${gameId}/start`);
 
-      const response = await request(app)
-        .post(`/api/games/${gameId}/complete`)
-        .expect(200);
+      const response = await request(app).post(`/api/games/${gameId}/complete`).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.game.status).toBe('completed');
@@ -309,9 +266,7 @@ describe('Game API Endpoints', () => {
 
       const gameId = createResponse.body.game.id;
 
-      const response = await request(app)
-        .post(`/api/games/${gameId}/complete`)
-        .expect(400);
+      const response = await request(app).post(`/api/games/${gameId}/complete`).expect(400);
 
       expect(response.body.success).toBe(false);
     });

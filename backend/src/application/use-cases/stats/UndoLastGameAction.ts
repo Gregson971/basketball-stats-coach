@@ -17,7 +17,7 @@ export class UndoLastGameAction {
       if (!gameStats) {
         return {
           success: false,
-          error: 'Game stats not found'
+          error: 'Game stats not found',
         };
       }
 
@@ -26,12 +26,12 @@ export class UndoLastGameAction {
 
       return {
         success: true,
-        gameStats: updatedStats
+        gameStats: updatedStats,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

@@ -32,14 +32,14 @@ export class PlayerController {
     if (!result.success) {
       res.status(400).json({
         success: false,
-        error: result.error
+        error: result.error,
       });
       return;
     }
 
     res.status(201).json({
       success: true,
-      player: result.player
+      player: result.player,
     });
   }
 
@@ -52,14 +52,14 @@ export class PlayerController {
     if (!result.success) {
       res.status(404).json({
         success: false,
-        error: result.error
+        error: result.error,
       });
       return;
     }
 
     res.status(200).json({
       success: true,
-      player: result.player
+      player: result.player,
     });
   }
 
@@ -72,14 +72,14 @@ export class PlayerController {
     if (!result.success) {
       res.status(404).json({
         success: false,
-        error: result.error
+        error: result.error,
       });
       return;
     }
 
     res.status(200).json({
       success: true,
-      player: result.player
+      player: result.player,
     });
   }
 
@@ -92,14 +92,14 @@ export class PlayerController {
     if (!result.success) {
       res.status(404).json({
         success: false,
-        error: result.error
+        error: result.error,
       });
       return;
     }
 
     res.status(200).json({
       success: true,
-      message: 'Player deleted successfully'
+      message: 'Player deleted successfully',
     });
   }
 
@@ -112,14 +112,14 @@ export class PlayerController {
     if (!result.success) {
       res.status(400).json({
         success: false,
-        error: result.error
+        error: result.error,
       });
       return;
     }
 
     res.status(200).json({
       success: true,
-      players: result.players
+      players: result.players,
     });
   }
 
@@ -133,12 +133,12 @@ export class PlayerController {
 
       res.status(200).json({
         success: true,
-        players
+        players,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }

@@ -11,17 +11,17 @@ export class MongoTeamRepository implements ITeamRepository {
 
   async findAll(): Promise<Team[]> {
     const docs = await TeamModel.find().sort({ name: 1 }).exec();
-    return docs.map(doc => TeamMapper.toDomain(doc));
+    return docs.map((doc) => TeamMapper.toDomain(doc));
   }
 
   async save(team: Team): Promise<Team> {
     const data = TeamMapper.toPersistence(team);
 
-    const doc = await TeamModel.findByIdAndUpdate(
-      team.id,
-      data,
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    ).exec();
+    const doc = await TeamModel.findByIdAndUpdate(team.id, data, {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+    }).exec();
 
     if (!doc) {
       throw new Error('Failed to save team');
@@ -38,9 +38,11 @@ export class MongoTeamRepository implements ITeamRepository {
   async searchByName(query: string): Promise<Team[]> {
     const regex = new RegExp(query, 'i');
     const docs = await TeamModel.find({
-      name: regex
-    }).sort({ name: 1 }).exec();
+      name: regex,
+    })
+      .sort({ name: 1 })
+      .exec();
 
-    return docs.map(doc => TeamMapper.toDomain(doc));
+    return docs.map((doc) => TeamMapper.toDomain(doc));
   }
 }

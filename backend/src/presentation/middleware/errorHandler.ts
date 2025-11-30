@@ -8,12 +8,7 @@ export interface ApiError extends Error {
 /**
  * Middleware de gestion centralisée des erreurs
  */
-export const errorHandler = (
-  err: ApiError,
-  req: Request,
-  res: Response,
-  _next: NextFunction
-) => {
+export const errorHandler = (err: ApiError, req: Request, res: Response, _next: NextFunction) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
 
@@ -22,14 +17,14 @@ export const errorHandler = (
     message,
     path: req.path,
     method: req.method,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
   });
 
   res.status(statusCode).json({
     success: false,
     error: message,
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
-    ...(err.errors && { errors: err.errors })
+    ...(err.errors && { errors: err.errors }),
   });
 };
 
@@ -39,6 +34,6 @@ export const errorHandler = (
 export const notFoundHandler = (req: Request, res: Response) => {
   res.status(404).json({
     success: false,
-    error: `Route ${req.method} ${req.path} not found`
+    error: `Route ${req.method} ${req.path} not found`,
   });
 };

@@ -17,7 +17,7 @@ export const validateRequiredFields = (fields: string[]) => {
       res.status(400).json({
         success: false,
         error: 'Missing required fields',
-        missingFields
+        missingFields,
       });
       return;
     }
@@ -34,7 +34,7 @@ export const validateParam = (param: string) => {
     if (!req.params[param]) {
       res.status(400).json({
         success: false,
-        error: `Missing required parameter: ${param}`
+        error: `Missing required parameter: ${param}`,
       });
       return;
     }

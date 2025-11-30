@@ -6,11 +6,11 @@ class MockTeamRepository implements ITeamRepository {
   public teams: Team[] = [];
 
   async findById(id: string): Promise<Team | null> {
-    return this.teams.find(t => t.id === id) || null;
+    return this.teams.find((t) => t.id === id) || null;
   }
 
   async save(team: Team): Promise<Team> {
-    const existingIndex = this.teams.findIndex(t => t.id === team.id);
+    const existingIndex = this.teams.findIndex((t) => t.id === team.id);
     if (existingIndex >= 0) {
       this.teams[existingIndex] = team;
     } else {
@@ -44,7 +44,7 @@ describe('UpdateTeam Use Case', () => {
     team = new Team({
       name: 'Wild Cats',
       coach: 'Coach Smith',
-      season: '2024-2025'
+      season: '2024-2025',
     });
     mockRepository.teams.push(team);
   });
@@ -74,7 +74,7 @@ describe('UpdateTeam Use Case', () => {
     const result = await updateTeam.execute(team.id, {
       name: 'Tigers',
       coach: 'Coach Williams',
-      league: 'Premier League'
+      league: 'Premier League',
     });
 
     expect(result.success).toBe(true);

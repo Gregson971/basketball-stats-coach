@@ -120,11 +120,7 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *             schema:
    *               $ref: '#/components/schemas/Error'
    */
-  router.get(
-    '/:id',
-    validateParam('id'),
-    asyncHandler(controller.getById.bind(controller))
-  );
+  router.get('/:id', validateParam('id'), asyncHandler(controller.getById.bind(controller)));
 
   /**
    * @swagger
@@ -188,11 +184,7 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *             schema:
    *               $ref: '#/components/schemas/Error'
    */
-  router.put(
-    '/:id',
-    validateParam('id'),
-    asyncHandler(controller.update.bind(controller))
-  );
+  router.put('/:id', validateParam('id'), asyncHandler(controller.update.bind(controller)));
 
   /**
    * @swagger
@@ -223,11 +215,7 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *             schema:
    *               $ref: '#/components/schemas/Error'
    */
-  router.delete(
-    '/:id',
-    validateParam('id'),
-    asyncHandler(controller.delete.bind(controller))
-  );
+  router.delete('/:id', validateParam('id'), asyncHandler(controller.delete.bind(controller)));
 
   /**
    * @swagger
@@ -302,10 +290,7 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *             schema:
    *               $ref: '#/components/schemas/Error'
    */
-  router.get(
-    '/',
-    asyncHandler(controller.getAll.bind(controller))
-  );
+  router.get('/', asyncHandler(controller.getAll.bind(controller)));
 
   return router;
 };

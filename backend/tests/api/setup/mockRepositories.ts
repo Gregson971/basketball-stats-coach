@@ -5,17 +5,20 @@ import { GameStats } from '../../../src/domain/entities/GameStats';
 import { IPlayerRepository } from '../../../src/domain/repositories/PlayerRepository';
 import { ITeamRepository } from '../../../src/domain/repositories/TeamRepository';
 import { IGameRepository } from '../../../src/domain/repositories/GameRepository';
-import { IGameStatsRepository, PlayerAggregateStats } from '../../../src/domain/repositories/GameStatsRepository';
+import {
+  IGameStatsRepository,
+  PlayerAggregateStats,
+} from '../../../src/domain/repositories/GameStatsRepository';
 
 export class MockPlayerRepository implements IPlayerRepository {
   players: Player[] = [];
 
   async findById(id: string): Promise<Player | null> {
-    return this.players.find(p => p.id === id) || null;
+    return this.players.find((p) => p.id === id) || null;
   }
 
   async save(player: Player): Promise<Player> {
-    const existingIndex = this.players.findIndex(p => p.id === player.id);
+    const existingIndex = this.players.findIndex((p) => p.id === player.id);
     if (existingIndex >= 0) {
       this.players[existingIndex] = player;
     } else {
@@ -25,7 +28,7 @@ export class MockPlayerRepository implements IPlayerRepository {
   }
 
   async findByTeamId(teamId: string): Promise<Player[]> {
-    return this.players.filter(p => p.teamId === teamId);
+    return this.players.filter((p) => p.teamId === teamId);
   }
 
   async findAll(): Promise<Player[]> {
@@ -37,7 +40,7 @@ export class MockPlayerRepository implements IPlayerRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.players.findIndex(p => p.id === id);
+    const index = this.players.findIndex((p) => p.id === id);
     if (index >= 0) {
       this.players.splice(index, 1);
       return true;
@@ -50,11 +53,11 @@ export class MockTeamRepository implements ITeamRepository {
   teams: Team[] = [];
 
   async findById(id: string): Promise<Team | null> {
-    return this.teams.find(t => t.id === id) || null;
+    return this.teams.find((t) => t.id === id) || null;
   }
 
   async save(team: Team): Promise<Team> {
-    const existingIndex = this.teams.findIndex(t => t.id === team.id);
+    const existingIndex = this.teams.findIndex((t) => t.id === team.id);
     if (existingIndex >= 0) {
       this.teams[existingIndex] = team;
     } else {
@@ -72,7 +75,7 @@ export class MockTeamRepository implements ITeamRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.teams.findIndex(t => t.id === id);
+    const index = this.teams.findIndex((t) => t.id === id);
     if (index >= 0) {
       this.teams.splice(index, 1);
       return true;
@@ -85,11 +88,11 @@ export class MockGameRepository implements IGameRepository {
   games: Game[] = [];
 
   async findById(id: string): Promise<Game | null> {
-    return this.games.find(g => g.id === id) || null;
+    return this.games.find((g) => g.id === id) || null;
   }
 
   async save(game: Game): Promise<Game> {
-    const existingIndex = this.games.findIndex(g => g.id === game.id);
+    const existingIndex = this.games.findIndex((g) => g.id === game.id);
     if (existingIndex >= 0) {
       this.games[existingIndex] = game;
     } else {
@@ -99,7 +102,7 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async findByTeamId(teamId: string): Promise<Game[]> {
-    return this.games.filter(g => g.teamId === teamId);
+    return this.games.filter((g) => g.teamId === teamId);
   }
 
   async findAll(): Promise<Game[]> {
@@ -107,11 +110,11 @@ export class MockGameRepository implements IGameRepository {
   }
 
   async findByStatus(status: GameStatus): Promise<Game[]> {
-    return this.games.filter(g => g.status === status);
+    return this.games.filter((g) => g.status === status);
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.games.findIndex(g => g.id === id);
+    const index = this.games.findIndex((g) => g.id === id);
     if (index >= 0) {
       this.games.splice(index, 1);
       return true;
@@ -128,20 +131,20 @@ export class MockGameStatsRepository implements IGameStatsRepository {
   }
 
   async findByGameId(gameId: string): Promise<GameStats[]> {
-    return this.stats.filter(s => s.gameId === gameId);
+    return this.stats.filter((s) => s.gameId === gameId);
   }
 
   async findByPlayerId(playerId: string): Promise<GameStats[]> {
-    return this.stats.filter(s => s.playerId === playerId);
+    return this.stats.filter((s) => s.playerId === playerId);
   }
 
   async findByGameAndPlayer(gameId: string, playerId: string): Promise<GameStats | null> {
-    return this.stats.find(s => s.gameId === gameId && s.playerId === playerId) || null;
+    return this.stats.find((s) => s.gameId === gameId && s.playerId === playerId) || null;
   }
 
   async save(gameStats: GameStats): Promise<GameStats> {
     const existingIndex = this.stats.findIndex(
-      s => s.gameId === gameStats.gameId && s.playerId === gameStats.playerId
+      (s) => s.gameId === gameStats.gameId && s.playerId === gameStats.playerId
     );
     if (existingIndex >= 0) {
       this.stats[existingIndex] = gameStats;
@@ -156,7 +159,7 @@ export class MockGameStatsRepository implements IGameStatsRepository {
   }
 
   async getPlayerAggregateStats(playerId: string): Promise<PlayerAggregateStats> {
-    const playerStats = this.stats.filter(s => s.playerId === playerId);
+    const playerStats = this.stats.filter((s) => s.playerId === playerId);
 
     if (playerStats.length === 0) {
       return {
@@ -173,19 +176,22 @@ export class MockGameStatsRepository implements IGameStatsRepository {
         averageAssists: 0,
         fieldGoalPercentage: 0,
         freeThrowPercentage: 0,
-        threePointPercentage: 0
+        threePointPercentage: 0,
       };
     }
 
-    const totals = playerStats.reduce((acc, stats) => ({
-      points: acc.points + stats.getTotalPoints(),
-      rebounds: acc.rebounds + stats.getTotalRebounds(),
-      assists: acc.assists + stats.assists
-    }), {
-      points: 0,
-      rebounds: 0,
-      assists: 0
-    });
+    const totals = playerStats.reduce(
+      (acc, stats) => ({
+        points: acc.points + stats.getTotalPoints(),
+        rebounds: acc.rebounds + stats.getTotalRebounds(),
+        assists: acc.assists + stats.assists,
+      }),
+      {
+        points: 0,
+        rebounds: 0,
+        assists: 0,
+      }
+    );
 
     return {
       playerId,
@@ -201,7 +207,7 @@ export class MockGameStatsRepository implements IGameStatsRepository {
       averageAssists: Math.round((totals.assists / playerStats.length) * 10) / 10,
       fieldGoalPercentage: 0,
       freeThrowPercentage: 0,
-      threePointPercentage: 0
+      threePointPercentage: 0,
     };
   }
 }

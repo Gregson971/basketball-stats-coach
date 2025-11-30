@@ -6,11 +6,11 @@ class MockGameRepository implements IGameRepository {
   public games: Game[] = [];
 
   async findById(id: string): Promise<Game | null> {
-    return this.games.find(g => g.id === id) || null;
+    return this.games.find((g) => g.id === id) || null;
   }
 
   async save(game: Game): Promise<Game> {
-    const existingIndex = this.games.findIndex(g => g.id === game.id);
+    const existingIndex = this.games.findIndex((g) => g.id === game.id);
     if (existingIndex >= 0) {
       this.games[existingIndex] = game;
     } else {
@@ -28,7 +28,7 @@ class MockGameRepository implements IGameRepository {
   }
 
   async findByStatus(status: GameStatus): Promise<Game[]> {
-    return this.games.filter(g => g.status === status);
+    return this.games.filter((g) => g.status === status);
   }
 
   async delete(_id: string): Promise<boolean> {
@@ -56,7 +56,7 @@ describe('GetGamesByStatus Use Case', () => {
 
     expect(result.success).toBe(true);
     expect(result.games?.length).toBe(2);
-    expect(result.games?.every(g => g.status === 'not_started')).toBe(true);
+    expect(result.games?.every((g) => g.status === 'not_started')).toBe(true);
   });
 
   test('should get all games with in_progress status', async () => {
@@ -71,7 +71,7 @@ describe('GetGamesByStatus Use Case', () => {
 
     expect(result.success).toBe(true);
     expect(result.games?.length).toBe(2);
-    expect(result.games?.every(g => g.status === 'in_progress')).toBe(true);
+    expect(result.games?.every((g) => g.status === 'in_progress')).toBe(true);
   });
 
   test('should get all games with completed status', async () => {

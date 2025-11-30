@@ -6,7 +6,7 @@ class MockTeamRepository implements ITeamRepository {
   private teams: Team[] = [];
 
   async findById(id: string): Promise<Team | null> {
-    return this.teams.find(t => t.id === id) || null;
+    return this.teams.find((t) => t.id === id) || null;
   }
 
   async save(team: Team): Promise<Team> {
@@ -38,7 +38,7 @@ describe('CreateTeam Use Case', () => {
 
   test('should create a team with required fields only', async () => {
     const teamData: TeamData = {
-      name: 'Wild Cats'
+      name: 'Wild Cats',
     };
 
     const result = await createTeam.execute(teamData);
@@ -53,7 +53,7 @@ describe('CreateTeam Use Case', () => {
       name: 'Tigers',
       coach: 'Coach Johnson',
       season: '2024-2025',
-      league: 'Youth League'
+      league: 'Youth League',
     };
 
     const result = await createTeam.execute(teamData);
@@ -67,7 +67,7 @@ describe('CreateTeam Use Case', () => {
 
   test('should return error when name is missing', async () => {
     const teamData: TeamData = {
-      name: ''
+      name: '',
     };
 
     const result = await createTeam.execute(teamData);
@@ -78,7 +78,7 @@ describe('CreateTeam Use Case', () => {
 
   test('should return error when name is only whitespace', async () => {
     const teamData: TeamData = {
-      name: '   '
+      name: '   ',
     };
 
     const result = await createTeam.execute(teamData);
@@ -90,7 +90,7 @@ describe('CreateTeam Use Case', () => {
   test('should save team to repository', async () => {
     const teamData: TeamData = {
       name: 'Panthers',
-      coach: 'Coach Smith'
+      coach: 'Coach Smith',
     };
 
     await createTeam.execute(teamData);

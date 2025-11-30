@@ -1,6 +1,9 @@
 import { UndoLastGameAction } from '../../../../../src/application/use-cases/stats/UndoLastGameAction';
 import { GameStats } from '../../../../../src/domain/entities/GameStats';
-import { IGameStatsRepository, PlayerAggregateStats } from '../../../../../src/domain/repositories/GameStatsRepository';
+import {
+  IGameStatsRepository,
+  PlayerAggregateStats,
+} from '../../../../../src/domain/repositories/GameStatsRepository';
 
 class MockGameStatsRepository implements IGameStatsRepository {
   private stats: GameStats[] = [];
@@ -18,11 +21,13 @@ class MockGameStatsRepository implements IGameStatsRepository {
   }
 
   async findByGameAndPlayer(gameId: string, playerId: string): Promise<GameStats | null> {
-    return this.stats.find(s => s.gameId === gameId && s.playerId === playerId) || null;
+    return this.stats.find((s) => s.gameId === gameId && s.playerId === playerId) || null;
   }
 
   async save(gameStats: GameStats): Promise<GameStats> {
-    const existingIndex = this.stats.findIndex(s => s.gameId === gameStats.gameId && s.playerId === gameStats.playerId);
+    const existingIndex = this.stats.findIndex(
+      (s) => s.gameId === gameStats.gameId && s.playerId === gameStats.playerId
+    );
     if (existingIndex >= 0) {
       this.stats[existingIndex] = gameStats;
     } else {
@@ -50,7 +55,7 @@ class MockGameStatsRepository implements IGameStatsRepository {
       averageAssists: 0,
       fieldGoalPercentage: 0,
       freeThrowPercentage: 0,
-      threePointPercentage: 0
+      threePointPercentage: 0,
     };
   }
 }
@@ -67,7 +72,7 @@ describe('UndoLastGameAction Use Case', () => {
   test('should undo last action successfully', async () => {
     const gameStats = new GameStats({
       gameId: 'game-1',
-      playerId: 'player-1'
+      playerId: 'player-1',
     });
     gameStats.recordTwoPoint(true);
     gameStats.recordAssist();
@@ -83,7 +88,7 @@ describe('UndoLastGameAction Use Case', () => {
   test('should undo multiple actions in sequence', async () => {
     const gameStats = new GameStats({
       gameId: 'game-2',
-      playerId: 'player-2'
+      playerId: 'player-2',
     });
     gameStats.recordTwoPoint(true);
     gameStats.recordThreePoint(true);
@@ -105,7 +110,7 @@ describe('UndoLastGameAction Use Case', () => {
   test('should undo shooting actions correctly', async () => {
     const gameStats = new GameStats({
       gameId: 'game-3',
-      playerId: 'player-3'
+      playerId: 'player-3',
     });
     gameStats.recordTwoPoint(true);
     gameStats.recordTwoPoint(false); // Missed shot
@@ -134,7 +139,7 @@ describe('UndoLastGameAction Use Case', () => {
   test('should return error when no actions to undo', async () => {
     const gameStats = new GameStats({
       gameId: 'game-4',
-      playerId: 'player-4'
+      playerId: 'player-4',
     });
     await mockRepository.save(gameStats);
 
@@ -147,7 +152,7 @@ describe('UndoLastGameAction Use Case', () => {
   test('should persist changes to repository', async () => {
     const gameStats = new GameStats({
       gameId: 'game-5',
-      playerId: 'player-5'
+      playerId: 'player-5',
     });
     gameStats.recordTwoPoint(true);
     gameStats.recordAssist();

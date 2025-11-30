@@ -6,7 +6,7 @@ class MockGameRepository implements IGameRepository {
   private games: Game[] = [];
 
   async findById(id: string): Promise<Game | null> {
-    return this.games.find(g => g.id === id) || null;
+    return this.games.find((g) => g.id === id) || null;
   }
 
   async save(game: Game): Promise<Game> {
@@ -43,7 +43,7 @@ describe('CreateGame Use Case', () => {
   test('should create a game with required fields only', async () => {
     const gameData: GameData = {
       teamId: 'team-123',
-      opponent: 'Tigers'
+      opponent: 'Tigers',
     };
 
     const result = await createGame.execute(gameData);
@@ -62,7 +62,7 @@ describe('CreateGame Use Case', () => {
       opponent: 'Panthers',
       gameDate,
       location: 'Main Arena',
-      notes: 'Championship game'
+      notes: 'Championship game',
     };
 
     const result = await createGame.execute(gameData);
@@ -78,7 +78,7 @@ describe('CreateGame Use Case', () => {
   test('should return error when teamId is missing', async () => {
     const gameData: GameData = {
       teamId: '',
-      opponent: 'Tigers'
+      opponent: 'Tigers',
     };
 
     const result = await createGame.execute(gameData);
@@ -90,7 +90,7 @@ describe('CreateGame Use Case', () => {
   test('should return error when opponent is missing', async () => {
     const gameData: GameData = {
       teamId: 'team-123',
-      opponent: ''
+      opponent: '',
     };
 
     const result = await createGame.execute(gameData);
@@ -102,7 +102,7 @@ describe('CreateGame Use Case', () => {
   test('should return error when opponent is only whitespace', async () => {
     const gameData: GameData = {
       teamId: 'team-123',
-      opponent: '   '
+      opponent: '   ',
     };
 
     const result = await createGame.execute(gameData);
@@ -115,7 +115,7 @@ describe('CreateGame Use Case', () => {
     const gameData: GameData = {
       teamId: 'team-789',
       opponent: 'Lions',
-      location: 'Sports Complex'
+      location: 'Sports Complex',
     };
 
     await createGame.execute(gameData);
@@ -128,7 +128,7 @@ describe('CreateGame Use Case', () => {
   test('should set initial status to not_started', async () => {
     const gameData: GameData = {
       teamId: 'team-123',
-      opponent: 'Eagles'
+      opponent: 'Eagles',
     };
 
     const result = await createGame.execute(gameData);

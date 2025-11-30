@@ -21,7 +21,10 @@ export const createApiRoutes = (repositories: RepositoryDependencies): Router =>
   router.use('/players', createPlayerRoutes(repositories.playerRepository));
   router.use('/teams', createTeamRoutes(repositories.teamRepository));
   router.use('/games', createGameRoutes(repositories.gameRepository));
-  router.use('/stats', createStatsRoutes(repositories.gameStatsRepository, repositories.gameRepository));
+  router.use(
+    '/stats',
+    createStatsRoutes(repositories.gameStatsRepository, repositories.gameRepository)
+  );
 
   return router;
 };

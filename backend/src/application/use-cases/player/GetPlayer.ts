@@ -17,18 +17,18 @@ export class GetPlayer {
       if (!player) {
         return {
           success: false,
-          error: 'Player not found'
+          error: 'Player not found',
         };
       }
 
       return {
         success: true,
-        player
+        player,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

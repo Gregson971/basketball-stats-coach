@@ -40,7 +40,7 @@ export class Team {
   public update(data: Partial<TeamData>): void {
     const immutableFields = ['id', 'createdAt'];
 
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       if (!immutableFields.includes(key) && key in this) {
         (this as any)[key] = (data as any)[key];
       }
@@ -67,7 +67,7 @@ export class Team {
       season: this.season,
       league: this.league,
       createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      updatedAt: this.updatedAt,
     };
   }
 }
