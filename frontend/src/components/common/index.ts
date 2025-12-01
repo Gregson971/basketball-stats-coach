@@ -5,3 +5,5 @@ export { PlayerCard } from './PlayerCard';
 export { TeamCard } from './TeamCard';
 export { GameCard } from './GameCard';
 export { InfoRow } from './InfoRow';
+export { ActionButton } from './ActionButton';
+export { StatsPanel } from './StatsPanel';

@@ -159,7 +159,7 @@ export default function GameDetailScreen() {
               <View className="mb-3">
                 <Button
                   title="Enregistrer des stats"
-                  onPress={() => Alert.alert('À venir', 'Fonctionnalité en développement')}
+                  onPress={() => router.push(`/games/${id}/stats`)}
                   variant="primary"
                 />
               </View>

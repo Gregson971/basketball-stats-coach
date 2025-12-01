@@ -1,7 +1,8 @@
-import { View, Text, ScrollView, Alert } from 'react-native';
+import { View, Text, ScrollView, Alert, TouchableOpacity, Platform } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { gameService } from '@/services';
 import { Button } from '@/components/common';
 
@@ -12,7 +13,8 @@ export default function CreateGameScreen() {
   // Form state
   const [teamId, setTeamId] = useState('');
   const [opponent, setOpponent] = useState('');
-  const [gameDate, setGameDate] = useState('');
+  const [gameDate, setGameDate] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [location, setLocation] = useState('');
   const [notes, setNotes] = useState('');
 
@@ -28,7 +30,7 @@ export default function CreateGameScreen() {
     const payload = {
       teamId: teamId.trim(),
       opponent: opponent.trim(),
-      ...(gameDate && { gameDate: new Date(gameDate) }),
+      ...(gameDate && { gameDate }),
       ...(location && { location: location.trim() }),
       ...(notes && { notes: notes.trim() }),
     };
@@ -76,14 +78,33 @@ export default function CreateGameScreen() {
             className="mb-3"
           />
 
-          <TextInput
-            label="Date"
-            value={gameDate}
-            onChangeText={setGameDate}
-            mode="outlined"
-            placeholder="ex: 2025-01-15"
-            className="mb-3"
-          />
+          {/* Date Picker */}
+          <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+            <View pointerEvents="none">
+              <TextInput
+                label="Date du match"
+                value={gameDate ? gameDate.toLocaleDateString('fr-FR') : ''}
+                mode="outlined"
+                placeholder="Sélectionner une date"
+                className="mb-3"
+                right={<TextInput.Icon icon="calendar" />}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={gameDate || new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(Platform.OS === 'ios');
+                if (selectedDate) {
+                  setGameDate(selectedDate);
+                }
+              }}
+            />
+          )}
 
           <TextInput
             label="Lieu"

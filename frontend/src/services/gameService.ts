@@ -9,10 +9,32 @@ import type { Game, ApiResponse, GameStatus } from '@/types';
 
 export const gameService = {
   /**
-   * Get all games
+   * Get all games (combines all statuses)
    */
   async getAll(): Promise<ApiResponse<Game[]>> {
-    return apiClient.get<Game[]>(API_CONFIG.ENDPOINTS.GAMES);
+    try {
+      // Récupérer les matchs de tous les statuts
+      const [notStarted, inProgress, completed] = await Promise.all([
+        apiClient.get<Game[]>(API_CONFIG.ENDPOINTS.GAMES_BY_STATUS('not_started')),
+        apiClient.get<Game[]>(API_CONFIG.ENDPOINTS.GAMES_BY_STATUS('in_progress')),
+        apiClient.get<Game[]>(API_CONFIG.ENDPOINTS.GAMES_BY_STATUS('completed')),
+      ]);
+
+      const allGames: Game[] = [];
+      if (notStarted.success && notStarted.data) allGames.push(...notStarted.data);
+      if (inProgress.success && inProgress.data) allGames.push(...inProgress.data);
+      if (completed.success && completed.data) allGames.push(...completed.data);
+
+      return {
+        success: true,
+        data: allGames,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch games',
+      };
+    }
   },
 
   /**
@@ -61,13 +83,13 @@ export const gameService = {
    * Start a game
    */
   async start(id: string): Promise<ApiResponse<Game>> {
-    return apiClient.put<Game>(API_CONFIG.ENDPOINTS.START_GAME(id), {});
+    return apiClient.post<Game>(API_CONFIG.ENDPOINTS.START_GAME(id), {});
   },
 
   /**
    * Complete a game
    */
   async complete(id: string): Promise<ApiResponse<Game>> {
-    return apiClient.put<Game>(API_CONFIG.ENDPOINTS.COMPLETE_GAME(id), {});
+    return apiClient.post<Game>(API_CONFIG.ENDPOINTS.COMPLETE_GAME(id), {});
   },
 };
