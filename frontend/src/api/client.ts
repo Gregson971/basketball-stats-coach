@@ -36,7 +36,17 @@ class ApiClient {
 
       return {
         success: true,
-        data: data.data || data.players || data.player || data.teams || data.team || data.games || data.game || data.gameStats || data.stats || data,
+        data:
+          data.data ||
+          data.players ||
+          data.player ||
+          data.teams ||
+          data.team ||
+          data.games ||
+          data.game ||
+          data.gameStats ||
+          data.stats ||
+          data,
       };
     } catch (error) {
       return {
@@ -70,7 +80,17 @@ class ApiClient {
 
       return {
         success: true,
-        data: data.data || data.players || data.player || data.teams || data.team || data.games || data.game || data.gameStats || data.stats || data,
+        data:
+          data.data ||
+          data.players ||
+          data.player ||
+          data.teams ||
+          data.team ||
+          data.games ||
+          data.game ||
+          data.gameStats ||
+          data.stats ||
+          data,
       };
     } catch (error) {
       return {
@@ -104,7 +124,17 @@ class ApiClient {
 
       return {
         success: true,
-        data: data.data || data.players || data.player || data.teams || data.team || data.games || data.game || data.gameStats || data.stats || data,
+        data:
+          data.data ||
+          data.players ||
+          data.player ||
+          data.teams ||
+          data.team ||
+          data.games ||
+          data.game ||
+          data.gameStats ||
+          data.stats ||
+          data,
       };
     } catch (error) {
       return {
@@ -137,7 +167,17 @@ class ApiClient {
 
       return {
         success: true,
-        data: data.data || data.players || data.player || data.teams || data.team || data.games || data.game || data.gameStats || data.stats || data,
+        data:
+          data.data ||
+          data.players ||
+          data.player ||
+          data.teams ||
+          data.team ||
+          data.games ||
+          data.game ||
+          data.gameStats ||
+          data.stats ||
+          data,
       };
     } catch (error) {
       return {

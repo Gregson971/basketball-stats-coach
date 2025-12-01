@@ -83,10 +83,7 @@ describe('playerService', () => {
 
   describe('getByTeam', () => {
     it('should fetch players by team', async () => {
-      const mockPlayers = [
-        mockPlayer,
-        { ...mockPlayer, id: 'player-2', firstName: 'Jane' },
-      ];
+      const mockPlayers = [mockPlayer, { ...mockPlayer, id: 'player-2', firstName: 'Jane' }];
       mockApiClientGet.mockResolvedValue({ success: true, data: mockPlayers });
 
       const result = await playerService.getByTeam('team-1');

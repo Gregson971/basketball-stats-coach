@@ -21,7 +21,7 @@ export default function CreateGameScreen() {
   const handleCreate = async () => {
     // Validation
     if (!teamId.trim() || !opponent.trim()) {
-      Alert.alert('Erreur', 'L\'ID de l\'équipe et l\'adversaire sont requis');
+      Alert.alert('Erreur', "L'ID de l'équipe et l'adversaire sont requis");
       return;
     }
 
@@ -56,9 +56,7 @@ export default function CreateGameScreen() {
       <View className="p-4">
         {/* Informations du match */}
         <View className="bg-white p-4 rounded-lg mb-4">
-          <Text className="text-lg font-semibold text-gray-900 mb-4">
-            Informations du match
-          </Text>
+          <Text className="text-lg font-semibold text-gray-900 mb-4">Informations du match</Text>
 
           <TextInput
             label="ID de l'équipe *"

@@ -61,7 +61,8 @@ export default function GameSummaryScreen() {
       (acc, { stats }) => {
         if (!stats) return acc;
         return {
-          points: acc.points + stats.freeThrowsMade + stats.twoPointsMade * 2 + stats.threePointsMade * 3,
+          points:
+            acc.points + stats.freeThrowsMade + stats.twoPointsMade * 2 + stats.threePointsMade * 3,
           rebounds: acc.rebounds + stats.offensiveRebounds + stats.defensiveRebounds,
           assists: acc.assists + stats.assists,
           steals: acc.steals + stats.steals,
@@ -154,21 +155,11 @@ export default function GameSummaryScreen() {
                 {/* Header du tableau */}
                 <View className="flex-row bg-gray-50 px-3 py-2 border-b border-gray-200">
                   <Text className="flex-1 text-xs font-semibold text-gray-600">JOUEUR</Text>
-                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">
-                    PTS
-                  </Text>
-                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">
-                    REB
-                  </Text>
-                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">
-                    AST
-                  </Text>
-                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">
-                    STL
-                  </Text>
-                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">
-                    BLK
-                  </Text>
+                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">PTS</Text>
+                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">REB</Text>
+                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">AST</Text>
+                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">STL</Text>
+                  <Text className="w-10 text-xs font-semibold text-gray-600 text-center">BLK</Text>
                 </View>
 
                 {/* Lignes des joueurs */}
@@ -181,10 +172,7 @@ export default function GameSummaryScreen() {
                     const rebounds = stats.offensiveRebounds + stats.defensiveRebounds;
 
                     return (
-                      <View
-                        key={player.id}
-                        className="flex-row px-3 py-3 border-b border-gray-100"
-                      >
+                      <View key={player.id} className="flex-row px-3 py-3 border-b border-gray-100">
                         <View className="flex-1">
                           <Text className="text-sm font-semibold text-gray-900">
                             {player.firstName} {player.lastName}
@@ -196,9 +184,7 @@ export default function GameSummaryScreen() {
                         <Text className="w-10 text-sm text-gray-900 text-center font-semibold">
                           {points}
                         </Text>
-                        <Text className="w-10 text-sm text-gray-700 text-center">
-                          {rebounds}
-                        </Text>
+                        <Text className="w-10 text-sm text-gray-700 text-center">{rebounds}</Text>
                         <Text className="w-10 text-sm text-gray-700 text-center">
                           {stats.assists}
                         </Text>

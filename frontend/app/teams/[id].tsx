@@ -32,7 +32,7 @@ export default function TeamDetailScreen() {
     if (teamResult.success && teamResult.data) {
       setTeam(teamResult.data);
     } else {
-      Alert.alert('Erreur', 'Impossible de charger l\'équipe');
+      Alert.alert('Erreur', "Impossible de charger l'équipe");
       setLoading(false);
       return;
     }
@@ -86,7 +86,8 @@ export default function TeamDetailScreen() {
           const statsResult = await statsService.getPlayerGameStats(game.id, player.id);
           if (statsResult.success && statsResult.data) {
             const stats = statsResult.data;
-            totalPoints += stats.freeThrowsMade + stats.twoPointsMade * 2 + stats.threePointsMade * 3;
+            totalPoints +=
+              stats.freeThrowsMade + stats.twoPointsMade * 2 + stats.threePointsMade * 3;
             playersWithStats++;
           }
         }
@@ -104,7 +105,7 @@ export default function TeamDetailScreen() {
   };
 
   const handleDelete = () => {
-    Alert.alert('Supprimer l\'équipe', 'Êtes-vous sûr de vouloir supprimer cette équipe ?', [
+    Alert.alert("Supprimer l'équipe", 'Êtes-vous sûr de vouloir supprimer cette équipe ?', [
       { text: 'Annuler', style: 'cancel' },
       {
         text: 'Supprimer',
@@ -116,7 +117,7 @@ export default function TeamDetailScreen() {
               { text: 'OK', onPress: () => router.back() },
             ]);
           } else {
-            Alert.alert('Erreur', 'Impossible de supprimer l\'équipe');
+            Alert.alert('Erreur', "Impossible de supprimer l'équipe");
           }
         },
       },
@@ -149,18 +150,21 @@ export default function TeamDetailScreen() {
 
           {team.season && <InfoRow label="Saison" value={team.season} />}
           {team.league && <InfoRow label="Ligue" value={team.league} />}
-          <InfoRow
-            label="Créée le"
-            value={new Date(team.createdAt).toLocaleDateString('fr-FR')}
-          />
+          <InfoRow label="Créée le" value={new Date(team.createdAt).toLocaleDateString('fr-FR')} />
         </View>
 
         {/* Effectif */}
         <View className="bg-white p-4 rounded-lg mb-4">
           <Text className="text-lg font-semibold text-gray-900 mb-4">Effectif</Text>
           <InfoRow label="Nombre de joueurs" value={players.length.toString()} />
-          <InfoRow label="Matchs joués" value={games.filter((g) => g.game.status !== 'not_started').length.toString()} />
-          <InfoRow label="Matchs à venir" value={games.filter((g) => g.game.status === 'not_started').length.toString()} />
+          <InfoRow
+            label="Matchs joués"
+            value={games.filter((g) => g.game.status !== 'not_started').length.toString()}
+          />
+          <InfoRow
+            label="Matchs à venir"
+            value={games.filter((g) => g.game.status === 'not_started').length.toString()}
+          />
         </View>
 
         {/* Statistiques de la saison */}
@@ -239,7 +243,9 @@ export default function TeamDetailScreen() {
                           ) : gameWithStats.game.status === 'in_progress' ? (
                             <View className="flex-row items-center">
                               <View className="bg-green-100 px-2 py-1 rounded mr-2">
-                                <Text className="text-xs font-semibold text-green-700">En cours</Text>
+                                <Text className="text-xs font-semibold text-green-700">
+                                  En cours
+                                </Text>
                               </View>
                               <Text className="text-lg font-bold text-primary-600">
                                 {gameWithStats.totalPoints}

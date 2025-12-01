@@ -80,16 +80,12 @@ export default function PlayerCareerStatsScreen() {
           <Text className="text-2xl font-bold text-gray-900">
             {player.firstName} {player.lastName}
           </Text>
-          <Text className="text-sm text-gray-500 mt-1">
-            {stats.gamesPlayed} matchs joués
-          </Text>
+          <Text className="text-sm text-gray-500 mt-1">{stats.gamesPlayed} matchs joués</Text>
         </View>
 
         {/* Moyennes par match */}
         <View className="bg-white p-4 rounded-lg mb-4">
-          <Text className="text-lg font-semibold text-gray-900 mb-4">
-            Moyennes par match
-          </Text>
+          <Text className="text-lg font-semibold text-gray-900 mb-4">Moyennes par match</Text>
 
           <View className="flex-row justify-around mb-4">
             <View className="items-center">

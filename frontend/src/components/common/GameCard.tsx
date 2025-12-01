@@ -40,9 +40,7 @@ export function GameCard({ game, onPress }: GameCardProps) {
           </View>
           <View className="flex-1">
             <Text className="text-lg font-bold text-gray-900">vs {game.opponent}</Text>
-            {game.location && (
-              <Text className="text-sm text-gray-500">📍 {game.location}</Text>
-            )}
+            {game.location && <Text className="text-sm text-gray-500">📍 {game.location}</Text>}
           </View>
         </View>
 

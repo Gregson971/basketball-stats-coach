@@ -12,10 +12,7 @@ export const statsService = {
    * Record a game action (shot, rebound, assist, etc.)
    */
   async recordAction(payload: RecordActionPayload): Promise<ApiResponse<GameStats>> {
-    return apiClient.post<GameStats>(
-      API_CONFIG.ENDPOINTS.RECORD_ACTION(payload.gameId),
-      payload
-    );
+    return apiClient.post<GameStats>(API_CONFIG.ENDPOINTS.RECORD_ACTION(payload.gameId), payload);
   },
 
   /**

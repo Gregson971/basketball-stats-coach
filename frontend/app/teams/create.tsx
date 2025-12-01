@@ -18,7 +18,7 @@ export default function CreateTeamScreen() {
   const handleCreate = async () => {
     // Validation
     if (!name.trim()) {
-      Alert.alert('Erreur', 'Le nom de l\'équipe est requis');
+      Alert.alert('Erreur', "Le nom de l'équipe est requis");
       return;
     }
 
@@ -43,7 +43,7 @@ export default function CreateTeamScreen() {
         },
       ]);
     } else {
-      Alert.alert('Erreur', result.error || 'Impossible de créer l\'équipe');
+      Alert.alert('Erreur', result.error || "Impossible de créer l'équipe");
     }
   };
 
@@ -52,9 +52,7 @@ export default function CreateTeamScreen() {
       <View className="p-4">
         {/* Informations de l'équipe */}
         <View className="bg-white p-4 rounded-lg mb-4">
-          <Text className="text-lg font-semibold text-gray-900 mb-4">
-            Informations de l'équipe
-          </Text>
+          <Text className="text-lg font-semibold text-gray-900 mb-4">Informations de l'équipe</Text>
 
           <TextInput
             label="Nom de l'équipe *"
@@ -103,12 +101,7 @@ export default function CreateTeamScreen() {
             />
           </View>
           <View className="flex-1">
-            <Button
-              title="Créer"
-              onPress={handleCreate}
-              variant="primary"
-              loading={loading}
-            />
+            <Button title="Créer" onPress={handleCreate} variant="primary" loading={loading} />
           </View>
         </View>
       </View>

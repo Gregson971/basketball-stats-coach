@@ -97,7 +97,7 @@ export default function GameStatsScreen() {
       // Mettre à jour les stats affichées
       setCurrentStats(result.data);
     } else {
-      Alert.alert('Erreur', result.error || 'Impossible d\'enregistrer l\'action');
+      Alert.alert('Erreur', result.error || "Impossible d'enregistrer l'action");
     }
   };
 
@@ -117,7 +117,7 @@ export default function GameStatsScreen() {
             // Mettre à jour les stats affichées
             setCurrentStats(result.data);
           } else {
-            Alert.alert('Erreur', 'Impossible d\'annuler l\'action');
+            Alert.alert('Erreur', "Impossible d'annuler l'action");
           }
         },
       },
@@ -170,9 +170,7 @@ export default function GameStatsScreen() {
               >
                 {item.firstName} {item.lastName}
               </Text>
-              {item.position && (
-                <Text className="text-xs text-gray-500">{item.position}</Text>
-              )}
+              {item.position && <Text className="text-xs text-gray-500">{item.position}</Text>}
             </View>
           )}
         />

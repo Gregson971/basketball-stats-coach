@@ -16,8 +16,7 @@ export function StatsPanel({ stats, playerName }: StatsPanelProps) {
   }
 
   // Calculs
-  const totalPoints =
-    stats.freeThrowsMade + stats.twoPointsMade * 2 + stats.threePointsMade * 3;
+  const totalPoints = stats.freeThrowsMade + stats.twoPointsMade * 2 + stats.threePointsMade * 3;
   const totalRebounds = stats.offensiveRebounds + stats.defensiveRebounds;
   const fieldGoalsMade = stats.twoPointsMade + stats.threePointsMade;
   const fieldGoalsAttempted = stats.twoPointsAttempted + stats.threePointsAttempted;
@@ -95,15 +94,11 @@ export function StatsPanel({ stats, playerName }: StatsPanelProps) {
           <Text className="text-xs text-gray-500">PF</Text>
         </View>
         <View className="items-center">
-          <Text className="text-sm font-semibold text-gray-900">
-            {stats.offensiveRebounds}
-          </Text>
+          <Text className="text-sm font-semibold text-gray-900">{stats.offensiveRebounds}</Text>
           <Text className="text-xs text-gray-500">OREB</Text>
         </View>
         <View className="items-center">
-          <Text className="text-sm font-semibold text-gray-900">
-            {stats.defensiveRebounds}
-          </Text>
+          <Text className="text-sm font-semibold text-gray-900">{stats.defensiveRebounds}</Text>
           <Text className="text-xs text-gray-500">DREB</Text>
         </View>
       </View>

@@ -76,9 +76,7 @@ export default function GameDetailScreen() {
         onPress: async () => {
           const result = await gameService.delete(id);
           if (result.success) {
-            Alert.alert('Succès', 'Match supprimé', [
-              { text: 'OK', onPress: () => router.back() },
-            ]);
+            Alert.alert('Succès', 'Match supprimé', [{ text: 'OK', onPress: () => router.back() }]);
           } else {
             Alert.alert('Erreur', 'Impossible de supprimer le match');
           }
@@ -126,10 +124,7 @@ export default function GameDetailScreen() {
           {game.location && <InfoRow label="Lieu" value={game.location} />}
           {game.notes && <InfoRow label="Notes" value={game.notes} />}
           {game.startedAt && (
-            <InfoRow
-              label="Démarré le"
-              value={new Date(game.startedAt).toLocaleString('fr-FR')}
-            />
+            <InfoRow label="Démarré le" value={new Date(game.startedAt).toLocaleString('fr-FR')} />
           )}
           {game.completedAt && (
             <InfoRow
