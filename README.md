@@ -102,12 +102,30 @@ basketball-stats-coach/
     ├── app/                    # Navigation Expo Router (file-based)
     │   ├── _layout.tsx         # Layout racine
     │   ├── (tabs)/            # Navigation par tabs
-    │   └── players/           # Routes des joueurs
+    │   │   ├── index.tsx       # Tab Accueil
+    │   │   ├── games.tsx       # Tab Matchs
+    │   │   └── teams.tsx       # Tab Équipes
+    │   ├── players/           # Routes des joueurs
+    │   │   ├── [id]/
+    │   │   │   ├── index.tsx   # Détails du joueur
+    │   │   │   └── stats.tsx   # Stats du joueur
+    │   │   └── create.tsx      # Création de joueur
+    │   ├── teams/             # Routes des équipes
+    │   │   ├── [id].tsx        # Détails de l'équipe
+    │   │   └── create.tsx      # Création d'équipe
+    │   └── games/             # Routes des matchs
+    │       ├── [id]/
+    │       │   ├── index.tsx   # Détails du match
+    │       │   ├── stats.tsx   # Enregistrement des stats
+    │       │   └── summary.tsx # Résumé du match
+    │       └── create.tsx      # Création de match
     ├── src/
     │   ├── api/               # Client API
-    │   ├── services/          # Services métier
+    │   ├── services/          # Services métier (player, team, game, stats)
     │   ├── stores/            # Zustand stores
     │   ├── components/        # Composants réutilisables
+    │   │   ├── common/        # PlayerCard, TeamCard, GameCard, StatsPanel...
+    │   │   └── ui/            # Composants Paper
     │   ├── types/             # Types TypeScript
     │   └── constants/         # Configuration
     └── .env                   # Variables d'environnement (gitignored)
@@ -397,20 +415,37 @@ describe('CreatePlayer Use Case', () => {
 - [x] Docker (Production + Dev avec hot reload)
 - [x] Documentation complète (API, Architecture, Use Cases)
 
-### Phase 2 : Frontend Mobile (En cours)
+### Phase 2 : Frontend Mobile (En cours) 🚧
 
 - [x] Configuration React Native + Expo
 - [x] Navigation avec Expo Router (file-based)
 - [x] Configuration NativeWind v4 (Tailwind CSS)
 - [x] Client API avec gestion d'erreurs
+- [x] Services métier (player, team, game, stats)
 - [x] Gestion des joueurs (CRUD complet)
   - [x] Liste des joueurs avec auto-refresh
   - [x] Création de joueur (formulaire complet)
   - [x] Détails du joueur
-  - [x] Suppression de joueur
-- [ ] Gestion des équipes
-- [ ] Interface de match en temps réel
-- [ ] Visualisation des statistiques
+  - [x] Stats du joueur
+- [x] Gestion des équipes
+  - [x] Liste des équipes
+  - [x] Création d'équipe
+  - [x] Détails de l'équipe
+- [x] Gestion des matchs
+  - [x] Liste des matchs
+  - [x] Création de match
+  - [x] Détails du match
+- [x] Interface de match en temps réel
+  - [x] Enregistrement des stats pendant le match
+  - [x] Visualisation des stats en temps réel
+  - [x] Résumé du match
+- [x] Composants réutilisables
+  - [x] PlayerCard, TeamCard, GameCard
+  - [x] StatsPanel
+  - [x] ActionButton, Button
+  - [x] EmptyState, LoadingScreen
+- [ ] Fonction Undo pour les stats
+- [ ] Mode édition pour équipes et matchs
 - [ ] Synchronisation offline
 
 ### Phase 3 : Fonctionnalités avancées
