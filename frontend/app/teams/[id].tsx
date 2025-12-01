@@ -1,9 +1,9 @@
 import { View, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { teamService, gameService, playerService, statsService } from '@/services';
 import { LoadingScreen, EmptyState, InfoRow, Button } from '@/components/common';
-import type { Team, Game, Player, GameStats } from '@/types';
+import type { Team, Game, Player } from '@/types';
 
 interface GameWithStats {
   game: Game;
@@ -20,36 +20,7 @@ export default function TeamDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [loadingStats, setLoadingStats] = useState(false);
 
-  useEffect(() => {
-    loadTeam();
-  }, [id]);
-
-  const loadTeam = async () => {
-    setLoading(true);
-
-    // Charger l'équipe
-    const teamResult = await teamService.getById(id);
-    if (teamResult.success && teamResult.data) {
-      setTeam(teamResult.data);
-    } else {
-      Alert.alert('Erreur', "Impossible de charger l'équipe");
-      setLoading(false);
-      return;
-    }
-
-    // Charger les joueurs de l'équipe
-    const playersResult = await playerService.getByTeam(id);
-    if (playersResult.success && playersResult.data) {
-      setPlayers(playersResult.data);
-    }
-
-    // Charger les matchs de l'équipe
-    await loadTeamGames();
-
-    setLoading(false);
-  };
-
-  const loadTeamGames = async () => {
+  const loadTeamGames = useCallback(async () => {
     setLoadingStats(true);
 
     const gamesResult = await gameService.getByTeam(id);
@@ -102,7 +73,36 @@ export default function TeamDetailScreen() {
 
     setGames(gamesWithStats);
     setLoadingStats(false);
-  };
+  }, [id]);
+
+  const loadTeam = useCallback(async () => {
+    setLoading(true);
+
+    // Charger l'équipe
+    const teamResult = await teamService.getById(id);
+    if (teamResult.success && teamResult.data) {
+      setTeam(teamResult.data);
+    } else {
+      Alert.alert('Erreur', "Impossible de charger l'équipe");
+      setLoading(false);
+      return;
+    }
+
+    // Charger les joueurs de l'équipe
+    const playersResult = await playerService.getByTeam(id);
+    if (playersResult.success && playersResult.data) {
+      setPlayers(playersResult.data);
+    }
+
+    // Charger les matchs de l'équipe
+    await loadTeamGames();
+
+    setLoading(false);
+  }, [id, loadTeamGames]);
+
+  useEffect(() => {
+    loadTeam();
+  }, [loadTeam]);
 
   const handleDelete = () => {
     Alert.alert("Supprimer l'équipe", 'Êtes-vous sûr de vouloir supprimer cette équipe ?', [

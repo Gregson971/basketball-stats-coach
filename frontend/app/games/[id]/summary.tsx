@@ -1,6 +1,6 @@
-import { View, Text, ScrollView, Alert, FlatList } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { View, Text, ScrollView, Alert } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { useState, useEffect, useCallback } from 'react';
 import { gameService, playerService, statsService } from '@/services';
 import { LoadingScreen, EmptyState } from '@/components/common';
 import type { Game, Player, GameStats } from '@/types';
@@ -12,16 +12,11 @@ interface PlayerWithStats {
 
 export default function GameSummaryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
   const [game, setGame] = useState<Game | null>(null);
   const [playersWithStats, setPlayersWithStats] = useState<PlayerWithStats[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadGameAndStats();
-  }, [id]);
-
-  const loadGameAndStats = async () => {
+  const loadGameAndStats = useCallback(async () => {
     setLoading(true);
 
     // Charger le match
@@ -54,7 +49,11 @@ export default function GameSummaryScreen() {
 
     setPlayersWithStats(playersWithStatsData);
     setLoading(false);
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadGameAndStats();
+  }, [loadGameAndStats]);
 
   const calculateTotals = () => {
     return playersWithStats.reduce(

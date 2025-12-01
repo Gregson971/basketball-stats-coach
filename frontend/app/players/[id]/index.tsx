@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { playerService } from '@/services';
 import { LoadingScreen, EmptyState, InfoRow, Button } from '@/components/common';
 import type { Player } from '@/types';
@@ -11,11 +11,7 @@ export default function PlayerDetailScreen() {
   const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadPlayer();
-  }, [id]);
-
-  const loadPlayer = async () => {
+  const loadPlayer = useCallback(async () => {
     setLoading(true);
     const result = await playerService.getById(id);
     if (result.success && result.data) {
@@ -24,7 +20,11 @@ export default function PlayerDetailScreen() {
       Alert.alert('Erreur', 'Impossible de charger le joueur');
     }
     setLoading(false);
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadPlayer();
+  }, [loadPlayer]);
 
   const handleDelete = () => {
     Alert.alert('Supprimer le joueur', 'Êtes-vous sûr de vouloir supprimer ce joueur ?', [

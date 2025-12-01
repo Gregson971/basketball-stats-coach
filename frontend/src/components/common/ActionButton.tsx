@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, View } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 
 interface ActionButtonProps {
   title: string;

@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { gameService } from '@/services';
 import { LoadingScreen, EmptyState, InfoRow, Button } from '@/components/common';
 import type { Game } from '@/types';
@@ -18,11 +18,7 @@ export default function GameDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
-  useEffect(() => {
-    loadGame();
-  }, [id]);
-
-  const loadGame = async () => {
+  const loadGame = useCallback(async () => {
     setLoading(true);
     const result = await gameService.getById(id);
     if (result.success && result.data) {
@@ -31,7 +27,11 @@ export default function GameDetailScreen() {
       Alert.alert('Erreur', 'Impossible de charger le match');
     }
     setLoading(false);
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadGame();
+  }, [loadGame]);
 
   const handleStart = async () => {
     setActionLoading(true);

@@ -1,13 +1,12 @@
 import { View, Text, ScrollView, Alert, FlatList } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import { useState, useEffect, useCallback } from 'react';
 import { gameService, playerService, statsService } from '@/services';
 import { LoadingScreen, EmptyState, ActionButton, StatsPanel } from '@/components/common';
 import type { Game, Player, ActionType, GameStats } from '@/types';
 
 export default function GameStatsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
   const [game, setGame] = useState<Game | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -15,18 +14,7 @@ export default function GameStatsScreen() {
   const [loading, setLoading] = useState(true);
   const [recording, setRecording] = useState(false);
 
-  useEffect(() => {
-    loadGameAndPlayers();
-  }, [id]);
-
-  // Charger les stats quand un joueur est sélectionné
-  useEffect(() => {
-    if (selectedPlayer) {
-      loadPlayerStats();
-    }
-  }, [selectedPlayer]);
-
-  const loadPlayerStats = async () => {
+  const loadPlayerStats = useCallback(async () => {
     if (!selectedPlayer) return;
 
     const result = await statsService.getPlayerGameStats(id, selectedPlayer.id);
@@ -52,9 +40,9 @@ export default function GameStatsScreen() {
         personalFouls: 0,
       });
     }
-  };
+  }, [id, selectedPlayer]);
 
-  const loadGameAndPlayers = async () => {
+  const loadGameAndPlayers = useCallback(async () => {
     setLoading(true);
 
     // Charger le match
@@ -74,7 +62,18 @@ export default function GameStatsScreen() {
     }
 
     setLoading(false);
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadGameAndPlayers();
+  }, [loadGameAndPlayers]);
+
+  // Charger les stats quand un joueur est sélectionné
+  useEffect(() => {
+    if (selectedPlayer) {
+      loadPlayerStats();
+    }
+  }, [selectedPlayer, loadPlayerStats]);
 
   const recordAction = async (actionType: ActionType, made?: boolean) => {
     if (!selectedPlayer) {

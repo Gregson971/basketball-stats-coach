@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { render } from '@testing-library/react-native';
+import { ActivityIndicator } from 'react-native';
 import { LoadingScreen } from '../LoadingScreen';
 
 describe('LoadingScreen', () => {
@@ -22,7 +23,6 @@ describe('LoadingScreen', () => {
 
     it('should display loading indicator (ActivityIndicator)', () => {
       const { UNSAFE_getByType } = render(<LoadingScreen />);
-      const { ActivityIndicator } = require('react-native');
 
       // Verify ActivityIndicator is present
       const indicator = UNSAFE_getByType(ActivityIndicator);

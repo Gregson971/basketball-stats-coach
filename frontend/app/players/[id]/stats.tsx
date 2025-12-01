@@ -1,22 +1,17 @@
-import { View, Text, ScrollView, Alert } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useEffect } from 'react';
+import { View, Text, ScrollView } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { useState, useEffect, useCallback } from 'react';
 import { playerService, statsService } from '@/services';
 import { LoadingScreen, EmptyState, InfoRow } from '@/components/common';
 import type { Player, CareerStats } from '@/types';
 
 export default function PlayerCareerStatsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
   const [player, setPlayer] = useState<Player | null>(null);
   const [stats, setStats] = useState<CareerStats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadPlayerAndStats();
-  }, [id]);
-
-  const loadPlayerAndStats = async () => {
+  const loadPlayerAndStats = useCallback(async () => {
     setLoading(true);
 
     // Charger le joueur
@@ -35,7 +30,11 @@ export default function PlayerCareerStatsScreen() {
     }
 
     setLoading(false);
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadPlayerAndStats();
+  }, [loadPlayerAndStats]);
 
   if (loading) {
     return <LoadingScreen message="Chargement des statistiques..." />;

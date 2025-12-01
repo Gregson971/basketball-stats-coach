@@ -4,7 +4,7 @@
 
 import { gameService } from '../gameService';
 import { apiClient } from '@/api/client';
-import type { Game, ApiResponse } from '@/types';
+import type { Game } from '@/types';
 
 // Mock API client
 jest.mock('@/api/client');

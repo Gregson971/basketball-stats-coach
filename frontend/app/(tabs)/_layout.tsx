@@ -21,7 +21,7 @@ export default function TabsLayout() {
         options={{
           title: 'Joueurs',
           tabBarLabel: 'Joueurs',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>👤</Text>,
+          tabBarIcon: ({ color: _color }) => <Text style={{ fontSize: 24 }}>👤</Text>,
         }}
       />
       <Tabs.Screen
@@ -29,7 +29,7 @@ export default function TabsLayout() {
         options={{
           title: 'Équipes',
           tabBarLabel: 'Équipes',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🏀</Text>,
+          tabBarIcon: ({ color: _color }) => <Text style={{ fontSize: 24 }}>🏀</Text>,
         }}
       />
       <Tabs.Screen
@@ -37,7 +37,7 @@ export default function TabsLayout() {
         options={{
           title: 'Matchs',
           tabBarLabel: 'Matchs',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🎯</Text>,
+          tabBarIcon: ({ color: _color }) => <Text style={{ fontSize: 24 }}>🎯</Text>,
         }}
       />
     </Tabs>
