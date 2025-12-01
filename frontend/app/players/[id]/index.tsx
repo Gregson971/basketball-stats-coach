@@ -81,10 +81,14 @@ export default function PlayerDetailScreen() {
           <InfoRow label="Équipe ID" value={player.teamId} />
         </View>
 
-        {/* Statistiques (à venir) */}
+        {/* Statistiques */}
         <View className="bg-white p-4 rounded-lg mb-4">
-          <Text className="text-lg font-semibold text-gray-900 mb-2">Statistiques</Text>
-          <Text className="text-gray-500">Les statistiques apparaîtront ici</Text>
+          <Text className="text-lg font-semibold text-gray-900 mb-4">Statistiques</Text>
+          <Button
+            title="Voir les stats en carrière"
+            onPress={() => router.push(`/players/${id}/stats`)}
+            variant="primary"
+          />
         </View>
 
         {/* Actions */}

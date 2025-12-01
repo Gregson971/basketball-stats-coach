@@ -177,9 +177,19 @@ export default function GameDetailScreen() {
           {game.status === 'completed' && (
             <View className="mb-3">
               <Button
-                title="Voir les statistiques"
-                onPress={() => Alert.alert('À venir', 'Fonctionnalité en développement')}
+                title="Voir les statistiques du match"
+                onPress={() => router.push(`/games/${id}/summary`)}
                 variant="primary"
+              />
+            </View>
+          )}
+
+          {game.status === 'in_progress' && (
+            <View className="mb-3">
+              <Button
+                title="Voir les stats en cours"
+                onPress={() => router.push(`/games/${id}/summary`)}
+                variant="secondary"
               />
             </View>
           )}
