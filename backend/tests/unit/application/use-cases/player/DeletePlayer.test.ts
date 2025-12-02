@@ -10,20 +10,20 @@ class MockPlayerRepository implements IPlayerRepository {
     return player;
   }
 
-  async findById(id: string): Promise<Player | null> {
-    return this.players.find((p) => p.id === id) || null;
+  async findById(id: string, userId: string): Promise<Player | null> {
+    return this.players.find((p) => p.id === id && p.userId === userId) || null;
   }
 
-  async findByTeamId(teamId: string): Promise<Player[]> {
-    return this.players.filter((p) => p.teamId === teamId);
+  async findByTeamId(teamId: string, userId: string): Promise<Player[]> {
+    return this.players.filter((p) => p.teamId === teamId && p.userId === userId);
   }
 
-  async findAll(): Promise<Player[]> {
-    return this.players;
+  async findByUserId(userId: string): Promise<Player[]> {
+    return this.players.filter((p) => p.userId === userId);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const index = this.players.findIndex((p) => p.id === id);
+  async delete(id: string, userId: string): Promise<boolean> {
+    const index = this.players.findIndex((p) => p.id === id && p.userId === userId);
     if (index >= 0) {
       this.players.splice(index, 1);
       return true;
@@ -31,8 +31,14 @@ class MockPlayerRepository implements IPlayerRepository {
     return false;
   }
 
-  async searchByName(_query: string): Promise<Player[]> {
+  async searchByName(_query: string, _userId: string): Promise<Player[]> {
     return [];
+  }
+
+  async deleteByUserId(userId: string): Promise<number> {
+    const initialLength = this.players.length;
+    this.players = this.players.filter((p) => p.userId !== userId);
+    return initialLength - this.players.length;
   }
 }
 
@@ -40,12 +46,14 @@ describe('DeletePlayer Use Case', () => {
   let mockRepository: MockPlayerRepository;
   let deletePlayer: DeletePlayer;
   let existingPlayer: Player;
+  const userId = 'user-123';
 
   beforeEach(async () => {
     mockRepository = new MockPlayerRepository();
     deletePlayer = new DeletePlayer(mockRepository);
 
     existingPlayer = new Player({
+      userId,
       firstName: 'Ryan',
       lastName: 'Evans',
       teamId: 'team-123',
@@ -54,18 +62,29 @@ describe('DeletePlayer Use Case', () => {
   });
 
   test('should delete existing player', async () => {
-    const result = await deletePlayer.execute(existingPlayer.id);
+    const result = await deletePlayer.execute(existingPlayer.id, userId);
 
     expect(result.success).toBe(true);
 
-    const player = await mockRepository.findById(existingPlayer.id);
+    const player = await mockRepository.findById(existingPlayer.id, userId);
     expect(player).toBeNull();
   });
 
   test('should return error when player not found', async () => {
-    const result = await deletePlayer.execute('non-existent-id');
+    const result = await deletePlayer.execute('non-existent-id', userId);
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('Player not found');
+  });
+
+  test('should not delete player from different user', async () => {
+    const result = await deletePlayer.execute(existingPlayer.id, 'different-user-id');
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Player not found');
+
+    // Original player should still exist
+    const player = await mockRepository.findById(existingPlayer.id, userId);
+    expect(player).not.toBeNull();
   });
 });

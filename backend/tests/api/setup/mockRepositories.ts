@@ -15,7 +15,7 @@ import {
 export class MockPlayerRepository implements IPlayerRepository {
   players: Player[] = [];
 
-  async findById(id: string): Promise<Player | null> {
+  async findById(id: string, _userId?: string): Promise<Player | null> {
     return this.players.find((p) => p.id === id) || null;
   }
 
@@ -29,19 +29,19 @@ export class MockPlayerRepository implements IPlayerRepository {
     return player;
   }
 
-  async findByTeamId(teamId: string): Promise<Player[]> {
+  async findByTeamId(teamId: string, _userId?: string): Promise<Player[]> {
     return this.players.filter((p) => p.teamId === teamId);
   }
 
-  async findAll(): Promise<Player[]> {
+  async findAll(_userId?: string): Promise<Player[]> {
     return this.players;
   }
 
-  async searchByName(_query: string): Promise<Player[]> {
+  async searchByName(_query: string, _userId?: string): Promise<Player[]> {
     return [];
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, _userId?: string): Promise<boolean> {
     const index = this.players.findIndex((p) => p.id === id);
     if (index >= 0) {
       this.players.splice(index, 1);
@@ -49,12 +49,22 @@ export class MockPlayerRepository implements IPlayerRepository {
     }
     return false;
   }
+
+  async findByUserId(_userId: string): Promise<Player[]> {
+    return this.players;
+  }
+
+  async deleteByUserId(_userId: string): Promise<number> {
+    const count = this.players.length;
+    this.players = [];
+    return count;
+  }
 }
 
 export class MockTeamRepository implements ITeamRepository {
   teams: Team[] = [];
 
-  async findById(id: string): Promise<Team | null> {
+  async findById(id: string, _userId?: string): Promise<Team | null> {
     return this.teams.find((t) => t.id === id) || null;
   }
 
@@ -68,15 +78,15 @@ export class MockTeamRepository implements ITeamRepository {
     return team;
   }
 
-  async findAll(): Promise<Team[]> {
+  async findAll(_userId?: string): Promise<Team[]> {
     return this.teams;
   }
 
-  async searchByName(_query: string): Promise<Team[]> {
+  async searchByName(_query: string, _userId?: string): Promise<Team[]> {
     return [];
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, _userId?: string): Promise<boolean> {
     const index = this.teams.findIndex((t) => t.id === id);
     if (index >= 0) {
       this.teams.splice(index, 1);
@@ -84,12 +94,22 @@ export class MockTeamRepository implements ITeamRepository {
     }
     return false;
   }
+
+  async findByUserId(_userId: string): Promise<Team[]> {
+    return this.teams;
+  }
+
+  async deleteByUserId(_userId: string): Promise<number> {
+    const count = this.teams.length;
+    this.teams = [];
+    return count;
+  }
 }
 
 export class MockGameRepository implements IGameRepository {
   games: Game[] = [];
 
-  async findById(id: string): Promise<Game | null> {
+  async findById(id: string, _userId?: string): Promise<Game | null> {
     return this.games.find((g) => g.id === id) || null;
   }
 
@@ -103,19 +123,19 @@ export class MockGameRepository implements IGameRepository {
     return game;
   }
 
-  async findByTeamId(teamId: string): Promise<Game[]> {
+  async findByTeamId(teamId: string, _userId?: string): Promise<Game[]> {
     return this.games.filter((g) => g.teamId === teamId);
   }
 
-  async findAll(): Promise<Game[]> {
+  async findAll(_userId?: string): Promise<Game[]> {
     return this.games;
   }
 
-  async findByStatus(status: GameStatus): Promise<Game[]> {
+  async findByStatus(status: GameStatus, _userId?: string): Promise<Game[]> {
     return this.games.filter((g) => g.status === status);
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, _userId?: string): Promise<boolean> {
     const index = this.games.findIndex((g) => g.id === id);
     if (index >= 0) {
       this.games.splice(index, 1);
@@ -123,24 +143,34 @@ export class MockGameRepository implements IGameRepository {
     }
     return false;
   }
+
+  async findByUserId(_userId: string): Promise<Game[]> {
+    return this.games;
+  }
+
+  async deleteByUserId(_userId: string): Promise<number> {
+    const count = this.games.length;
+    this.games = [];
+    return count;
+  }
 }
 
 export class MockGameStatsRepository implements IGameStatsRepository {
   stats: GameStats[] = [];
 
-  async findById(_id: string): Promise<GameStats | null> {
+  async findById(_id: string, _userId?: string): Promise<GameStats | null> {
     return null;
   }
 
-  async findByGameId(gameId: string): Promise<GameStats[]> {
+  async findByGameId(gameId: string, _userId?: string): Promise<GameStats[]> {
     return this.stats.filter((s) => s.gameId === gameId);
   }
 
-  async findByPlayerId(playerId: string): Promise<GameStats[]> {
+  async findByPlayerId(playerId: string, _userId?: string): Promise<GameStats[]> {
     return this.stats.filter((s) => s.playerId === playerId);
   }
 
-  async findByGameAndPlayer(gameId: string, playerId: string): Promise<GameStats | null> {
+  async findByGameAndPlayer(gameId: string, playerId: string, _userId?: string): Promise<GameStats | null> {
     return this.stats.find((s) => s.gameId === gameId && s.playerId === playerId) || null;
   }
 
@@ -156,11 +186,21 @@ export class MockGameStatsRepository implements IGameStatsRepository {
     return gameStats;
   }
 
-  async delete(_id: string): Promise<boolean> {
+  async delete(_id: string, _userId?: string): Promise<boolean> {
     return false;
   }
 
-  async getPlayerAggregateStats(playerId: string): Promise<PlayerAggregateStats> {
+  async findByUserId(_userId: string): Promise<GameStats[]> {
+    return this.stats;
+  }
+
+  async deleteByUserId(_userId: string): Promise<number> {
+    const count = this.stats.length;
+    this.stats = [];
+    return count;
+  }
+
+  async getPlayerAggregateStats(playerId: string, _userId?: string): Promise<PlayerAggregateStats> {
     const playerStats = this.stats.filter((s) => s.playerId === playerId);
 
     if (playerStats.length === 0) {

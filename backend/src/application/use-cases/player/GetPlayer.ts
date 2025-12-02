@@ -10,9 +10,9 @@ export interface GetPlayerResult {
 export class GetPlayer {
   constructor(private readonly playerRepository: IPlayerRepository) {}
 
-  async execute(playerId: string): Promise<GetPlayerResult> {
+  async execute(playerId: string, userId: string): Promise<GetPlayerResult> {
     try {
-      const player = await this.playerRepository.findById(playerId);
+      const player = await this.playerRepository.findById(playerId, userId);
 
       if (!player) {
         return {

@@ -5,6 +5,7 @@ export class GameStatsMapper {
   static toDomain(doc: IGameStatsDocument): GameStats {
     return new GameStats({
       id: doc._id,
+      userId: doc.userId,
       gameId: doc.gameId,
       playerId: doc.playerId,
       freeThrowsMade: doc.freeThrowsMade,
@@ -30,6 +31,7 @@ export class GameStatsMapper {
   static toPersistence(gameStats: GameStats): Partial<IGameStatsDocument> {
     return {
       _id: gameStats.id,
+      userId: gameStats.userId,
       gameId: gameStats.gameId,
       playerId: gameStats.playerId,
       freeThrowsMade: gameStats.freeThrowsMade,

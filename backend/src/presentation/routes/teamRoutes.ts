@@ -15,7 +15,9 @@ export const createTeamRoutes = (teamRepository: ITeamRepository): Router => {
    *     tags:
    *       - Teams
    *     summary: Créer une nouvelle équipe
-   *     description: Ajoute une nouvelle équipe dans la base de données
+   *     description: Ajoute une nouvelle équipe dans la base de données. Le userId est automatiquement extrait du token JWT.
+   *     security:
+   *       - bearerAuth: []
    *     requestBody:
    *       required: true
    *       content:
@@ -70,7 +72,9 @@ export const createTeamRoutes = (teamRepository: ITeamRepository): Router => {
    *     tags:
    *       - Teams
    *     summary: Obtenir une équipe par ID
-   *     description: Récupère les informations d'une équipe spécifique
+   *     description: Récupère les informations d'une équipe spécifique. Retourne uniquement si l'équipe appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -107,7 +111,9 @@ export const createTeamRoutes = (teamRepository: ITeamRepository): Router => {
    *     tags:
    *       - Teams
    *     summary: Mettre à jour une équipe
-   *     description: Modifie les informations d'une équipe existante
+   *     description: Modifie les informations d'une équipe existante. Fonctionne uniquement si l'équipe appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -159,7 +165,9 @@ export const createTeamRoutes = (teamRepository: ITeamRepository): Router => {
    *     tags:
    *       - Teams
    *     summary: Supprimer une équipe
-   *     description: Supprime une équipe de la base de données
+   *     description: Supprime une équipe de la base de données. Fonctionne uniquement si l'équipe appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -190,7 +198,9 @@ export const createTeamRoutes = (teamRepository: ITeamRepository): Router => {
    *     tags:
    *       - Teams
    *     summary: Obtenir toutes les équipes
-   *     description: Récupère la liste complète de toutes les équipes
+   *     description: Récupère la liste complète de toutes les équipes de l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     responses:
    *       200:
    *         description: Liste de toutes les équipes

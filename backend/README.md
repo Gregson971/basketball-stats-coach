@@ -4,8 +4,8 @@ Backend API pour **StatCoach Pro**, l'application mobile professionnelle de suiv
 
 [![Backend CI](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml)
 [![codecov](https://codecov.io/github/Gregson971/basketball-stats-coach/graph/badge.svg?token=RH60FEVC1C)](https://codecov.io/github/Gregson971/basketball-stats-coach)
-![Tests](https://img.shields.io/badge/tests-246%20passing-success)
-![Coverage](https://img.shields.io/badge/coverage-70%25-brightgreen)
+![Tests](https://img.shields.io/badge/tests-369%20passing-success)
+![Coverage](https://img.shields.io/badge/coverage-72%25-brightgreen)
 ![Deployment](https://img.shields.io/badge/deployment-Railway-purple)
 
 **🚀 API en production :** [https://basketball-stats-coach-production.up.railway.app/api-docs](https://basketball-stats-coach-production.up.railway.app/api-docs)
@@ -97,6 +97,8 @@ backend/
 
 Représente un joueur de basketball avec ses informations personnelles et physiques.
 
+**Sécurité:** Chaque joueur est lié à un `userId` pour l'isolation des données.
+
 **Attributs:**
 
 - `firstName`, `lastName`, `nickname`
@@ -108,6 +110,8 @@ Représente un joueur de basketball avec ses informations personnelles et physiq
 
 Représente une équipe de basketball.
 
+**Sécurité:** Chaque équipe est liée à un `userId` pour l'isolation des données.
+
 **Attributs:**
 
 - `name`, `coach`, `season`, `league`
@@ -115,6 +119,8 @@ Représente une équipe de basketball.
 ### Game (Match)
 
 Représente un match de basketball.
+
+**Sécurité:** Chaque match est lié à un `userId` pour l'isolation des données.
 
 **Attributs:**
 
@@ -125,6 +131,8 @@ Représente un match de basketball.
 ### GameStats (Statistiques de match)
 
 Représente les statistiques d'un joueur pour un match donné.
+
+**Sécurité:** Chaque statistique est liée à un `userId` pour l'isolation des données.
 
 **Statistiques:**
 
@@ -154,35 +162,40 @@ Ce projet suit une approche TDD (Test Driven Development) stricte avec une couve
 
 ### Résultats des tests
 
-- **Tests totaux**: 246 tests passing
-- **Test Suites**: 32 suites
-- **Coverage**: ~70%
+- **Tests totaux**: 369 tests passing
+- **Test Suites**: 37 suites
+- **Coverage**: ~72%
 - **Statut**: ✅ Tous les tests passent
+- **Isolation des données**: ✅ Tous les tests vérifient l'isolation par `userId`
 
 ### Types de tests
 
-**Tests unitaires** (94 tests) - Tests des use cases et entités du domaine
+**Tests unitaires** (145 tests) - Tests des use cases et entités du domaine
 
-- Tests isolés des use cases (Player, Team, Game, Stats)
-- Tests des entités et de la logique métier (96 tests)
+- Tests isolés des use cases (Player, Team, Game, Stats, Auth)
+- Tests des entités et de la logique métier (123 tests)
+- Tests d'isolation des données par utilisateur
 - Mock des dépendances
 
-**Tests d'intégration** (26 tests) - Tests des repositories avec MongoDB
+**Tests d'intégration** (49 tests) - Tests des repositories avec MongoDB
 
 - Tests avec base de données en mémoire (MongoDB Memory Server)
 - Validation de la persistance des données
-- Tests des requêtes complexes
-- 4 repository test suites
+- Tests des requêtes complexes avec filtrage par `userId`
+- Tests de cascade delete
+- 5 repository test suites
 
-**Tests API** (56 tests) - Tests des endpoints Express avec Supertest
+**Tests API** (75 tests) - Tests des endpoints Express avec Supertest
 
-- Tests de toutes les routes REST (24 endpoints)
+- Tests de toutes les routes REST (26 endpoints)
 - Validation des codes HTTP et réponses JSON
 - Tests des middlewares et gestion d'erreurs
+- Tests d'authentification JWT
 - Players API: 12 tests
 - Teams API: 14 tests
 - Games API: 18 tests
 - Stats API: 12 tests
+- Auth API: 19 tests
 
 ### Commandes de test
 
@@ -307,6 +320,44 @@ npm run build
 npm start
 ```
 
+## 🔒 Sécurité et isolation des données
+
+### Principe de l'isolation par utilisateur
+
+**Toutes les données sont isolées par `userId`** pour garantir qu'un utilisateur ne peut accéder qu'à ses propres données.
+
+### Caractéristiques de sécurité
+
+- ✅ **Authentification JWT**: Tokens sécurisés avec expiration de 7 jours
+- ✅ **Isolation totale des données**: Chaque utilisateur ne voit que ses propres équipes, joueurs, matchs et statistiques
+- ✅ **Mots de passe hashés**: Utilisation de bcrypt avec 10 rounds
+- ✅ **Cascade delete**: Suppression automatique de toutes les données d'un utilisateur
+- ✅ **Validation automatique**: Le `userId` est vérifié à chaque opération
+- ✅ **Protection contre l'énumération**: Impossible de deviner l'existence de données d'autres utilisateurs
+
+### Comment ça fonctionne
+
+1. **Authentification**: L'utilisateur reçoit un token JWT après login/register
+2. **Extraction du userId**: Le middleware extrait le `userId` du token
+3. **Filtrage automatique**: Tous les repositories filtrent les données par `userId`
+4. **Isolation garantie**: Un utilisateur ne peut jamais accéder aux données d'un autre
+
+**Exemple:**
+
+```typescript
+// ❌ IMPOSSIBLE: User A ne peut pas accéder aux données de User B
+GET /api/players/player-b-123
+Authorization: Bearer <token-user-a>
+// Résultat: 404 Not Found
+
+// ✅ POSSIBLE: User A accède à ses propres données
+GET /api/players/player-a-456
+Authorization: Bearer <token-user-a>
+// Résultat: 200 OK
+```
+
+---
+
 ## 🔧 Configuration
 
 Créer un fichier `.env` à partir de `.env.example`:
@@ -408,7 +459,6 @@ docker-compose down -v
 Le projet dispose de deux configurations Docker:
 
 1. **Production** (`Dockerfile`):
-
    - Build multi-stage optimisé
    - Image Node.js Alpine légère
    - Compilation TypeScript
@@ -591,6 +641,7 @@ Le module `src/infrastructure/database/mongodb/connection.ts` gère:
 Une documentation interactive complète de l'API est disponible via Swagger UI:
 
 **Environnement de développement:**
+
 ```bash
 # Démarrer le serveur
 npm run dev
@@ -600,6 +651,7 @@ npm run dev
 ```
 
 **Environnement de production:**
+
 - **API Docs**: https://basketball-stats-coach-production.up.railway.app/api-docs
 - **Health Check**: https://basketball-stats-coach-production.up.railway.app/health
 
@@ -681,7 +733,6 @@ Le projet dispose d'une documentation complète dans le dossier `docs/`:
 ### Documentation technique
 
 - **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Architecture Clean Architecture détaillée
-
   - Explication des 4 couches (Domain, Application, Infrastructure, Presentation)
   - Patterns et principes (SOLID, DI, Repository Pattern)
   - Flux de données et exemples concrets

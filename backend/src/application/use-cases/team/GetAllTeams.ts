@@ -10,9 +10,9 @@ export interface GetAllTeamsResult {
 export class GetAllTeams {
   constructor(private readonly teamRepository: ITeamRepository) {}
 
-  async execute(): Promise<GetAllTeamsResult> {
+  async execute(userId: string): Promise<GetAllTeamsResult> {
     try {
-      const teams = await this.teamRepository.findAll();
+      const teams = await this.teamRepository.findAll(userId);
 
       return {
         success: true,

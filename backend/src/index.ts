@@ -24,7 +24,12 @@ async function startServer() {
     const teamRepository = new MongoTeamRepository();
     const gameRepository = new MongoGameRepository();
     const gameStatsRepository = new MongoGameStatsRepository();
-    const userRepository = new MongoUserRepository();
+    const userRepository = new MongoUserRepository(
+      playerRepository,
+      teamRepository,
+      gameRepository,
+      gameStatsRepository
+    );
 
     // Create Express app with repositories
     const app = createApp({

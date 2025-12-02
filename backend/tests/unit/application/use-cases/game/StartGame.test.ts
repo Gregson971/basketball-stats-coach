@@ -7,8 +7,8 @@ import { GameStatus } from '../../../../../src/domain/entities/Game';
 class MockGameRepository implements IGameRepository {
   private games: Game[] = [];
 
-  async findById(id: string): Promise<Game | null> {
-    return this.games.find((g) => g.id === id) || null;
+  async findById(id: string, userId: string): Promise<Game | null> {
+    return this.games.find((g) => g.id === id && g.userId === userId) || null;
   }
 
   async save(game: Game): Promise<Game> {
@@ -21,31 +21,42 @@ class MockGameRepository implements IGameRepository {
     return game;
   }
 
-  async findByTeamId(teamId: string): Promise<Game[]> {
-    return this.games.filter((g) => g.teamId === teamId);
+  async findByTeamId(teamId: string, userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.teamId === teamId && g.userId === userId);
   }
 
-  async findAll(): Promise<Game[]> {
-    return this.games;
+  async findAll(userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.userId === userId);
   }
 
-  async findByStatus(status: GameStatus): Promise<Game[]> {
-    return this.games.filter((g) => g.status === status);
+  async findByStatus(status: GameStatus, userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.status === status && g.userId === userId);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const index = this.games.findIndex((g) => g.id === id);
+  async findByUserId(userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.userId === userId);
+  }
+
+  async delete(id: string, userId: string): Promise<boolean> {
+    const index = this.games.findIndex((g) => g.id === id && g.userId === userId);
     if (index >= 0) {
       this.games.splice(index, 1);
       return true;
     }
     return false;
   }
+
+  async deleteByUserId(userId: string): Promise<number> {
+    const initialLength = this.games.length;
+    this.games = this.games.filter((g) => g.userId !== userId);
+    return initialLength - this.games.length;
+  }
 }
 
 describe('StartGame Use Case', () => {
   let mockRepository: MockGameRepository;
   let startGame: StartGame;
+  const userId = 'user-123';
 
   beforeEach(() => {
     mockRepository = new MockGameRepository();
@@ -54,20 +65,22 @@ describe('StartGame Use Case', () => {
 
   test('should start a game successfully', async () => {
     const game = new Game({
+      userId,
       teamId: 'team-123',
       opponent: 'Tigers',
     });
     await mockRepository.save(game);
 
-    const result = await startGame.execute(game.id);
+    const result = await startGame.execute(game.id, userId);
 
     expect(result.success).toBe(true);
     expect(result.game?.status).toBe('in_progress');
     expect(result.game?.startedAt).toBeInstanceOf(Date);
+    expect(result.game?.userId).toBe(userId);
   });
 
   test('should return error when game not found', async () => {
-    const result = await startGame.execute('non-existent-id');
+    const result = await startGame.execute('non-existent-id', userId);
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('Game not found');
@@ -75,13 +88,14 @@ describe('StartGame Use Case', () => {
 
   test('should return error when game is already started', async () => {
     const game = new Game({
+      userId,
       teamId: 'team-123',
       opponent: 'Tigers',
     });
     game.start();
     await mockRepository.save(game);
 
-    const result = await startGame.execute(game.id);
+    const result = await startGame.execute(game.id, userId);
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('already in progress or completed');
@@ -89,15 +103,30 @@ describe('StartGame Use Case', () => {
 
   test('should update game in repository', async () => {
     const game = new Game({
+      userId,
       teamId: 'team-123',
       opponent: 'Tigers',
     });
     await mockRepository.save(game);
 
-    await startGame.execute(game.id);
+    await startGame.execute(game.id, userId);
 
-    const updatedGame = await mockRepository.findById(game.id);
+    const updatedGame = await mockRepository.findById(game.id, userId);
     expect(updatedGame?.status).toBe('in_progress');
     expect(updatedGame?.startedAt).toBeInstanceOf(Date);
+  });
+
+  test('should not start game from different user', async () => {
+    const game = new Game({
+      userId,
+      teamId: 'team-123',
+      opponent: 'Tigers',
+    });
+    await mockRepository.save(game);
+
+    const result = await startGame.execute(game.id, 'different-user-id');
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Game not found');
   });
 });

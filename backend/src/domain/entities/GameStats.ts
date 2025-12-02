@@ -19,6 +19,7 @@ export interface ActionHistoryItem {
 
 export interface GameStatsData {
   id?: string;
+  userId: string;
   gameId: string;
   playerId: string;
   freeThrowsMade?: number;
@@ -42,6 +43,7 @@ export interface GameStatsData {
 
 export class GameStats {
   public readonly id: string;
+  public readonly userId: string;
   public readonly gameId: string;
   public readonly playerId: string;
 
@@ -71,6 +73,7 @@ export class GameStats {
 
   constructor(data: GameStatsData) {
     this.id = data.id || uuidv4();
+    this.userId = data.userId;
     this.gameId = data.gameId;
     this.playerId = data.playerId;
 
@@ -102,6 +105,10 @@ export class GameStats {
   }
 
   private validate(): void {
+    if (!this.userId || this.userId.trim() === '') {
+      throw new Error('User ID is required');
+    }
+
     if (!this.gameId || this.gameId.trim() === '') {
       throw new Error('Game ID is required');
     }
@@ -275,6 +282,7 @@ export class GameStats {
   public toJSON(): Record<string, any> {
     return {
       id: this.id,
+      userId: this.userId,
       gameId: this.gameId,
       playerId: this.playerId,
       freeThrowsMade: this.freeThrowsMade,

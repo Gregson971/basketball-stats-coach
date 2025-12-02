@@ -5,8 +5,8 @@ import { ITeamRepository } from '../../../../../src/domain/repositories/TeamRepo
 class MockTeamRepository implements ITeamRepository {
   public teams: Team[] = [];
 
-  async findById(id: string): Promise<Team | null> {
-    return this.teams.find((t) => t.id === id) || null;
+  async findById(id: string, userId: string): Promise<Team | null> {
+    return this.teams.find((t) => t.id === id && t.userId === userId) || null;
   }
 
   async save(team: Team): Promise<Team> {
@@ -14,22 +14,40 @@ class MockTeamRepository implements ITeamRepository {
     return team;
   }
 
-  async searchByName(_query: string): Promise<Team[]> {
-    return [];
+  async searchByName(query: string, userId: string): Promise<Team[]> {
+    return this.teams.filter(
+      (t) => t.userId === userId && t.name.toLowerCase().includes(query.toLowerCase())
+    );
   }
 
-  async findAll(): Promise<Team[]> {
-    return this.teams;
+  async findAll(userId: string): Promise<Team[]> {
+    return this.teams.filter((t) => t.userId === userId);
   }
 
-  async delete(_id: string): Promise<boolean> {
+  async findByUserId(userId: string): Promise<Team[]> {
+    return this.teams.filter((t) => t.userId === userId);
+  }
+
+  async delete(id: string, userId: string): Promise<boolean> {
+    const index = this.teams.findIndex((t) => t.id === id && t.userId === userId);
+    if (index >= 0) {
+      this.teams.splice(index, 1);
+      return true;
+    }
     return false;
+  }
+
+  async deleteByUserId(userId: string): Promise<number> {
+    const initialLength = this.teams.length;
+    this.teams = this.teams.filter((t) => t.userId !== userId);
+    return initialLength - this.teams.length;
   }
 }
 
 describe('GetTeam Use Case', () => {
   let mockRepository: MockTeamRepository;
   let getTeam: GetTeam;
+  const userId = 'user-123';
 
   beforeEach(() => {
     mockRepository = new MockTeamRepository();
@@ -38,21 +56,37 @@ describe('GetTeam Use Case', () => {
 
   test('should get a team by id', async () => {
     const team = new Team({
+      userId,
       name: 'Wild Cats',
       coach: 'Coach Smith',
     });
     mockRepository.teams.push(team);
 
-    const result = await getTeam.execute(team.id);
+    const result = await getTeam.execute(team.id, userId);
 
     expect(result.success).toBe(true);
     expect(result.team?.id).toBe(team.id);
+    expect(result.team?.userId).toBe(userId);
     expect(result.team?.name).toBe('Wild Cats');
     expect(result.team?.coach).toBe('Coach Smith');
   });
 
   test('should return error when team not found', async () => {
-    const result = await getTeam.execute('non-existent-id');
+    const result = await getTeam.execute('non-existent-id', userId);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Team not found');
+  });
+
+  test('should not get team from different user', async () => {
+    const team = new Team({
+      userId,
+      name: 'Wild Cats',
+      coach: 'Coach Smith',
+    });
+    mockRepository.teams.push(team);
+
+    const result = await getTeam.execute(team.id, 'different-user-id');
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('Team not found');

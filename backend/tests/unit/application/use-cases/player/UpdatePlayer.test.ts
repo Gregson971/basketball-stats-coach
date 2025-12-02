@@ -7,7 +7,7 @@ class MockPlayerRepository implements IPlayerRepository {
   private players: Player[] = [];
 
   async save(player: Player): Promise<Player> {
-    const existingIndex = this.players.findIndex((p) => p.id === player.id);
+    const existingIndex = this.players.findIndex((p) => p.id === player.id && p.userId === player.userId);
     if (existingIndex >= 0) {
       this.players[existingIndex] = player;
     } else {
@@ -16,20 +16,20 @@ class MockPlayerRepository implements IPlayerRepository {
     return player;
   }
 
-  async findById(id: string): Promise<Player | null> {
-    return this.players.find((p) => p.id === id) || null;
+  async findById(id: string, userId: string): Promise<Player | null> {
+    return this.players.find((p) => p.id === id && p.userId === userId) || null;
   }
 
-  async findByTeamId(teamId: string): Promise<Player[]> {
-    return this.players.filter((p) => p.teamId === teamId);
+  async findByTeamId(teamId: string, userId: string): Promise<Player[]> {
+    return this.players.filter((p) => p.teamId === teamId && p.userId === userId);
   }
 
-  async findAll(): Promise<Player[]> {
-    return this.players;
+  async findByUserId(userId: string): Promise<Player[]> {
+    return this.players.filter((p) => p.userId === userId);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const index = this.players.findIndex((p) => p.id === id);
+  async delete(id: string, userId: string): Promise<boolean> {
+    const index = this.players.findIndex((p) => p.id === id && p.userId === userId);
     if (index >= 0) {
       this.players.splice(index, 1);
       return true;
@@ -37,12 +37,19 @@ class MockPlayerRepository implements IPlayerRepository {
     return false;
   }
 
-  async searchByName(query: string): Promise<Player[]> {
+  async searchByName(query: string, userId: string): Promise<Player[]> {
     return this.players.filter(
       (p) =>
-        p.firstName.toLowerCase().includes(query.toLowerCase()) ||
-        p.lastName.toLowerCase().includes(query.toLowerCase())
+        p.userId === userId &&
+        (p.firstName.toLowerCase().includes(query.toLowerCase()) ||
+          p.lastName.toLowerCase().includes(query.toLowerCase()))
     );
+  }
+
+  async deleteByUserId(userId: string): Promise<number> {
+    const initialLength = this.players.length;
+    this.players = this.players.filter((p) => p.userId !== userId);
+    return initialLength - this.players.length;
   }
 }
 
@@ -50,12 +57,14 @@ describe('UpdatePlayer Use Case', () => {
   let mockRepository: MockPlayerRepository;
   let updatePlayer: UpdatePlayer;
   let existingPlayer: Player;
+  const userId = 'user-123';
 
   beforeEach(async () => {
     mockRepository = new MockPlayerRepository();
     updatePlayer = new UpdatePlayer(mockRepository);
 
     existingPlayer = new Player({
+      userId,
       firstName: 'Ryan',
       lastName: 'Evans',
       teamId: 'team-123',
@@ -70,7 +79,7 @@ describe('UpdatePlayer Use Case', () => {
       age: 24,
     };
 
-    const result = await updatePlayer.execute(existingPlayer.id, updateData);
+    const result = await updatePlayer.execute(existingPlayer.id, userId, updateData);
 
     expect(result.success).toBe(true);
     expect(result.player?.nickname).toBe('The Rocket');
@@ -80,7 +89,14 @@ describe('UpdatePlayer Use Case', () => {
   });
 
   test('should return error when player not found', async () => {
-    const result = await updatePlayer.execute('non-existent-id', { nickname: 'Test' });
+    const result = await updatePlayer.execute('non-existent-id', userId, { nickname: 'Test' });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Player not found');
+  });
+
+  test('should not update player from different user', async () => {
+    const result = await updatePlayer.execute(existingPlayer.id, 'different-user-id', { nickname: 'Test' });
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('Player not found');
@@ -91,7 +107,7 @@ describe('UpdatePlayer Use Case', () => {
       age: -5,
     };
 
-    const result = await updatePlayer.execute(existingPlayer.id, updateData);
+    const result = await updatePlayer.execute(existingPlayer.id, userId, updateData);
 
     expect(result.success).toBe(false);
     expect(result.error).toBeDefined();
@@ -101,14 +117,16 @@ describe('UpdatePlayer Use Case', () => {
   test('should not update immutable fields', async () => {
     const updateData = {
       id: 'new-id',
+      userId: 'new-user-id',
       teamId: 'new-team-id',
       createdAt: new Date(),
     } as any;
 
-    const result = await updatePlayer.execute(existingPlayer.id, updateData);
+    const result = await updatePlayer.execute(existingPlayer.id, userId, updateData);
 
     expect(result.success).toBe(true);
     expect(result.player?.id).toBe(existingPlayer.id);
+    expect(result.player?.userId).toBe(userId);
     expect(result.player?.teamId).toBe('team-123');
   });
 
@@ -117,9 +135,9 @@ describe('UpdatePlayer Use Case', () => {
       nickname: 'The Rocket',
     };
 
-    await updatePlayer.execute(existingPlayer.id, updateData);
+    await updatePlayer.execute(existingPlayer.id, userId, updateData);
 
-    const updatedPlayer = await mockRepository.findById(existingPlayer.id);
+    const updatedPlayer = await mockRepository.findById(existingPlayer.id, userId);
     expect(updatedPlayer?.nickname).toBe('The Rocket');
   });
 
@@ -132,7 +150,7 @@ describe('UpdatePlayer Use Case', () => {
       position: 'Power Forward',
     };
 
-    const result = await updatePlayer.execute(existingPlayer.id, updateData);
+    const result = await updatePlayer.execute(existingPlayer.id, userId, updateData);
 
     expect(result.success).toBe(true);
     expect(result.player?.nickname).toBe('The Rocket');

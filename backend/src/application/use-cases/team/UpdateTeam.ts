@@ -10,9 +10,9 @@ export interface UpdateTeamResult {
 export class UpdateTeam {
   constructor(private readonly teamRepository: ITeamRepository) {}
 
-  async execute(teamId: string, updateData: Partial<TeamData>): Promise<UpdateTeamResult> {
+  async execute(teamId: string, userId: string, updateData: Partial<TeamData>): Promise<UpdateTeamResult> {
     try {
-      const team = await this.teamRepository.findById(teamId);
+      const team = await this.teamRepository.findById(teamId, userId);
 
       if (!team) {
         return {

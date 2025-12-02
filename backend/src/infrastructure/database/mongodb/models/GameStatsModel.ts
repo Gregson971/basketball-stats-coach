@@ -3,6 +3,7 @@ import { ActionHistoryItem } from '../../../../domain/entities/GameStats';
 
 export interface IGameStatsDocument {
   _id: string;
+  userId: string;
   gameId: string;
   playerId: string;
   freeThrowsMade: number;
@@ -50,6 +51,7 @@ const ActionHistorySchema = new Schema(
 const GameStatsSchema = new Schema<IGameStatsDocument>(
   {
     _id: { type: String, required: true },
+    userId: { type: String, required: true, index: true },
     gameId: { type: String, required: true, index: true },
     playerId: { type: String, required: true, index: true },
     freeThrowsMade: { type: Number, default: 0, min: 0 },
@@ -77,6 +79,7 @@ const GameStatsSchema = new Schema<IGameStatsDocument>(
 // Composite unique index
 GameStatsSchema.index({ gameId: 1, playerId: 1 }, { unique: true });
 // Index for queries
-GameStatsSchema.index({ playerId: 1, gameId: 1 });
+GameStatsSchema.index({ userId: 1, playerId: 1, gameId: 1 });
+GameStatsSchema.index({ userId: 1, gameId: 1 });
 
 export const GameStatsModel = mongoose.model<IGameStatsDocument>('GameStats', GameStatsSchema);

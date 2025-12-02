@@ -8,9 +8,9 @@ export interface DeletePlayerResult {
 export class DeletePlayer {
   constructor(private readonly playerRepository: IPlayerRepository) {}
 
-  async execute(playerId: string): Promise<DeletePlayerResult> {
+  async execute(playerId: string, userId: string): Promise<DeletePlayerResult> {
     try {
-      const deleted = await this.playerRepository.delete(playerId);
+      const deleted = await this.playerRepository.delete(playerId, userId);
 
       if (!deleted) {
         return {

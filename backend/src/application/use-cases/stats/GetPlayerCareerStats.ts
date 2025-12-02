@@ -12,9 +12,9 @@ export interface GetPlayerCareerStatsResult {
 export class GetPlayerCareerStats {
   constructor(private readonly gameStatsRepository: IGameStatsRepository) {}
 
-  async execute(playerId: string): Promise<GetPlayerCareerStatsResult> {
+  async execute(playerId: string, userId: string): Promise<GetPlayerCareerStatsResult> {
     try {
-      const stats = await this.gameStatsRepository.getPlayerAggregateStats(playerId);
+      const stats = await this.gameStatsRepository.getPlayerAggregateStats(playerId, userId);
 
       return {
         success: true,

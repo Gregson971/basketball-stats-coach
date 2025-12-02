@@ -10,9 +10,9 @@ export interface GetGamesByTeamResult {
 export class GetGamesByTeam {
   constructor(private readonly gameRepository: IGameRepository) {}
 
-  async execute(teamId: string): Promise<GetGamesByTeamResult> {
+  async execute(teamId: string, userId: string): Promise<GetGamesByTeamResult> {
     try {
-      const games = await this.gameRepository.findByTeamId(teamId);
+      const games = await this.gameRepository.findByTeamId(teamId, userId);
 
       return {
         success: true,

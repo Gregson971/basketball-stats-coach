@@ -8,20 +8,24 @@ import {
 class MockGameStatsRepository implements IGameStatsRepository {
   private stats: GameStats[] = [];
 
-  async findById(_id: string): Promise<GameStats | null> {
-    return null;
+  async findById(id: string, userId: string): Promise<GameStats | null> {
+    return this.stats.find((s) => s.id === id && s.userId === userId) || null;
   }
 
-  async findByGameId(_gameId: string): Promise<GameStats[]> {
-    return [];
+  async findByGameId(gameId: string, userId: string): Promise<GameStats[]> {
+    return this.stats.filter((s) => s.gameId === gameId && s.userId === userId);
   }
 
-  async findByPlayerId(playerId: string): Promise<GameStats[]> {
-    return this.stats.filter((s) => s.playerId === playerId);
+  async findByPlayerId(playerId: string, userId: string): Promise<GameStats[]> {
+    return this.stats.filter((s) => s.playerId === playerId && s.userId === userId);
   }
 
-  async findByGameAndPlayer(_gameId: string, _playerId: string): Promise<GameStats | null> {
-    return null;
+  async findByGameAndPlayer(gameId: string, playerId: string, userId: string): Promise<GameStats | null> {
+    return this.stats.find((s) => s.gameId === gameId && s.playerId === playerId && s.userId === userId) || null;
+  }
+
+  async findByUserId(userId: string): Promise<GameStats[]> {
+    return this.stats.filter((s) => s.userId === userId);
   }
 
   async save(gameStats: GameStats): Promise<GameStats> {
@@ -29,12 +33,23 @@ class MockGameStatsRepository implements IGameStatsRepository {
     return gameStats;
   }
 
-  async delete(_id: string): Promise<boolean> {
+  async delete(id: string, userId: string): Promise<boolean> {
+    const index = this.stats.findIndex((s) => s.id === id && s.userId === userId);
+    if (index >= 0) {
+      this.stats.splice(index, 1);
+      return true;
+    }
     return false;
   }
 
-  async getPlayerAggregateStats(playerId: string): Promise<PlayerAggregateStats> {
-    const playerStats = this.stats.filter((s) => s.playerId === playerId);
+  async deleteByUserId(userId: string): Promise<number> {
+    const initialLength = this.stats.length;
+    this.stats = this.stats.filter((s) => s.userId !== userId);
+    return initialLength - this.stats.length;
+  }
+
+  async getPlayerAggregateStats(playerId: string, userId: string): Promise<PlayerAggregateStats> {
+    const playerStats = this.stats.filter((s) => s.playerId === playerId && s.userId === userId);
 
     if (playerStats.length === 0) {
       return {
@@ -90,6 +105,7 @@ class MockGameStatsRepository implements IGameStatsRepository {
 describe('GetPlayerCareerStats Use Case', () => {
   let mockRepository: MockGameStatsRepository;
   let getPlayerCareerStats: GetPlayerCareerStats;
+  const userId = 'user-123';
 
   beforeEach(async () => {
     mockRepository = new MockGameStatsRepository();
@@ -97,6 +113,7 @@ describe('GetPlayerCareerStats Use Case', () => {
 
     // Game 1
     const game1Stats = new GameStats({
+      userId,
       gameId: 'game-1',
       playerId: 'player-123',
     });
@@ -107,6 +124,7 @@ describe('GetPlayerCareerStats Use Case', () => {
 
     // Game 2
     const game2Stats = new GameStats({
+      userId,
       gameId: 'game-2',
       playerId: 'player-123',
     });
@@ -118,7 +136,7 @@ describe('GetPlayerCareerStats Use Case', () => {
   });
 
   test('should get career stats for player', async () => {
-    const result = await getPlayerCareerStats.execute('player-123');
+    const result = await getPlayerCareerStats.execute('player-123', userId);
 
     expect(result.success).toBe(true);
     expect(result.stats?.playerId).toBe('player-123');
@@ -130,7 +148,34 @@ describe('GetPlayerCareerStats Use Case', () => {
   });
 
   test('should return zero stats for player with no games', async () => {
-    const result = await getPlayerCareerStats.execute('player-no-games');
+    const result = await getPlayerCareerStats.execute('player-no-games', userId);
+
+    expect(result.success).toBe(true);
+    expect(result.stats?.gamesPlayed).toBe(0);
+    expect(result.stats?.totalPoints).toBe(0);
+  });
+
+  test('should only return stats for specified user', async () => {
+    // Add stats for a different user
+    const otherUserStats = new GameStats({
+      userId: 'user-456',
+      gameId: 'game-3',
+      playerId: 'player-123',
+    });
+    otherUserStats.recordThreePoint(true);
+    otherUserStats.recordThreePoint(true);
+    await mockRepository.save(otherUserStats);
+
+    const result = await getPlayerCareerStats.execute('player-123', userId);
+
+    // Should only include the 2 games from user-123, not the one from user-456
+    expect(result.success).toBe(true);
+    expect(result.stats?.gamesPlayed).toBe(2);
+    expect(result.stats?.totalPoints).toBe(9); // Still 9, not 15
+  });
+
+  test('should not return stats from different user', async () => {
+    const result = await getPlayerCareerStats.execute('player-123', 'different-user-id');
 
     expect(result.success).toBe(true);
     expect(result.stats?.gamesPlayed).toBe(0);

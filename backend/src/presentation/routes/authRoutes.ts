@@ -13,9 +13,9 @@ export const createAuthRoutes = (userRepository: IUserRepository): Router => {
    * /api/auth/register:
    *   post:
    *     tags:
-   *       - Authentication
+   *       - Auth
    *     summary: Créer un nouveau compte utilisateur
-   *     description: Enregistre un nouvel utilisateur et retourne un token JWT
+   *     description: Enregistre un nouvel utilisateur et retourne un token JWT. Ce token doit être inclus dans l'en-tête Authorization (Bearer token) pour toutes les routes protégées.
    *     requestBody:
    *       required: true
    *       content:
@@ -78,9 +78,9 @@ export const createAuthRoutes = (userRepository: IUserRepository): Router => {
    * /api/auth/login:
    *   post:
    *     tags:
-   *       - Authentication
+   *       - Auth
    *     summary: Se connecter
-   *     description: Authentifie un utilisateur et retourne un token JWT
+   *     description: Authentifie un utilisateur et retourne un token JWT. Ce token doit être inclus dans l'en-tête Authorization (Bearer token) pour toutes les routes protégées.
    *     requestBody:
    *       required: true
    *       content:

@@ -4,25 +4,27 @@ import { PlayerModel } from '../mongodb/models/PlayerModel';
 import { PlayerMapper } from '../mongodb/mappers/PlayerMapper';
 
 export class MongoPlayerRepository implements IPlayerRepository {
-  async findById(id: string): Promise<Player | null> {
-    const doc = await PlayerModel.findById(id).exec();
+  async findById(id: string, userId: string): Promise<Player | null> {
+    const doc = await PlayerModel.findOne({ _id: id, userId }).exec();
     return doc ? PlayerMapper.toDomain(doc) : null;
   }
 
-  async findByTeamId(teamId: string): Promise<Player[]> {
-    const docs = await PlayerModel.find({ teamId }).sort({ lastName: 1, firstName: 1 }).exec();
+  async findByTeamId(teamId: string, userId: string): Promise<Player[]> {
+    const docs = await PlayerModel.find({ teamId, userId })
+      .sort({ lastName: 1, firstName: 1 })
+      .exec();
     return docs.map((doc) => PlayerMapper.toDomain(doc));
   }
 
-  async findAll(): Promise<Player[]> {
-    const docs = await PlayerModel.find().sort({ lastName: 1, firstName: 1 }).exec();
+  async findByUserId(userId: string): Promise<Player[]> {
+    const docs = await PlayerModel.find({ userId }).sort({ lastName: 1, firstName: 1 }).exec();
     return docs.map((doc) => PlayerMapper.toDomain(doc));
   }
 
   async save(player: Player): Promise<Player> {
     const data = PlayerMapper.toPersistence(player);
 
-    const doc = await PlayerModel.findByIdAndUpdate(player.id, data, {
+    const doc = await PlayerModel.findOneAndUpdate({ _id: player.id, userId: player.userId }, data, {
       upsert: true,
       new: true,
       setDefaultsOnInsert: true,
@@ -35,19 +37,25 @@ export class MongoPlayerRepository implements IPlayerRepository {
     return PlayerMapper.toDomain(doc);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await PlayerModel.findByIdAndDelete(id).exec();
+  async delete(id: string, userId: string): Promise<boolean> {
+    const result = await PlayerModel.findOneAndDelete({ _id: id, userId }).exec();
     return result !== null;
   }
 
-  async searchByName(query: string): Promise<Player[]> {
+  async searchByName(query: string, userId: string): Promise<Player[]> {
     const regex = new RegExp(query, 'i');
     const docs = await PlayerModel.find({
+      userId,
       $or: [{ firstName: regex }, { lastName: regex }, { nickname: regex }],
     })
       .sort({ lastName: 1, firstName: 1 })
       .exec();
 
     return docs.map((doc) => PlayerMapper.toDomain(doc));
+  }
+
+  async deleteByUserId(userId: string): Promise<number> {
+    const result = await PlayerModel.deleteMany({ userId }).exec();
+    return result.deletedCount || 0;
   }
 }

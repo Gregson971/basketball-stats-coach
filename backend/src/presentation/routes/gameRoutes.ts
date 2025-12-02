@@ -15,7 +15,9 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *     tags:
    *       - Games
    *     summary: Créer un nouveau match
-   *     description: Ajoute un nouveau match dans la base de données
+   *     description: Ajoute un nouveau match dans la base de données. Le userId est automatiquement extrait du token JWT.
+   *     security:
+   *       - bearerAuth: []
    *     requestBody:
    *       required: true
    *       content:
@@ -75,7 +77,9 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *     tags:
    *       - Games
    *     summary: Obtenir un match par ID
-   *     description: Récupère les informations d'un match spécifique
+   *     description: Récupère les informations d'un match spécifique. Retourne uniquement si le match appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -112,7 +116,9 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *     tags:
    *       - Games
    *     summary: Mettre à jour un match
-   *     description: Modifie les informations d'un match existant
+   *     description: Modifie les informations d'un match existant. Fonctionne uniquement si le match appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -165,7 +171,9 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *     tags:
    *       - Games
    *     summary: Supprimer un match
-   *     description: Supprime un match de la base de données
+   *     description: Supprime un match de la base de données. Fonctionne uniquement si le match appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -196,7 +204,9 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *     tags:
    *       - Games
    *     summary: Obtenir tous les matchs d'une équipe
-   *     description: Récupère la liste de tous les matchs d'une équipe spécifique
+   *     description: Récupère la liste de tous les matchs d'une équipe spécifique de l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: teamId
@@ -239,7 +249,9 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *     tags:
    *       - Games
    *     summary: Obtenir tous les matchs par statut
-   *     description: Récupère la liste de tous les matchs avec un statut spécifique
+   *     description: Récupère la liste de tous les matchs avec un statut spécifique pour l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: status
@@ -283,7 +295,9 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *     tags:
    *       - Games
    *     summary: Démarrer un match
-   *     description: Change le statut du match à "in_progress" et enregistre l'heure de début
+   *     description: Change le statut du match à "in_progress" et enregistre l'heure de début. Fonctionne uniquement si le match appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -320,7 +334,9 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
    *     tags:
    *       - Games
    *     summary: Terminer un match
-   *     description: Change le statut du match à "completed" et enregistre l'heure de fin
+   *     description: Change le statut du match à "completed" et enregistre l'heure de fin. Fonctionne uniquement si le match appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id

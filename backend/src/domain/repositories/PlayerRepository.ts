@@ -6,19 +6,19 @@ import { Player } from '../entities/Player';
  */
 export interface IPlayerRepository {
   /**
-   * Find a player by ID
+   * Find a player by ID and userId
    */
-  findById(id: string): Promise<Player | null>;
+  findById(id: string, userId: string): Promise<Player | null>;
 
   /**
-   * Find all players for a team
+   * Find all players for a team and userId
    */
-  findByTeamId(teamId: string): Promise<Player[]>;
+  findByTeamId(teamId: string, userId: string): Promise<Player[]>;
 
   /**
-   * Find all players
+   * Find all players for a userId
    */
-  findAll(): Promise<Player[]>;
+  findByUserId(userId: string): Promise<Player[]>;
 
   /**
    * Save a player (create or update)
@@ -26,12 +26,17 @@ export interface IPlayerRepository {
   save(player: Player): Promise<Player>;
 
   /**
-   * Delete a player by ID
+   * Delete a player by ID and userId
    */
-  delete(id: string): Promise<boolean>;
+  delete(id: string, userId: string): Promise<boolean>;
 
   /**
-   * Search players by name
+   * Search players by name for a userId
    */
-  searchByName(query: string): Promise<Player[]>;
+  searchByName(query: string, userId: string): Promise<Player[]>;
+
+  /**
+   * Delete all players for a userId (cascade delete)
+   */
+  deleteByUserId(userId: string): Promise<number>;
 }

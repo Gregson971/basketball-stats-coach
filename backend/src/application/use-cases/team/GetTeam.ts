@@ -10,9 +10,9 @@ export interface GetTeamResult {
 export class GetTeam {
   constructor(private readonly teamRepository: ITeamRepository) {}
 
-  async execute(teamId: string): Promise<GetTeamResult> {
+  async execute(teamId: string, userId: string): Promise<GetTeamResult> {
     try {
-      const team = await this.teamRepository.findById(teamId);
+      const team = await this.teamRepository.findById(teamId, userId);
 
       if (!team) {
         return {

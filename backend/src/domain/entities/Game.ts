@@ -4,6 +4,7 @@ export type GameStatus = 'not_started' | 'in_progress' | 'completed';
 
 export interface GameData {
   id?: string;
+  userId: string;
   teamId: string;
   opponent: string;
   gameDate?: Date | null;
@@ -18,6 +19,7 @@ export interface GameData {
 
 export class Game {
   public readonly id: string;
+  public readonly userId: string;
   public readonly teamId: string;
   public opponent: string;
   public gameDate: Date | null;
@@ -31,6 +33,7 @@ export class Game {
 
   constructor(data: GameData) {
     this.id = data.id || uuidv4();
+    this.userId = data.userId;
     this.teamId = data.teamId;
     this.opponent = data.opponent;
     this.gameDate = data.gameDate || null;
@@ -46,6 +49,10 @@ export class Game {
   }
 
   private validate(): void {
+    if (!this.userId || this.userId.trim() === '') {
+      throw new Error('User ID is required');
+    }
+
     if (!this.teamId || this.teamId.trim() === '') {
       throw new Error('Team ID is required');
     }
@@ -89,7 +96,7 @@ export class Game {
   }
 
   public update(data: Partial<GameData>): void {
-    const immutableFields = ['id', 'createdAt', 'teamId', 'startedAt', 'completedAt'];
+    const immutableFields = ['id', 'userId', 'createdAt', 'teamId', 'startedAt', 'completedAt'];
 
     Object.keys(data).forEach((key) => {
       if (!immutableFields.includes(key) && key in this) {
@@ -113,6 +120,7 @@ export class Game {
   public toJSON(): Record<string, any> {
     return {
       id: this.id,
+      userId: this.userId,
       teamId: this.teamId,
       opponent: this.opponent,
       gameDate: this.gameDate,

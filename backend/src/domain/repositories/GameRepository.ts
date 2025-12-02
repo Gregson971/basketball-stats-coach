@@ -6,24 +6,29 @@ import { Game, GameStatus } from '../entities/Game';
  */
 export interface IGameRepository {
   /**
-   * Find a game by ID
+   * Find a game by ID and userId
    */
-  findById(id: string): Promise<Game | null>;
+  findById(id: string, userId: string): Promise<Game | null>;
 
   /**
-   * Find all games for a team
+   * Find all games for a team and userId
    */
-  findByTeamId(teamId: string): Promise<Game[]>;
+  findByTeamId(teamId: string, userId: string): Promise<Game[]>;
 
   /**
-   * Find all games
+   * Find all games for a userId
    */
-  findAll(): Promise<Game[]>;
+  findAll(userId: string): Promise<Game[]>;
 
   /**
-   * Find games by status
+   * Find games by status and userId
    */
-  findByStatus(status: GameStatus): Promise<Game[]>;
+  findByStatus(status: GameStatus, userId: string): Promise<Game[]>;
+
+  /**
+   * Find all games for a userId
+   */
+  findByUserId(userId: string): Promise<Game[]>;
 
   /**
    * Save a game (create or update)
@@ -31,7 +36,12 @@ export interface IGameRepository {
   save(game: Game): Promise<Game>;
 
   /**
-   * Delete a game by ID
+   * Delete a game by ID and userId
    */
-  delete(id: string): Promise<boolean>;
+  delete(id: string, userId: string): Promise<boolean>;
+
+  /**
+   * Delete all games for a userId (cascade delete)
+   */
+  deleteByUserId(userId: string): Promise<number>;
 }

@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export interface PlayerData {
   id?: string;
+  userId: string;
   firstName: string;
   lastName: string;
   teamId: string;
@@ -18,6 +19,7 @@ export interface PlayerData {
 
 export class Player {
   public readonly id: string;
+  public readonly userId: string;
   public firstName: string;
   public lastName: string;
   public readonly teamId: string;
@@ -33,6 +35,7 @@ export class Player {
 
   constructor(data: PlayerData) {
     this.id = data.id || uuidv4();
+    this.userId = data.userId;
     this.firstName = data.firstName;
     this.lastName = data.lastName;
     this.teamId = data.teamId;
@@ -50,6 +53,10 @@ export class Player {
   }
 
   private validate(): void {
+    if (!this.userId || this.userId.trim() === '') {
+      throw new Error('User ID is required');
+    }
+
     if (!this.firstName || this.firstName.trim() === '') {
       throw new Error('First name is required');
     }
@@ -91,7 +98,7 @@ export class Player {
   }
 
   public update(data: Partial<PlayerData>): void {
-    const immutableFields = ['id', 'createdAt', 'teamId'];
+    const immutableFields = ['id', 'userId', 'createdAt', 'teamId'];
 
     Object.keys(data).forEach((key) => {
       if (!immutableFields.includes(key) && key in this) {
@@ -115,6 +122,7 @@ export class Player {
   public toJSON(): Record<string, any> {
     return {
       id: this.id,
+      userId: this.userId,
       firstName: this.firstName,
       lastName: this.lastName,
       teamId: this.teamId,

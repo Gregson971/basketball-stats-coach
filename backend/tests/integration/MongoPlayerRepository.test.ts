@@ -4,6 +4,7 @@ import { setupDatabase, teardownDatabase, clearDatabase } from '../setup';
 
 describe('MongoPlayerRepository Integration Tests', () => {
   let repository: MongoPlayerRepository;
+  const userId = 'user-123';
 
   beforeAll(async () => {
     await setupDatabase();
@@ -21,6 +22,7 @@ describe('MongoPlayerRepository Integration Tests', () => {
   describe('save and findById', () => {
     test('should save and retrieve a player', async () => {
       const player = new Player({
+        userId,
         firstName: 'John',
         lastName: 'Doe',
         teamId: 'team-123',
@@ -29,15 +31,17 @@ describe('MongoPlayerRepository Integration Tests', () => {
       const saved = await repository.save(player);
       expect(saved.id).toBe(player.id);
 
-      const found = await repository.findById(player.id);
+      const found = await repository.findById(player.id, userId);
       expect(found).not.toBeNull();
       expect(found?.firstName).toBe('John');
       expect(found?.lastName).toBe('Doe');
       expect(found?.teamId).toBe('team-123');
+      expect(found?.userId).toBe(userId);
     });
 
     test('should update existing player', async () => {
       const player = new Player({
+        userId,
         firstName: 'John',
         lastName: 'Doe',
         teamId: 'team-123',
@@ -50,12 +54,12 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
       expect(updated.nickname).toBe('Johnny');
 
-      const found = await repository.findById(player.id);
+      const found = await repository.findById(player.id, userId);
       expect(found?.nickname).toBe('Johnny');
     });
 
     test('should return null for non-existent player', async () => {
-      const found = await repository.findById('non-existent-id');
+      const found = await repository.findById('non-existent-id', userId);
       expect(found).toBeNull();
     });
   });
@@ -63,18 +67,21 @@ describe('MongoPlayerRepository Integration Tests', () => {
   describe('findByTeamId', () => {
     test('should find all players in a team', async () => {
       const player1 = new Player({
+        userId,
         firstName: 'John',
         lastName: 'Doe',
         teamId: 'team-123',
       });
 
       const player2 = new Player({
+        userId,
         firstName: 'Jane',
         lastName: 'Smith',
         teamId: 'team-123',
       });
 
       const player3 = new Player({
+        userId,
         firstName: 'Bob',
         lastName: 'Jones',
         teamId: 'team-456',
@@ -84,20 +91,21 @@ describe('MongoPlayerRepository Integration Tests', () => {
       await repository.save(player2);
       await repository.save(player3);
 
-      const team123Players = await repository.findByTeamId('team-123');
+      const team123Players = await repository.findByTeamId('team-123', userId);
       expect(team123Players).toHaveLength(2);
       expect(team123Players.map((p) => p.id)).toContain(player1.id);
       expect(team123Players.map((p) => p.id)).toContain(player2.id);
     });
 
     test('should return empty array for team with no players', async () => {
-      const players = await repository.findByTeamId('empty-team');
+      const players = await repository.findByTeamId('empty-team', userId);
       expect(players).toEqual([]);
     });
 
     test('should return players sorted by last name', async () => {
       await repository.save(
         new Player({
+          userId,
           firstName: 'Charlie',
           lastName: 'Zulu',
           teamId: 'team-123',
@@ -106,6 +114,7 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
       await repository.save(
         new Player({
+          userId,
           firstName: 'Alice',
           lastName: 'Alpha',
           teamId: 'team-123',
@@ -114,23 +123,25 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
       await repository.save(
         new Player({
+          userId,
           firstName: 'Bob',
           lastName: 'Bravo',
           teamId: 'team-123',
         })
       );
 
-      const players = await repository.findByTeamId('team-123');
+      const players = await repository.findByTeamId('team-123', userId);
       expect(players[0].lastName).toBe('Alpha');
       expect(players[1].lastName).toBe('Bravo');
       expect(players[2].lastName).toBe('Zulu');
     });
   });
 
-  describe('findAll', () => {
-    test('should find all players', async () => {
+  describe('findByUserId (findAll equivalent)', () => {
+    test('should find all players for a user', async () => {
       await repository.save(
         new Player({
+          userId,
           firstName: 'John',
           lastName: 'Doe',
           teamId: 'team-123',
@@ -139,18 +150,19 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
       await repository.save(
         new Player({
+          userId,
           firstName: 'Jane',
           lastName: 'Smith',
           teamId: 'team-456',
         })
       );
 
-      const all = await repository.findAll();
+      const all = await repository.findByUserId(userId);
       expect(all).toHaveLength(2);
     });
 
     test('should return empty array when no players exist', async () => {
-      const all = await repository.findAll();
+      const all = await repository.findByUserId(userId);
       expect(all).toEqual([]);
     });
   });
@@ -158,6 +170,7 @@ describe('MongoPlayerRepository Integration Tests', () => {
   describe('delete', () => {
     test('should delete a player', async () => {
       const player = new Player({
+        userId,
         firstName: 'John',
         lastName: 'Doe',
         teamId: 'team-123',
@@ -165,15 +178,15 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
       await repository.save(player);
 
-      const deleted = await repository.delete(player.id);
+      const deleted = await repository.delete(player.id, userId);
       expect(deleted).toBe(true);
 
-      const found = await repository.findById(player.id);
+      const found = await repository.findById(player.id, userId);
       expect(found).toBeNull();
     });
 
     test('should return false when deleting non-existent player', async () => {
-      const deleted = await repository.delete('non-existent-id');
+      const deleted = await repository.delete('non-existent-id', userId);
       expect(deleted).toBe(false);
     });
   });
@@ -182,6 +195,7 @@ describe('MongoPlayerRepository Integration Tests', () => {
     beforeEach(async () => {
       await repository.save(
         new Player({
+          userId,
           firstName: 'Ryan',
           lastName: 'Evans',
           teamId: 'team-123',
@@ -191,6 +205,7 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
       await repository.save(
         new Player({
+          userId,
           firstName: 'Lilly',
           lastName: 'Evans',
           teamId: 'team-123',
@@ -199,6 +214,7 @@ describe('MongoPlayerRepository Integration Tests', () => {
 
       await repository.save(
         new Player({
+          userId,
           firstName: 'Reed',
           lastName: 'Smith',
           teamId: 'team-123',
@@ -207,30 +223,84 @@ describe('MongoPlayerRepository Integration Tests', () => {
     });
 
     test('should search by first name', async () => {
-      const results = await repository.searchByName('Ryan');
+      const results = await repository.searchByName('Ryan', userId);
       expect(results).toHaveLength(1);
       expect(results[0].firstName).toBe('Ryan');
     });
 
     test('should search by last name', async () => {
-      const results = await repository.searchByName('Evans');
+      const results = await repository.searchByName('Evans', userId);
       expect(results).toHaveLength(2);
     });
 
     test('should search by nickname', async () => {
-      const results = await repository.searchByName('Rocket');
+      const results = await repository.searchByName('Rocket', userId);
       expect(results).toHaveLength(1);
       expect(results[0].nickname).toBe('The Rocket');
     });
 
     test('should be case insensitive', async () => {
-      const results = await repository.searchByName('ryan');
+      const results = await repository.searchByName('ryan', userId);
       expect(results).toHaveLength(1);
     });
 
     test('should return empty array for no matches', async () => {
-      const results = await repository.searchByName('NonExistent');
+      const results = await repository.searchByName('NonExistent', userId);
       expect(results).toEqual([]);
+    });
+  });
+
+  describe('findByUserId', () => {
+    test('should find all players for a user', async () => {
+      await repository.save(
+        new Player({
+          userId,
+          firstName: 'John',
+          lastName: 'Doe',
+          teamId: 'team-123',
+        })
+      );
+
+      await repository.save(
+        new Player({
+          userId: 'user-456',
+          firstName: 'Jane',
+          lastName: 'Smith',
+          teamId: 'team-123',
+        })
+      );
+
+      const userPlayers = await repository.findByUserId(userId);
+      expect(userPlayers).toHaveLength(1);
+      expect(userPlayers[0].firstName).toBe('John');
+    });
+  });
+
+  describe('deleteByUserId', () => {
+    test('should delete all players for a user', async () => {
+      await repository.save(
+        new Player({
+          userId,
+          firstName: 'John',
+          lastName: 'Doe',
+          teamId: 'team-123',
+        })
+      );
+
+      await repository.save(
+        new Player({
+          userId,
+          firstName: 'Jane',
+          lastName: 'Smith',
+          teamId: 'team-456',
+        })
+      );
+
+      const deletedCount = await repository.deleteByUserId(userId);
+      expect(deletedCount).toBe(2);
+
+      const remaining = await repository.findByUserId(userId);
+      expect(remaining).toHaveLength(0);
     });
   });
 });

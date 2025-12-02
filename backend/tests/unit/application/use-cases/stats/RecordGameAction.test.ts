@@ -12,8 +12,16 @@ import { GameStatus } from '../../../../../src/domain/entities/Game';
 class MockGameStatsRepository implements IGameStatsRepository {
   private stats: GameStats[] = [];
 
-  async findByGameAndPlayer(gameId: string, playerId: string): Promise<GameStats | null> {
-    return this.stats.find((s) => s.gameId === gameId && s.playerId === playerId) || null;
+  async findByGameAndPlayer(
+    gameId: string,
+    playerId: string,
+    userId: string
+  ): Promise<GameStats | null> {
+    return (
+      this.stats.find(
+        (s) => s.gameId === gameId && s.playerId === playerId && s.userId === userId
+      ) || null
+    );
   }
 
   async save(gameStats: GameStats): Promise<GameStats> {
@@ -26,20 +34,24 @@ class MockGameStatsRepository implements IGameStatsRepository {
     return gameStats;
   }
 
-  async findById(id: string): Promise<GameStats | null> {
-    return this.stats.find((s) => s.id === id) || null;
+  async findById(id: string, userId: string): Promise<GameStats | null> {
+    return this.stats.find((s) => s.id === id && s.userId === userId) || null;
   }
 
-  async findByGameId(gameId: string): Promise<GameStats[]> {
-    return this.stats.filter((s) => s.gameId === gameId);
+  async findByGameId(gameId: string, userId: string): Promise<GameStats[]> {
+    return this.stats.filter((s) => s.gameId === gameId && s.userId === userId);
   }
 
-  async findByPlayerId(playerId: string): Promise<GameStats[]> {
-    return this.stats.filter((s) => s.playerId === playerId);
+  async findByPlayerId(playerId: string, userId: string): Promise<GameStats[]> {
+    return this.stats.filter((s) => s.playerId === playerId && s.userId === userId);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const index = this.stats.findIndex((s) => s.id === id);
+  async findByUserId(userId: string): Promise<GameStats[]> {
+    return this.stats.filter((s) => s.userId === userId);
+  }
+
+  async delete(id: string, userId: string): Promise<boolean> {
+    const index = this.stats.findIndex((s) => s.id === id && s.userId === userId);
     if (index >= 0) {
       this.stats.splice(index, 1);
       return true;
@@ -47,8 +59,14 @@ class MockGameStatsRepository implements IGameStatsRepository {
     return false;
   }
 
-  async getPlayerAggregateStats(playerId: string): Promise<PlayerAggregateStats> {
-    const playerStats = this.stats.filter((s) => s.playerId === playerId);
+  async deleteByUserId(userId: string): Promise<number> {
+    const initialLength = this.stats.length;
+    this.stats = this.stats.filter((s) => s.userId !== userId);
+    return initialLength - this.stats.length;
+  }
+
+  async getPlayerAggregateStats(playerId: string, userId: string): Promise<PlayerAggregateStats> {
+    const playerStats = this.stats.filter((s) => s.playerId === playerId && s.userId === userId);
 
     return {
       playerId,
@@ -72,8 +90,8 @@ class MockGameStatsRepository implements IGameStatsRepository {
 class MockGameRepository implements IGameRepository {
   public games: Game[] = [];
 
-  async findById(id: string): Promise<Game | null> {
-    return this.games.find((g) => g.id === id) || null;
+  async findById(id: string, userId: string): Promise<Game | null> {
+    return this.games.find((g) => g.id === id && g.userId === userId) || null;
   }
 
   async save(game: Game): Promise<Game> {
@@ -86,25 +104,35 @@ class MockGameRepository implements IGameRepository {
     return game;
   }
 
-  async findByTeamId(teamId: string): Promise<Game[]> {
-    return this.games.filter((g) => g.teamId === teamId);
+  async findByTeamId(teamId: string, userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.teamId === teamId && g.userId === userId);
+  }
+
+  async findByUserId(userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.userId === userId);
   }
 
   async findAll(): Promise<Game[]> {
     return this.games;
   }
 
-  async findByStatus(status: GameStatus): Promise<Game[]> {
-    return this.games.filter((g) => g.status === status);
+  async findByStatus(status: GameStatus, userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.status === status && g.userId === userId);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const index = this.games.findIndex((g) => g.id === id);
+  async delete(id: string, userId: string): Promise<boolean> {
+    const index = this.games.findIndex((g) => g.id === id && g.userId === userId);
     if (index >= 0) {
       this.games.splice(index, 1);
       return true;
     }
     return false;
+  }
+
+  async deleteByUserId(userId: string): Promise<number> {
+    const initialLength = this.games.length;
+    this.games = this.games.filter((g) => g.userId !== userId);
+    return initialLength - this.games.length;
   }
 }
 
@@ -113,6 +141,7 @@ describe('RecordGameAction Use Case', () => {
   let mockGameRepository: MockGameRepository;
   let recordGameAction: RecordGameAction;
   let game: Game;
+  const userId = 'user-123';
 
   beforeEach(() => {
     mockStatsRepository = new MockGameStatsRepository();
@@ -121,6 +150,7 @@ describe('RecordGameAction Use Case', () => {
 
     // Create and start a game
     game = new Game({
+      userId,
       teamId: 'team-123',
       opponent: 'Tigers',
     });
@@ -132,6 +162,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: game.id,
       playerId: 'player-123',
+      userId,
       actionType: 'twoPoint' as const,
       made: true,
     };
@@ -139,6 +170,7 @@ describe('RecordGameAction Use Case', () => {
     const result = await recordGameAction.execute(actionData);
 
     expect(result.success).toBe(true);
+    expect(result.gameStats?.userId).toBe(userId);
     expect(result.gameStats?.twoPointsMade).toBe(1);
     expect(result.gameStats?.twoPointsAttempted).toBe(1);
     expect(result.gameStats?.getTotalPoints()).toBe(2);
@@ -148,6 +180,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: game.id,
       playerId: 'player-123',
+      userId,
       actionType: 'threePoint' as const,
       made: false,
     };
@@ -163,6 +196,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: game.id,
       playerId: 'player-123',
+      userId,
       actionType: 'assist' as const,
     };
 
@@ -178,6 +212,7 @@ describe('RecordGameAction Use Case', () => {
     await recordGameAction.execute({
       gameId: game.id,
       playerId: player,
+      userId,
       actionType: 'twoPoint',
       made: true,
     });
@@ -185,16 +220,18 @@ describe('RecordGameAction Use Case', () => {
     await recordGameAction.execute({
       gameId: game.id,
       playerId: player,
+      userId,
       actionType: 'assist',
     });
 
     await recordGameAction.execute({
       gameId: game.id,
       playerId: player,
+      userId,
       actionType: 'offensiveRebound',
     });
 
-    const stats = await mockStatsRepository.findByGameAndPlayer(game.id, player);
+    const stats = await mockStatsRepository.findByGameAndPlayer(game.id, player, userId);
     expect(stats?.twoPointsMade).toBe(1);
     expect(stats?.assists).toBe(1);
     expect(stats?.offensiveRebounds).toBe(1);
@@ -205,6 +242,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: game.id,
       playerId: 'player-new',
+      userId,
       actionType: 'steal' as const,
     };
 
@@ -219,6 +257,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: 'non-existent-game',
       playerId: 'player-123',
+      userId,
       actionType: 'assist' as const,
     };
 
@@ -230,6 +269,7 @@ describe('RecordGameAction Use Case', () => {
 
   test('should return error if game is not in progress', async () => {
     const notStartedGame = new Game({
+      userId,
       teamId: 'team-123',
       opponent: 'Lions',
     });
@@ -238,6 +278,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: notStartedGame.id,
       playerId: 'player-123',
+      userId,
       actionType: 'assist' as const,
     };
 
@@ -251,6 +292,7 @@ describe('RecordGameAction Use Case', () => {
     const actionData = {
       gameId: game.id,
       playerId: 'player-123',
+      userId,
       actionType: 'invalidAction' as any,
     };
 
@@ -279,12 +321,13 @@ describe('RecordGameAction Use Case', () => {
       await recordGameAction.execute({
         gameId: game.id,
         playerId: player,
+        userId,
         actionType: action.type,
         made: 'made' in action ? action.made : undefined,
       });
     }
 
-    const stats = await mockStatsRepository.findByGameAndPlayer(game.id, player);
+    const stats = await mockStatsRepository.findByGameAndPlayer(game.id, player, userId);
     expect(stats?.freeThrowsMade).toBe(1);
     expect(stats?.twoPointsMade).toBe(1);
     expect(stats?.threePointsMade).toBe(1);
@@ -296,5 +339,38 @@ describe('RecordGameAction Use Case', () => {
     expect(stats?.turnovers).toBe(1);
     expect(stats?.personalFouls).toBe(1);
     expect(stats?.getTotalPoints()).toBe(6); // 1 + 2 + 3
+  });
+
+  test('should isolate data by userId - users cannot access other users data', async () => {
+    const user2 = 'user-456';
+    const player = 'player-123';
+
+    // User 1 creates a game and records an action
+    await recordGameAction.execute({
+      gameId: game.id,
+      playerId: player,
+      userId,
+      actionType: 'twoPoint',
+      made: true,
+    });
+
+    // User 2 tries to record action on User 1's game - should fail
+    const result = await recordGameAction.execute({
+      gameId: game.id,
+      playerId: player,
+      userId: user2,
+      actionType: 'assist',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Game not found');
+
+    // Verify User 1's stats exist
+    const user1Stats = await mockStatsRepository.findByGameAndPlayer(game.id, player, userId);
+    expect(user1Stats?.twoPointsMade).toBe(1);
+
+    // Verify User 2 cannot see User 1's stats
+    const user2Stats = await mockStatsRepository.findByGameAndPlayer(game.id, player, user2);
+    expect(user2Stats).toBeNull();
   });
 });

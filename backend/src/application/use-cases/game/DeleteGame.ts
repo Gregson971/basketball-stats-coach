@@ -8,9 +8,9 @@ export interface DeleteGameResult {
 export class DeleteGame {
   constructor(private readonly gameRepository: IGameRepository) {}
 
-  async execute(gameId: string): Promise<DeleteGameResult> {
+  async execute(gameId: string, userId: string): Promise<DeleteGameResult> {
     try {
-      const game = await this.gameRepository.findById(gameId);
+      const game = await this.gameRepository.findById(gameId, userId);
 
       if (!game) {
         return {
@@ -19,7 +19,7 @@ export class DeleteGame {
         };
       }
 
-      await this.gameRepository.delete(gameId);
+      await this.gameRepository.delete(gameId, userId);
 
       return {
         success: true,

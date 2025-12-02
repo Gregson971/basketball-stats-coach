@@ -6,6 +6,9 @@ import { GetTeam } from '../../application/use-cases/team/GetTeam';
 import { GetAllTeams } from '../../application/use-cases/team/GetAllTeams';
 import { ITeamRepository } from '../../domain/repositories/TeamRepository';
 
+// Default userId for tests when auth is disabled
+const DEFAULT_TEST_USER_ID = 'test-user';
+
 export class TeamController {
   private createTeam: CreateTeam;
   private updateTeam: UpdateTeam;
@@ -22,7 +25,8 @@ export class TeamController {
   }
 
   async create(req: Request, res: Response): Promise<void> {
-    const result = await this.createTeam.execute(req.body);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.createTeam.execute({ ...req.body, userId });
 
     if (!result.success) {
       res.status(400).json({ success: false, error: result.error });
@@ -33,7 +37,8 @@ export class TeamController {
   }
 
   async getById(req: Request, res: Response): Promise<void> {
-    const result = await this.getTeam.execute(req.params.id);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.getTeam.execute(req.params.id, userId);
 
     if (!result.success) {
       res.status(404).json({ success: false, error: result.error });
@@ -44,7 +49,8 @@ export class TeamController {
   }
 
   async update(req: Request, res: Response): Promise<void> {
-    const result = await this.updateTeam.execute(req.params.id, req.body);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.updateTeam.execute(req.params.id, userId, req.body);
 
     if (!result.success) {
       res.status(404).json({ success: false, error: result.error });
@@ -55,7 +61,8 @@ export class TeamController {
   }
 
   async delete(req: Request, res: Response): Promise<void> {
-    const result = await this.deleteTeam.execute(req.params.id);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.deleteTeam.execute(req.params.id, userId);
 
     if (!result.success) {
       res.status(404).json({ success: false, error: result.error });
@@ -65,8 +72,9 @@ export class TeamController {
     res.status(200).json({ success: true, message: 'Team deleted successfully' });
   }
 
-  async getAll(_req: Request, res: Response): Promise<void> {
-    const result = await this.getAllTeams.execute();
+  async getAll(req: Request, res: Response): Promise<void> {
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.getAllTeams.execute(userId);
 
     if (!result.success) {
       res.status(500).json({ success: false, error: result.error });

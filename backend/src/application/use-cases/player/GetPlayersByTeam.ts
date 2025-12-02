@@ -10,9 +10,9 @@ export interface GetPlayersByTeamResult {
 export class GetPlayersByTeam {
   constructor(private readonly playerRepository: IPlayerRepository) {}
 
-  async execute(teamId: string): Promise<GetPlayersByTeamResult> {
+  async execute(teamId: string, userId: string): Promise<GetPlayersByTeamResult> {
     try {
-      const players = await this.playerRepository.findByTeamId(teamId);
+      const players = await this.playerRepository.findByTeamId(teamId, userId);
 
       return {
         success: true,

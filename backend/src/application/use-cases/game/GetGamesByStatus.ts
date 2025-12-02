@@ -10,9 +10,9 @@ export interface GetGamesByStatusResult {
 export class GetGamesByStatus {
   constructor(private readonly gameRepository: IGameRepository) {}
 
-  async execute(status: GameStatus): Promise<GetGamesByStatusResult> {
+  async execute(status: GameStatus, userId: string): Promise<GetGamesByStatusResult> {
     try {
-      const games = await this.gameRepository.findByStatus(status);
+      const games = await this.gameRepository.findByStatus(status, userId);
 
       return {
         success: true,

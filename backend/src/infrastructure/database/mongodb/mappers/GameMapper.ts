@@ -5,6 +5,7 @@ export class GameMapper {
   static toDomain(doc: IGameDocument): Game {
     return new Game({
       id: doc._id,
+      userId: doc.userId,
       teamId: doc.teamId,
       opponent: doc.opponent,
       gameDate: doc.gameDate,
@@ -21,6 +22,7 @@ export class GameMapper {
   static toPersistence(game: Game): Partial<IGameDocument> {
     return {
       _id: game.id,
+      userId: game.userId,
       teamId: game.teamId,
       opponent: game.opponent,
       gameDate: game.gameDate || undefined,

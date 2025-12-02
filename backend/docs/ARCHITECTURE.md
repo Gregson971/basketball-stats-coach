@@ -101,8 +101,9 @@ export class Player {
     public teamId: string,
     public nickname?: string,
     public position?: PlayerPosition
-  ) // ...
-  {}
+  ) {
+    // ...
+  }
 
   getFullName(): string {
     return `${this.firstName} ${this.lastName}`;
@@ -343,7 +344,11 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
   const createPlayerUseCase = new CreatePlayer(playerRepository);
   const controller = new PlayerController(createPlayerUseCase);
 
-  router.post('/', validateRequiredFields(['firstName', 'lastName', 'teamId']), asyncHandler(controller.create.bind(controller)));
+  router.post(
+    '/',
+    validateRequiredFields(['firstName', 'lastName', 'teamId']),
+    asyncHandler(controller.create.bind(controller))
+  );
 
   return router;
 };
@@ -631,6 +636,127 @@ const playerRepository = new MongoPlayerRepository();
 const playerRepository = new PostgresPlayerRepository();
 
 // Le reste du code reste identique!
+```
+
+---
+
+## Sécurité et isolation des données
+
+### Principe de l'isolation par utilisateur
+
+**Toutes les données sont isolées par `userId`** pour garantir qu'un utilisateur ne peut accéder qu'à ses propres données.
+
+### Implémentation
+
+**1. Entités du domaine:**
+
+Toutes les entités incluent un champ `userId`:
+
+```typescript
+// src/domain/entities/Player.ts
+export class Player {
+  constructor(
+    public readonly id: string,
+    public readonly userId: string, // ⭐ Identifie le propriétaire
+    public firstName: string,
+    public lastName: string,
+    public readonly teamId: string
+  ) {}
+}
+```
+
+**2. Interfaces de repositories:**
+
+Tous les repositories filtrent par `userId`:
+
+```typescript
+// src/domain/repositories/PlayerRepository.ts
+export interface IPlayerRepository {
+  findById(id: string, userId: string): Promise<Player | null>;
+  findByTeamId(teamId: string, userId: string): Promise<Player[]>;
+  findByUserId(userId: string): Promise<Player[]>;
+  delete(id: string, userId: string): Promise<boolean>;
+  deleteByUserId(userId: string): Promise<number>; // Cascade delete
+  // ...
+}
+```
+
+**3. Use cases:**
+
+Les use cases reçoivent le `userId` et le passent aux repositories:
+
+```typescript
+// src/application/use-cases/player/GetPlayer.ts
+export class GetPlayer {
+  async execute(playerId: string, userId: string) {
+    const player = await this.playerRepository.findById(playerId, userId);
+
+    if (!player) {
+      return { success: false, error: 'Player not found' };
+    }
+
+    return { success: true, player };
+  }
+}
+```
+
+**4. Controllers:**
+
+Les controllers extraient le `userId` du token JWT:
+
+```typescript
+// src/presentation/controllers/PlayerController.ts
+async getById(req: Request, res: Response) {
+  const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+  const result = await this.getPlayer.execute(req.params.id, userId);
+  // ...
+}
+```
+
+### Sécurité des données
+
+**Garanties:**
+
+- ✅ **Isolation totale**: Un utilisateur ne peut pas accéder aux données d'un autre
+- ✅ **Authentification**: Token JWT vérifié par middleware
+- ✅ **Cascade delete**: Suppression d'un utilisateur → suppression de toutes ses données
+- ✅ **Validation automatique**: Le `userId` est vérifié à chaque opération
+- ✅ **Pas de fuite**: Impossible d'énumérer les données d'autres utilisateurs
+
+**Exemple de protection:**
+
+```typescript
+// ❌ IMPOSSIBLE: User A essaie d'accéder au joueur de User B
+GET /api/players/player-b-123
+Authorization: Bearer <token-user-a>
+
+// Résultat: 404 Not Found (le joueur existe mais n'appartient pas à User A)
+
+// ✅ POSSIBLE: User A accède à son propre joueur
+GET /api/players/player-a-456
+Authorization: Bearer <token-user-a>
+
+// Résultat: 200 OK avec les données du joueur
+```
+
+### Suppression en cascade
+
+Lorsqu'un utilisateur est supprimé, toutes ses données associées sont automatiquement supprimées:
+
+```typescript
+// src/infrastructure/database/repositories/MongoUserRepository.ts
+async delete(userId: string): Promise<boolean> {
+  // Supprime l'utilisateur
+  await UserModel.findByIdAndDelete(userId);
+
+  // Supprime toutes ses données
+  await this.playerRepository.deleteByUserId(userId);
+  await this.teamRepository.deleteByUserId(userId);
+  await this.gameRepository.deleteByUserId(userId);
+  await this.gameStatsRepository.deleteByUserId(userId);
+
+  return true;
+}
 ```
 
 ---

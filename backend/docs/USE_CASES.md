@@ -12,6 +12,7 @@ Liste complète des use cases implémentés avec TDD.
 
 **Paramètres:**
 
+- `userId` (required) - Automatiquement extrait du token JWT
 - `firstName` (required)
 - `lastName` (required)
 - `teamId` (required)
@@ -30,6 +31,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `playerId` (required)
+- `userId` (required) - Authentifie et filtre les données
 - Champs à modifier (partial)
 
 **Champs immutables:** `id`, `teamId`, `createdAt`
@@ -57,6 +59,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `playerId` (required)
+- `userId` (required) - Assure l'isolation des données
 
 ---
 
@@ -69,6 +72,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `teamId` (required)
+- `userId` (required) - Retourne uniquement les joueurs de l'utilisateur
 
 ---
 
@@ -82,6 +86,7 @@ Liste complète des use cases implémentés avec TDD.
 
 **Paramètres:**
 
+- `userId` (required) - Automatiquement extrait du token JWT
 - `name` (required)
 - `coach`, `season`, `league` (optional)
 
@@ -96,6 +101,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `teamId` (required)
+- `userId` (required) - Vérifie la propriété de l'équipe
 - Champs à modifier (partial)
 
 **Champs immutables:** `id`, `createdAt`
@@ -111,6 +117,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `teamId` (required)
+- `userId` (required) - Vérifie la propriété de l'équipe
 
 ---
 
@@ -123,6 +130,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `teamId` (required)
+- `userId` (required) - Assure l'isolation des données
 
 ---
 
@@ -130,9 +138,11 @@ Liste complète des use cases implémentés avec TDD.
 
 **Fichier:** `src/application/use-cases/team/GetAllTeams.ts`
 **Tests:** `tests/unit/application/use-cases/team/GetAllTeams.test.ts`
-**Description:** Récupérer toutes les équipes
+**Description:** Récupérer toutes les équipes de l'utilisateur
 
-**Paramètres:** Aucun
+**Paramètres:**
+
+- `userId` (required) - Retourne uniquement les équipes de l'utilisateur
 
 ---
 
@@ -146,6 +156,7 @@ Liste complète des use cases implémentés avec TDD.
 
 **Paramètres:**
 
+- `userId` (required) - Automatiquement extrait du token JWT
 - `teamId` (required)
 - `opponent` (required)
 - `gameDate`, `location`, `notes` (optional)
@@ -161,6 +172,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `gameId` (required)
+- `userId` (required) - Vérifie la propriété du match
 - Champs à modifier (partial)
 
 **Champs immutables:** `id`, `teamId`, `createdAt`, `startedAt`, `completedAt`
@@ -176,6 +188,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `gameId` (required)
+- `userId` (required) - Vérifie la propriété du match
 
 ---
 
@@ -188,6 +201,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `gameId` (required)
+- `userId` (required) - Assure l'isolation des données
 
 ---
 
@@ -200,6 +214,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `teamId` (required)
+- `userId` (required) - Retourne uniquement les matchs de l'utilisateur
 
 ---
 
@@ -212,6 +227,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `status` (required): 'not_started' | 'in_progress' | 'completed'
+- `userId` (required) - Retourne uniquement les matchs de l'utilisateur
 
 ---
 
@@ -224,6 +240,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `gameId` (required)
+- `userId` (required) - Vérifie la propriété du match
 
 ---
 
@@ -236,6 +253,7 @@ Liste complète des use cases implémentés avec TDD.
 **Paramètres:**
 
 - `gameId` (required)
+- `userId` (required) - Vérifie la propriété du match
 
 ---
 
@@ -251,6 +269,7 @@ Liste complète des use cases implémentés avec TDD.
 
 - `gameId` (required)
 - `playerId` (required)
+- `userId` (required) - Vérifie la propriété du match et des statistiques
 - `actionType` (required):
   - `freeThrow`, `twoPoint`, `threePoint`
   - `offensiveRebound`, `defensiveRebound`
@@ -286,6 +305,7 @@ type ActionType =
 
 - `gameId` (required)
 - `playerId` (required)
+- `userId` (required) - Vérifie la propriété des statistiques
 
 ---
 
@@ -299,6 +319,7 @@ type ActionType =
 
 - `gameId` (required)
 - `playerId` (required)
+- `userId` (required) - Assure l'isolation des données
 
 **Retour:**
 
@@ -317,6 +338,7 @@ type ActionType =
 **Paramètres:**
 
 - `playerId` (required)
+- `userId` (required) - Retourne uniquement les statistiques de l'utilisateur
 
 **Retour:**
 
@@ -414,10 +436,10 @@ type ActionType =
 
 - **Use Cases implémentés:** 25
 - **Endpoints API REST:** 26
-- **Tests totaux:** 336 tests
-  - Tests unitaires (Use Cases): 121 tests
+- **Tests totaux:** 369 tests
+  - Tests unitaires (Use Cases): 145 tests
   - Tests unitaires (Domain): 123 tests
-  - Tests d'intégration (Repositories): 43 tests
+  - Tests d'intégration (Repositories): 49 tests
   - Tests API (Supertest): 75 tests
     - Players API: 12 tests
     - Teams API: 14 tests
@@ -427,6 +449,7 @@ type ActionType =
 - **Test Suites:** 37 suites
 - **Coverage:** ~72%
 - **Tous les tests:** ✅ **PASSING**
+- **Isolation des données:** ✅ **Implémentée** - Tous les use cases filtrent par `userId`
 
 ---
 

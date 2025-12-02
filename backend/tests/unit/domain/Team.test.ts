@@ -4,12 +4,14 @@ describe('Team Entity', () => {
   describe('Creation', () => {
     test('should create a valid team with required fields', () => {
       const teamData: TeamData = {
+        userId: 'user-123',
         name: 'Wild Cats',
       };
 
       const team = new Team(teamData);
 
       expect(team.id).toBeDefined();
+      expect(team.userId).toBe('user-123');
       expect(team.name).toBe('Wild Cats');
       expect(team.createdAt).toBeInstanceOf(Date);
       expect(team.updatedAt).toBeInstanceOf(Date);
@@ -17,6 +19,7 @@ describe('Team Entity', () => {
 
     test('should create team with optional fields', () => {
       const teamData: TeamData = {
+        userId: 'user-123',
         name: 'Wild Cats',
         coach: 'Coach Smith',
         season: '2023-2024',
@@ -30,14 +33,25 @@ describe('Team Entity', () => {
       expect(team.league).toBe('High School League');
     });
 
+    test('should throw error if userId is missing', () => {
+      const teamData = {
+        name: 'Wild Cats',
+      } as TeamData;
+
+      expect(() => new Team(teamData)).toThrow('User ID is required');
+    });
+
     test('should throw error if name is missing', () => {
-      const teamData = {} as TeamData;
+      const teamData = {
+        userId: 'user-123',
+      } as TeamData;
 
       expect(() => new Team(teamData)).toThrow('Team name is required');
     });
 
     test('should throw error if name is empty string', () => {
       const teamData: TeamData = {
+        userId: 'user-123',
         name: '   ',
       };
 
@@ -48,6 +62,7 @@ describe('Team Entity', () => {
   describe('Methods', () => {
     test('should update team info', async () => {
       const team = new Team({
+        userId: 'user-123',
         name: 'Wild Cats',
       });
 
@@ -64,20 +79,24 @@ describe('Team Entity', () => {
 
     test('should not update immutable fields', () => {
       const team = new Team({
+        userId: 'user-123',
         name: 'Wild Cats',
       });
 
       const originalId = team.id;
+      const originalUserId = team.userId;
       const originalCreatedAt = team.createdAt;
 
-      team.update({ id: 'new-id', createdAt: new Date() } as any);
+      team.update({ id: 'new-id', userId: 'new-user-id', createdAt: new Date() } as any);
 
       expect(team.id).toBe(originalId);
+      expect(team.userId).toBe(originalUserId);
       expect(team.createdAt).toEqual(originalCreatedAt);
     });
 
     test('should convert to JSON', () => {
       const team = new Team({
+        userId: 'user-123',
         name: 'Wild Cats',
         coach: 'Coach Smith',
       });
@@ -85,6 +104,7 @@ describe('Team Entity', () => {
       const json = team.toJSON();
 
       expect(json).toHaveProperty('id');
+      expect(json).toHaveProperty('userId', 'user-123');
       expect(json).toHaveProperty('name', 'Wild Cats');
       expect(json).toHaveProperty('coach', 'Coach Smith');
       expect(json).toHaveProperty('createdAt');
@@ -95,6 +115,7 @@ describe('Team Entity', () => {
   describe('Validation', () => {
     test('should validate team data', () => {
       const team = new Team({
+        userId: 'user-123',
         name: 'Wild Cats',
         coach: 'Coach Smith',
       });

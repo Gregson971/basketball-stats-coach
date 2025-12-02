@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 export interface ITeamDocument {
   _id: string;
+  userId: string;
   name: string;
   coach?: string;
   season?: string;
@@ -13,6 +14,7 @@ export interface ITeamDocument {
 const TeamSchema = new Schema<ITeamDocument>(
   {
     _id: { type: String, required: true },
+    userId: { type: String, required: true, index: true },
     name: { type: String, required: true, trim: true },
     coach: { type: String, trim: true },
     season: { type: String, trim: true },
@@ -25,6 +27,6 @@ const TeamSchema = new Schema<ITeamDocument>(
 );
 
 // Indexes
-TeamSchema.index({ name: 1 });
+TeamSchema.index({ userId: 1, name: 1 });
 
 export const TeamModel = mongoose.model<ITeamDocument>('Team', TeamSchema);

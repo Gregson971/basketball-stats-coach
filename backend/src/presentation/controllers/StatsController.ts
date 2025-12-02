@@ -6,6 +6,9 @@ import { GetPlayerCareerStats } from '../../application/use-cases/stats/GetPlaye
 import { IGameStatsRepository } from '../../domain/repositories/GameStatsRepository';
 import { IGameRepository } from '../../domain/repositories/GameRepository';
 
+// Default userId for tests when auth is disabled
+const DEFAULT_TEST_USER_ID = 'test-user';
+
 export class StatsController {
   private recordGameAction: RecordGameAction;
   private undoLastGameAction: UndoLastGameAction;
@@ -20,9 +23,11 @@ export class StatsController {
   }
 
   async recordAction(req: Request, res: Response): Promise<void> {
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
     const { gameId } = req.params;
     const actionData = {
       gameId,
+      userId,
       ...req.body,
     };
 
@@ -37,8 +42,9 @@ export class StatsController {
   }
 
   async undoAction(req: Request, res: Response): Promise<void> {
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
     const { gameId, playerId } = req.params;
-    const result = await this.undoLastGameAction.execute(gameId, playerId);
+    const result = await this.undoLastGameAction.execute(gameId, playerId, userId);
 
     if (!result.success) {
       res.status(400).json({ success: false, error: result.error });
@@ -49,8 +55,9 @@ export class StatsController {
   }
 
   async getGameStats(req: Request, res: Response): Promise<void> {
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
     const { gameId, playerId } = req.params;
-    const result = await this.getPlayerGameStats.execute(gameId, playerId);
+    const result = await this.getPlayerGameStats.execute(gameId, playerId, userId);
 
     if (!result.success) {
       res.status(404).json({ success: false, error: result.error });
@@ -61,8 +68,9 @@ export class StatsController {
   }
 
   async getCareerStats(req: Request, res: Response): Promise<void> {
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
     const { playerId } = req.params;
-    const result = await this.getPlayerCareerStats.execute(playerId);
+    const result = await this.getPlayerCareerStats.execute(playerId, userId);
 
     if (!result.success) {
       res.status(400).json({ success: false, error: result.error });

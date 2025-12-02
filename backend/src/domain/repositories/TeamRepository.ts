@@ -6,14 +6,19 @@ import { Team } from '../entities/Team';
  */
 export interface ITeamRepository {
   /**
-   * Find a team by ID
+   * Find a team by ID and userId
    */
-  findById(id: string): Promise<Team | null>;
+  findById(id: string, userId: string): Promise<Team | null>;
 
   /**
-   * Find all teams
+   * Find all teams for a userId
    */
-  findAll(): Promise<Team[]>;
+  findAll(userId: string): Promise<Team[]>;
+
+  /**
+   * Find all teams for a userId
+   */
+  findByUserId(userId: string): Promise<Team[]>;
 
   /**
    * Save a team (create or update)
@@ -21,12 +26,17 @@ export interface ITeamRepository {
   save(team: Team): Promise<Team>;
 
   /**
-   * Delete a team by ID
+   * Delete a team by ID and userId
    */
-  delete(id: string): Promise<boolean>;
+  delete(id: string, userId: string): Promise<boolean>;
 
   /**
-   * Search teams by name
+   * Search teams by name for a userId
    */
-  searchByName(query: string): Promise<Team[]>;
+  searchByName(query: string, userId: string): Promise<Team[]>;
+
+  /**
+   * Delete all teams for a userId (cascade delete)
+   */
+  deleteByUserId(userId: string): Promise<number>;
 }

@@ -10,9 +10,9 @@ export interface CompleteGameResult {
 export class CompleteGame {
   constructor(private readonly gameRepository: IGameRepository) {}
 
-  async execute(gameId: string): Promise<CompleteGameResult> {
+  async execute(gameId: string, userId: string): Promise<CompleteGameResult> {
     try {
-      const game = await this.gameRepository.findById(gameId);
+      const game = await this.gameRepository.findById(gameId, userId);
 
       if (!game) {
         return {

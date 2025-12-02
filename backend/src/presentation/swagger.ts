@@ -28,20 +28,24 @@ const options: swaggerJsdoc.Options = {
     ],
     tags: [
       {
+        name: 'Auth',
+        description: 'Authentification et gestion des utilisateurs',
+      },
+      {
         name: 'Players',
-        description: 'Gestion des joueurs',
+        description: 'Gestion des joueurs (🔒 Requiert authentification)',
       },
       {
         name: 'Teams',
-        description: 'Gestion des équipes',
+        description: 'Gestion des équipes (🔒 Requiert authentification)',
       },
       {
         name: 'Games',
-        description: 'Gestion des matchs',
+        description: 'Gestion des matchs (🔒 Requiert authentification)',
       },
       {
         name: 'Stats',
-        description: 'Gestion des statistiques',
+        description: 'Gestion des statistiques (🔒 Requiert authentification)',
       },
       {
         name: 'Health',
@@ -49,7 +53,42 @@ const options: swaggerJsdoc.Options = {
       },
     ],
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Token JWT obtenu via /api/auth/login ou /api/auth/register',
+        },
+      },
       schemas: {
+        User: {
+          type: 'object',
+          required: ['email', 'password', 'name'],
+          properties: {
+            id: {
+              type: 'string',
+              description: 'Identifiant unique de l\'utilisateur',
+            },
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'Adresse email (unique, case-insensitive)',
+            },
+            name: {
+              type: 'string',
+              description: 'Nom complet de l\'utilisateur',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+            },
+          },
+        },
         Player: {
           type: 'object',
           required: ['firstName', 'lastName', 'teamId'],
@@ -57,6 +96,10 @@ const options: swaggerJsdoc.Options = {
             id: {
               type: 'string',
               description: 'Identifiant unique du joueur',
+            },
+            userId: {
+              type: 'string',
+              description: 'Identifiant de l\'utilisateur propriétaire (automatiquement ajouté)',
             },
             firstName: {
               type: 'string',
@@ -118,6 +161,10 @@ const options: swaggerJsdoc.Options = {
               type: 'string',
               description: "Identifiant unique de l'équipe",
             },
+            userId: {
+              type: 'string',
+              description: 'Identifiant de l\'utilisateur propriétaire (automatiquement ajouté)',
+            },
             name: {
               type: 'string',
               description: "Nom de l'équipe",
@@ -151,6 +198,10 @@ const options: swaggerJsdoc.Options = {
             id: {
               type: 'string',
               description: 'Identifiant unique du match',
+            },
+            userId: {
+              type: 'string',
+              description: 'Identifiant de l\'utilisateur propriétaire (automatiquement ajouté)',
             },
             teamId: {
               type: 'string',
@@ -208,6 +259,10 @@ const options: swaggerJsdoc.Options = {
             playerId: {
               type: 'string',
               description: 'Identifiant du joueur',
+            },
+            userId: {
+              type: 'string',
+              description: 'Identifiant de l\'utilisateur propriétaire (automatiquement ajouté)',
             },
             freeThrowsMade: {
               type: 'number',

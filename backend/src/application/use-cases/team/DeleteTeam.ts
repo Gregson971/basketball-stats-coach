@@ -8,9 +8,9 @@ export interface DeleteTeamResult {
 export class DeleteTeam {
   constructor(private readonly teamRepository: ITeamRepository) {}
 
-  async execute(teamId: string): Promise<DeleteTeamResult> {
+  async execute(teamId: string, userId: string): Promise<DeleteTeamResult> {
     try {
-      const team = await this.teamRepository.findById(teamId);
+      const team = await this.teamRepository.findById(teamId, userId);
 
       if (!team) {
         return {
@@ -19,7 +19,7 @@ export class DeleteTeam {
         };
       }
 
-      await this.teamRepository.delete(teamId);
+      await this.teamRepository.delete(teamId, userId);
 
       return {
         success: true,

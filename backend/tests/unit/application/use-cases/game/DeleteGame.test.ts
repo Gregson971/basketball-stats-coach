@@ -5,8 +5,8 @@ import { IGameRepository } from '../../../../../src/domain/repositories/GameRepo
 class MockGameRepository implements IGameRepository {
   public games: Game[] = [];
 
-  async findById(id: string): Promise<Game | null> {
-    return this.games.find((g) => g.id === id) || null;
+  async findById(id: string, userId: string): Promise<Game | null> {
+    return this.games.find((g) => g.id === id && g.userId === userId) || null;
   }
 
   async save(game: Game): Promise<Game> {
@@ -14,31 +14,42 @@ class MockGameRepository implements IGameRepository {
     return game;
   }
 
-  async findByTeamId(_teamId: string): Promise<Game[]> {
-    return [];
+  async findByTeamId(teamId: string, userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.teamId === teamId && g.userId === userId);
   }
 
-  async findAll(): Promise<Game[]> {
-    return this.games;
+  async findAll(userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.userId === userId);
   }
 
-  async findByStatus(_status: GameStatus): Promise<Game[]> {
-    return [];
+  async findByStatus(status: GameStatus, userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.status === status && g.userId === userId);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const index = this.games.findIndex((g) => g.id === id);
+  async findByUserId(userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.userId === userId);
+  }
+
+  async delete(id: string, userId: string): Promise<boolean> {
+    const index = this.games.findIndex((g) => g.id === id && g.userId === userId);
     if (index >= 0) {
       this.games.splice(index, 1);
       return true;
     }
     return false;
   }
+
+  async deleteByUserId(userId: string): Promise<number> {
+    const initialLength = this.games.length;
+    this.games = this.games.filter((g) => g.userId !== userId);
+    return initialLength - this.games.length;
+  }
 }
 
 describe('DeleteGame Use Case', () => {
   let mockRepository: MockGameRepository;
   let deleteGame: DeleteGame;
+  const userId = 'user-123';
 
   beforeEach(() => {
     mockRepository = new MockGameRepository();
@@ -46,19 +57,30 @@ describe('DeleteGame Use Case', () => {
   });
 
   test('should delete a game successfully', async () => {
-    const game = new Game({ teamId: 'team-123', opponent: 'Tigers' });
+    const game = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
     mockRepository.games.push(game);
 
-    const result = await deleteGame.execute(game.id);
+    const result = await deleteGame.execute(game.id, userId);
 
     expect(result.success).toBe(true);
     expect(mockRepository.games.length).toBe(0);
   });
 
   test('should return error when game not found', async () => {
-    const result = await deleteGame.execute('non-existent-id');
+    const result = await deleteGame.execute('non-existent-id', userId);
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('Game not found');
+  });
+
+  test('should not delete game from different user', async () => {
+    const game = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
+    mockRepository.games.push(game);
+
+    const result = await deleteGame.execute(game.id, 'different-user-id');
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Game not found');
+    expect(mockRepository.games.length).toBe(1);
   });
 });

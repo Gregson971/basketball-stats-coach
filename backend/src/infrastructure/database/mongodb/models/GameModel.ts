@@ -3,6 +3,7 @@ import { GameStatus } from '../../../../domain/entities/Game';
 
 export interface IGameDocument {
   _id: string;
+  userId: string;
   teamId: string;
   opponent: string;
   gameDate?: Date;
@@ -18,6 +19,7 @@ export interface IGameDocument {
 const GameSchema = new Schema<IGameDocument>(
   {
     _id: { type: String, required: true },
+    userId: { type: String, required: true, index: true },
     teamId: { type: String, required: true, index: true },
     opponent: { type: String, required: true, trim: true },
     gameDate: { type: Date },
@@ -39,7 +41,7 @@ const GameSchema = new Schema<IGameDocument>(
 );
 
 // Indexes
-GameSchema.index({ teamId: 1, gameDate: -1 });
-GameSchema.index({ status: 1 });
+GameSchema.index({ userId: 1, teamId: 1, gameDate: -1 });
+GameSchema.index({ userId: 1, status: 1 });
 
 export const GameModel = mongoose.model<IGameDocument>('Game', GameSchema);

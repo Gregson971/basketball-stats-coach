@@ -5,6 +5,7 @@ export class PlayerMapper {
   static toDomain(doc: IPlayerDocument): Player {
     return new Player({
       id: doc._id,
+      userId: doc.userId,
       firstName: doc.firstName,
       lastName: doc.lastName,
       teamId: doc.teamId,
@@ -23,6 +24,7 @@ export class PlayerMapper {
   static toPersistence(player: Player): Partial<IPlayerDocument> {
     return {
       _id: player.id,
+      userId: player.userId,
       firstName: player.firstName,
       lastName: player.lastName,
       teamId: player.teamId,

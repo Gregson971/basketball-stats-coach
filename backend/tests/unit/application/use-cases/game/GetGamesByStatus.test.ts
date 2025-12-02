@@ -5,8 +5,8 @@ import { IGameRepository } from '../../../../../src/domain/repositories/GameRepo
 class MockGameRepository implements IGameRepository {
   public games: Game[] = [];
 
-  async findById(id: string): Promise<Game | null> {
-    return this.games.find((g) => g.id === id) || null;
+  async findById(id: string, userId: string): Promise<Game | null> {
+    return this.games.find((g) => g.id === id && g.userId === userId) || null;
   }
 
   async save(game: Game): Promise<Game> {
@@ -19,26 +19,42 @@ class MockGameRepository implements IGameRepository {
     return game;
   }
 
-  async findByTeamId(_teamId: string): Promise<Game[]> {
-    return [];
+  async findByTeamId(teamId: string, userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.teamId === teamId && g.userId === userId);
   }
 
-  async findAll(): Promise<Game[]> {
-    return this.games;
+  async findAll(userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.userId === userId);
   }
 
-  async findByStatus(status: GameStatus): Promise<Game[]> {
-    return this.games.filter((g) => g.status === status);
+  async findByStatus(status: GameStatus, userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.status === status && g.userId === userId);
   }
 
-  async delete(_id: string): Promise<boolean> {
+  async findByUserId(userId: string): Promise<Game[]> {
+    return this.games.filter((g) => g.userId === userId);
+  }
+
+  async delete(id: string, userId: string): Promise<boolean> {
+    const index = this.games.findIndex((g) => g.id === id && g.userId === userId);
+    if (index >= 0) {
+      this.games.splice(index, 1);
+      return true;
+    }
     return false;
+  }
+
+  async deleteByUserId(userId: string): Promise<number> {
+    const initialLength = this.games.length;
+    this.games = this.games.filter((g) => g.userId !== userId);
+    return initialLength - this.games.length;
   }
 }
 
 describe('GetGamesByStatus Use Case', () => {
   let mockRepository: MockGameRepository;
   let getGamesByStatus: GetGamesByStatus;
+  const userId = 'user-123';
 
   beforeEach(() => {
     mockRepository = new MockGameRepository();
@@ -46,13 +62,13 @@ describe('GetGamesByStatus Use Case', () => {
   });
 
   test('should get all games with not_started status', async () => {
-    const game1 = new Game({ teamId: 'team-123', opponent: 'Tigers' });
-    const game2 = new Game({ teamId: 'team-123', opponent: 'Panthers' });
-    const game3 = new Game({ teamId: 'team-123', opponent: 'Lions' });
+    const game1 = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
+    const game2 = new Game({ userId, teamId: 'team-123', opponent: 'Panthers' });
+    const game3 = new Game({ userId, teamId: 'team-123', opponent: 'Lions' });
     game3.start();
     mockRepository.games.push(game1, game2, game3);
 
-    const result = await getGamesByStatus.execute('not_started');
+    const result = await getGamesByStatus.execute('not_started', userId);
 
     expect(result.success).toBe(true);
     expect(result.games?.length).toBe(2);
@@ -60,14 +76,14 @@ describe('GetGamesByStatus Use Case', () => {
   });
 
   test('should get all games with in_progress status', async () => {
-    const game1 = new Game({ teamId: 'team-123', opponent: 'Tigers' });
-    const game2 = new Game({ teamId: 'team-123', opponent: 'Panthers' });
-    const game3 = new Game({ teamId: 'team-123', opponent: 'Lions' });
+    const game1 = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
+    const game2 = new Game({ userId, teamId: 'team-123', opponent: 'Panthers' });
+    const game3 = new Game({ userId, teamId: 'team-123', opponent: 'Lions' });
     game1.start();
     game2.start();
     mockRepository.games.push(game1, game2, game3);
 
-    const result = await getGamesByStatus.execute('in_progress');
+    const result = await getGamesByStatus.execute('in_progress', userId);
 
     expect(result.success).toBe(true);
     expect(result.games?.length).toBe(2);
@@ -75,15 +91,15 @@ describe('GetGamesByStatus Use Case', () => {
   });
 
   test('should get all games with completed status', async () => {
-    const game1 = new Game({ teamId: 'team-123', opponent: 'Tigers' });
-    const game2 = new Game({ teamId: 'team-123', opponent: 'Panthers' });
-    const game3 = new Game({ teamId: 'team-123', opponent: 'Lions' });
+    const game1 = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
+    const game2 = new Game({ userId, teamId: 'team-123', opponent: 'Panthers' });
+    const game3 = new Game({ userId, teamId: 'team-123', opponent: 'Lions' });
     game1.start();
     game1.complete();
     game2.start();
     mockRepository.games.push(game1, game2, game3);
 
-    const result = await getGamesByStatus.execute('completed');
+    const result = await getGamesByStatus.execute('completed', userId);
 
     expect(result.success).toBe(true);
     expect(result.games?.length).toBe(1);
@@ -92,12 +108,24 @@ describe('GetGamesByStatus Use Case', () => {
   });
 
   test('should return empty array when no games match status', async () => {
-    const game1 = new Game({ teamId: 'team-123', opponent: 'Tigers' });
+    const game1 = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
     mockRepository.games.push(game1);
 
-    const result = await getGamesByStatus.execute('completed');
+    const result = await getGamesByStatus.execute('completed', userId);
 
     expect(result.success).toBe(true);
     expect(result.games?.length).toBe(0);
+  });
+
+  test('should not return games from different user', async () => {
+    const game1 = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
+    const game2 = new Game({ userId: 'user-456', teamId: 'team-123', opponent: 'Panthers' });
+    mockRepository.games.push(game1, game2);
+
+    const result = await getGamesByStatus.execute('not_started', userId);
+
+    expect(result.success).toBe(true);
+    expect(result.games?.length).toBe(1);
+    expect(result.games?.[0].userId).toBe(userId);
   });
 });

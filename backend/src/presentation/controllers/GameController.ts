@@ -10,6 +10,9 @@ import { CompleteGame } from '../../application/use-cases/game/CompleteGame';
 import { IGameRepository } from '../../domain/repositories/GameRepository';
 import { GameStatus } from '../../domain/entities/Game';
 
+// Default userId for tests when auth is disabled
+const DEFAULT_TEST_USER_ID = 'test-user';
+
 export class GameController {
   private createGame: CreateGame;
   private updateGame: UpdateGame;
@@ -32,7 +35,8 @@ export class GameController {
   }
 
   async create(req: Request, res: Response): Promise<void> {
-    const result = await this.createGame.execute(req.body);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.createGame.execute({ ...req.body, userId });
 
     if (!result.success) {
       res.status(400).json({ success: false, error: result.error });
@@ -43,7 +47,8 @@ export class GameController {
   }
 
   async getById(req: Request, res: Response): Promise<void> {
-    const result = await this.getGame.execute(req.params.id);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.getGame.execute(req.params.id, userId);
 
     if (!result.success) {
       res.status(404).json({ success: false, error: result.error });
@@ -54,7 +59,8 @@ export class GameController {
   }
 
   async update(req: Request, res: Response): Promise<void> {
-    const result = await this.updateGame.execute(req.params.id, req.body);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.updateGame.execute(req.params.id, userId, req.body);
 
     if (!result.success) {
       res.status(404).json({ success: false, error: result.error });
@@ -65,7 +71,8 @@ export class GameController {
   }
 
   async delete(req: Request, res: Response): Promise<void> {
-    const result = await this.deleteGame.execute(req.params.id);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.deleteGame.execute(req.params.id, userId);
 
     if (!result.success) {
       res.status(404).json({ success: false, error: result.error });
@@ -76,7 +83,8 @@ export class GameController {
   }
 
   async getByTeam(req: Request, res: Response): Promise<void> {
-    const result = await this.getGamesByTeam.execute(req.params.teamId);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.getGamesByTeam.execute(req.params.teamId, userId);
 
     if (!result.success) {
       res.status(400).json({ success: false, error: result.error });
@@ -87,8 +95,9 @@ export class GameController {
   }
 
   async getByStatus(req: Request, res: Response): Promise<void> {
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
     const status = req.params.status as GameStatus;
-    const result = await this.getGamesByStatus.execute(status);
+    const result = await this.getGamesByStatus.execute(status, userId);
 
     if (!result.success) {
       res.status(400).json({ success: false, error: result.error });
@@ -99,7 +108,8 @@ export class GameController {
   }
 
   async start(req: Request, res: Response): Promise<void> {
-    const result = await this.startGame.execute(req.params.id);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.startGame.execute(req.params.id, userId);
 
     if (!result.success) {
       res.status(400).json({ success: false, error: result.error });
@@ -110,7 +120,8 @@ export class GameController {
   }
 
   async complete(req: Request, res: Response): Promise<void> {
-    const result = await this.completeGame.execute(req.params.id);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.completeGame.execute(req.params.id, userId);
 
     if (!result.success) {
       res.status(400).json({ success: false, error: result.error });

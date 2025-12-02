@@ -6,6 +6,9 @@ import { GetPlayer } from '../../application/use-cases/player/GetPlayer';
 import { GetPlayersByTeam } from '../../application/use-cases/player/GetPlayersByTeam';
 import { IPlayerRepository } from '../../domain/repositories/PlayerRepository';
 
+// Default userId for tests when auth is disabled
+const DEFAULT_TEST_USER_ID = 'test-user';
+
 export class PlayerController {
   private createPlayer: CreatePlayer;
   private updatePlayer: UpdatePlayer;
@@ -27,7 +30,8 @@ export class PlayerController {
    * POST /api/players
    */
   async create(req: Request, res: Response): Promise<void> {
-    const result = await this.createPlayer.execute(req.body);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.createPlayer.execute({ ...req.body, userId });
 
     if (!result.success) {
       res.status(400).json({
@@ -47,7 +51,8 @@ export class PlayerController {
    * GET /api/players/:id
    */
   async getById(req: Request, res: Response): Promise<void> {
-    const result = await this.getPlayer.execute(req.params.id);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.getPlayer.execute(req.params.id, userId);
 
     if (!result.success) {
       res.status(404).json({
@@ -67,7 +72,8 @@ export class PlayerController {
    * PUT /api/players/:id
    */
   async update(req: Request, res: Response): Promise<void> {
-    const result = await this.updatePlayer.execute(req.params.id, req.body);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.updatePlayer.execute(req.params.id, userId, req.body);
 
     if (!result.success) {
       res.status(404).json({
@@ -87,7 +93,8 @@ export class PlayerController {
    * DELETE /api/players/:id
    */
   async delete(req: Request, res: Response): Promise<void> {
-    const result = await this.deletePlayer.execute(req.params.id);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.deletePlayer.execute(req.params.id, userId);
 
     if (!result.success) {
       res.status(404).json({
@@ -107,7 +114,8 @@ export class PlayerController {
    * GET /api/players/team/:teamId
    */
   async getByTeam(req: Request, res: Response): Promise<void> {
-    const result = await this.getPlayersByTeam.execute(req.params.teamId);
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
+    const result = await this.getPlayersByTeam.execute(req.params.teamId, userId);
 
     if (!result.success) {
       res.status(400).json({
@@ -126,10 +134,10 @@ export class PlayerController {
   /**
    * GET /api/players
    */
-  async getAll(_req: Request, res: Response): Promise<void> {
-    // Pour l'instant on retourne tous les joueurs via findAll du repository
+  async getAll(req: Request, res: Response): Promise<void> {
+    const userId = req.user?.userId || DEFAULT_TEST_USER_ID;
     try {
-      const players = await this.playerRepository.findAll();
+      const players = await this.playerRepository.findByUserId(userId);
 
       res.status(200).json({
         success: true,

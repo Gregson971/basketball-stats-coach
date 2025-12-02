@@ -7,34 +7,43 @@ import { GameStatsModel } from '../mongodb/models/GameStatsModel';
 import { GameStatsMapper } from '../mongodb/mappers/GameStatsMapper';
 
 export class MongoGameStatsRepository implements IGameStatsRepository {
-  async findById(id: string): Promise<GameStats | null> {
-    const doc = await GameStatsModel.findById(id).exec();
+  async findById(id: string, userId: string): Promise<GameStats | null> {
+    const doc = await GameStatsModel.findOne({ _id: id, userId }).exec();
     return doc ? GameStatsMapper.toDomain(doc) : null;
   }
 
-  async findByGameId(gameId: string): Promise<GameStats[]> {
-    const docs = await GameStatsModel.find({ gameId }).exec();
+  async findByGameId(gameId: string, userId: string): Promise<GameStats[]> {
+    const docs = await GameStatsModel.find({ gameId, userId }).exec();
     return docs.map((doc) => GameStatsMapper.toDomain(doc));
   }
 
-  async findByPlayerId(playerId: string): Promise<GameStats[]> {
-    const docs = await GameStatsModel.find({ playerId }).sort({ createdAt: -1 }).exec();
+  async findByPlayerId(playerId: string, userId: string): Promise<GameStats[]> {
+    const docs = await GameStatsModel.find({ playerId, userId }).sort({ createdAt: -1 }).exec();
     return docs.map((doc) => GameStatsMapper.toDomain(doc));
   }
 
-  async findByGameAndPlayer(gameId: string, playerId: string): Promise<GameStats | null> {
-    const doc = await GameStatsModel.findOne({ gameId, playerId }).exec();
+  async findByGameAndPlayer(gameId: string, playerId: string, userId: string): Promise<GameStats | null> {
+    const doc = await GameStatsModel.findOne({ gameId, playerId, userId }).exec();
     return doc ? GameStatsMapper.toDomain(doc) : null;
+  }
+
+  async findByUserId(userId: string): Promise<GameStats[]> {
+    const docs = await GameStatsModel.find({ userId }).sort({ createdAt: -1 }).exec();
+    return docs.map((doc) => GameStatsMapper.toDomain(doc));
   }
 
   async save(gameStats: GameStats): Promise<GameStats> {
     const data = GameStatsMapper.toPersistence(gameStats);
 
-    const doc = await GameStatsModel.findByIdAndUpdate(gameStats.id, data, {
-      upsert: true,
-      new: true,
-      setDefaultsOnInsert: true,
-    }).exec();
+    const doc = await GameStatsModel.findOneAndUpdate(
+      { _id: gameStats.id, userId: gameStats.userId },
+      data,
+      {
+        upsert: true,
+        new: true,
+        setDefaultsOnInsert: true,
+      }
+    ).exec();
 
     if (!doc) {
       throw new Error('Failed to save game stats');
@@ -43,13 +52,13 @@ export class MongoGameStatsRepository implements IGameStatsRepository {
     return GameStatsMapper.toDomain(doc);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await GameStatsModel.findByIdAndDelete(id).exec();
+  async delete(id: string, userId: string): Promise<boolean> {
+    const result = await GameStatsModel.findOneAndDelete({ _id: id, userId }).exec();
     return result !== null;
   }
 
-  async getPlayerAggregateStats(playerId: string): Promise<PlayerAggregateStats> {
-    const allStats = await this.findByPlayerId(playerId);
+  async getPlayerAggregateStats(playerId: string, userId: string): Promise<PlayerAggregateStats> {
+    const allStats = await this.findByPlayerId(playerId, userId);
 
     if (allStats.length === 0) {
       return {
@@ -129,5 +138,10 @@ export class MongoGameStatsRepository implements IGameStatsRepository {
           ? Math.round((totals.threePointsMade / totals.threePointsAttempted) * 1000) / 10
           : 0,
     };
+  }
+
+  async deleteByUserId(userId: string): Promise<number> {
+    const result = await GameStatsModel.deleteMany({ userId }).exec();
+    return result.deletedCount || 0;
   }
 }

@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 export interface IPlayerDocument {
   _id: string;
+  userId: string;
   firstName: string;
   lastName: string;
   teamId: string;
@@ -19,6 +20,7 @@ export interface IPlayerDocument {
 const PlayerSchema = new Schema<IPlayerDocument>(
   {
     _id: { type: String, required: true },
+    userId: { type: String, required: true, index: true },
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
     teamId: { type: String, required: true, index: true },
@@ -37,7 +39,7 @@ const PlayerSchema = new Schema<IPlayerDocument>(
 );
 
 // Indexes
-PlayerSchema.index({ firstName: 1, lastName: 1 });
-PlayerSchema.index({ teamId: 1, lastName: 1 });
+PlayerSchema.index({ userId: 1, firstName: 1, lastName: 1 });
+PlayerSchema.index({ userId: 1, teamId: 1, lastName: 1 });
 
 export const PlayerModel = mongoose.model<IPlayerDocument>('Player', PlayerSchema);

@@ -19,7 +19,9 @@ export const createStatsRoutes = (
    *     tags:
    *       - Stats
    *     summary: Enregistrer une action de jeu
-   *     description: Enregistre une action de jeu pour un joueur (panier, rebond, passe, etc.)
+   *     description: Enregistre une action de jeu pour un joueur (panier, rebond, passe, etc.). Le userId est automatiquement extrait du token JWT et le match doit appartenir à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: gameId
@@ -82,7 +84,9 @@ export const createStatsRoutes = (
    *     tags:
    *       - Stats
    *     summary: Annuler la dernière action d'un joueur
-   *     description: Annule la dernière action enregistrée pour un joueur dans un match
+   *     description: Annule la dernière action enregistrée pour un joueur dans un match. Fonctionne uniquement si les statistiques appartiennent à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: gameId
@@ -130,7 +134,9 @@ export const createStatsRoutes = (
    *     tags:
    *       - Stats
    *     summary: Obtenir les statistiques d'un joueur pour un match
-   *     description: Récupère toutes les statistiques d'un joueur pour un match spécifique
+   *     description: Récupère toutes les statistiques d'un joueur pour un match spécifique. Retourne uniquement si les statistiques appartiennent à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: gameId
@@ -178,7 +184,9 @@ export const createStatsRoutes = (
    *     tags:
    *       - Stats
    *     summary: Obtenir les statistiques de carrière d'un joueur
-   *     description: Récupère les statistiques agrégées de tous les matchs d'un joueur
+   *     description: Récupère les statistiques agrégées de tous les matchs d'un joueur. Retourne uniquement les statistiques appartenant à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: playerId

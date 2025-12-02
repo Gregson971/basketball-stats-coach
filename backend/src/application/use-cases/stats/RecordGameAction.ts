@@ -5,6 +5,7 @@ import { IGameRepository } from '../../../domain/repositories/GameRepository';
 export interface RecordGameActionRequest {
   gameId: string;
   playerId: string;
+  userId: string;
   actionType: ActionType;
   made?: boolean;
 }
@@ -23,10 +24,10 @@ export class RecordGameAction {
 
   async execute(actionData: RecordGameActionRequest): Promise<RecordGameActionResult> {
     try {
-      const { gameId, playerId, actionType, made } = actionData;
+      const { gameId, playerId, userId, actionType, made } = actionData;
 
       // Verify game exists and is in progress
-      const game = await this.gameRepository.findById(gameId);
+      const game = await this.gameRepository.findById(gameId, userId);
       if (!game) {
         return {
           success: false,
@@ -42,10 +43,10 @@ export class RecordGameAction {
       }
 
       // Get or create game stats for this player
-      let gameStats = await this.gameStatsRepository.findByGameAndPlayer(gameId, playerId);
+      let gameStats = await this.gameStatsRepository.findByGameAndPlayer(gameId, playerId, userId);
 
       if (!gameStats) {
-        gameStats = new GameStats({ gameId, playerId });
+        gameStats = new GameStats({ gameId, playerId, userId });
       }
 
       // Record the action

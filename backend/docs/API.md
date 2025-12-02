@@ -19,12 +19,14 @@
 ## Vue d'ensemble
 
 **Base URL**:
+
 - **Développement**: `http://localhost:3000`
 - **Production**: `https://basketball-stats-coach-production.up.railway.app`
 
 **Format**: JSON
 
 **Documentation interactive (Swagger UI)**:
+
 - **Développement**: `http://localhost:3000/api-docs`
 - **Production**: `https://basketball-stats-coach-production.up.railway.app/api-docs`
 
@@ -63,6 +65,8 @@ Les tokens JWT sont valides pendant **7 jours** après leur émission.
 - Les mots de passe sont hashés avec bcrypt (10 rounds)
 - Les tokens sont signés avec une clé secrète (variable `JWT_SECRET`)
 - Les emails ne sont pas sensibles à la casse
+- **Isolation des données**: Chaque utilisateur ne peut accéder qu'à ses propres données (équipes, joueurs, matchs, statistiques)
+- Le `userId` est automatiquement extrait du token JWT et appliqué à toutes les opérations
 
 ---
 
@@ -267,6 +271,8 @@ POST /api/players
 ```
 
 **Champs requis**: `firstName`, `lastName`, `teamId`
+
+**Note**: Le champ `userId` est automatiquement ajouté à partir du token JWT. Il ne doit pas être fourni dans le body.
 
 **Valeurs autorisées**:
 
@@ -480,6 +486,8 @@ POST /api/teams
 
 **Champs requis**: `name`
 
+**Note**: Le champ `userId` est automatiquement ajouté à partir du token JWT. Il ne doit pas être fourni dans le body.
+
 **Réponse (201)**:
 
 ```json
@@ -634,6 +642,8 @@ POST /api/games
 ```
 
 **Champs requis**: `teamId`, `opponent`
+
+**Note**: Le champ `userId` est automatiquement ajouté à partir du token JWT. Il ne doit pas être fourni dans le body.
 
 **Réponse (201)**:
 
@@ -1126,19 +1136,27 @@ Header: Authorization: Bearer eyJhbGciOi...
 
 1. **Authentification**: Tous les endpoints nécessitent un token JWT valide sauf `/health` et `/api/auth/*`.
 
-2. **Validation**: Tous les champs requis doivent être fournis, sinon l'API retournera une erreur 400 avec les champs manquants.
+2. **Isolation des données par utilisateur**:
+   - Chaque utilisateur authentifié ne peut accéder qu'à ses propres données
+   - Le `userId` est automatiquement extrait du token JWT
+   - Impossible d'accéder aux données d'un autre utilisateur
+   - Toutes les opérations (lecture, création, modification, suppression) sont filtrées par `userId`
 
-3. **ID auto-générés**: Tous les ID sont générés automatiquement par le système.
+3. **Validation**: Tous les champs requis doivent être fournis, sinon l'API retournera une erreur 400 avec les champs manquants.
 
-4. **Timestamps**: Les champs `createdAt` et `updatedAt` sont gérés automatiquement.
+4. **ID auto-générés**: Tous les ID sont générés automatiquement par le système.
 
-5. **Actions de match**: Les actions ne peuvent être enregistrées que lorsque le match est en cours (`status: "in_progress"`).
+5. **Timestamps**: Les champs `createdAt` et `updatedAt` sont gérés automatiquement.
 
-6. **Undo**: La fonction d'annulation ne supprime que la dernière action pour le joueur spécifié.
+6. **Actions de match**: Les actions ne peuvent être enregistrées que lorsque le match est en cours (`status: "in_progress"`).
 
-7. **Stats de carrière**: Les statistiques de carrière sont calculées en temps réel à partir de tous les matchs du joueur.
+7. **Undo**: La fonction d'annulation ne supprime que la dernière action pour le joueur spécifié.
 
-8. **Sécurité des mots de passe**: Les mots de passe ne sont jamais retournés dans les réponses API et sont hashés avant stockage.
+8. **Stats de carrière**: Les statistiques de carrière sont calculées en temps réel à partir de tous les matchs du joueur.
+
+9. **Sécurité des mots de passe**: Les mots de passe ne sont jamais retournés dans les réponses API et sont hashés avant stockage.
+
+10. **Suppression en cascade**: La suppression d'un utilisateur supprime automatiquement toutes ses données associées (équipes, joueurs, matchs, statistiques).
 
 ---
 

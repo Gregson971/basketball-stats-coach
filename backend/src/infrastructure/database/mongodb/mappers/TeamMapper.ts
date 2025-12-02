@@ -5,6 +5,7 @@ export class TeamMapper {
   static toDomain(doc: ITeamDocument): Team {
     return new Team({
       id: doc._id,
+      userId: doc.userId,
       name: doc.name,
       coach: doc.coach,
       season: doc.season,
@@ -17,6 +18,7 @@ export class TeamMapper {
   static toPersistence(team: Team): Partial<ITeamDocument> {
     return {
       _id: team.id,
+      userId: team.userId,
       name: team.name,
       coach: team.coach || undefined,
       season: team.season || undefined,

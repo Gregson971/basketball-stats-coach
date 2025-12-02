@@ -15,7 +15,9 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *     tags:
    *       - Players
    *     summary: Créer un nouveau joueur
-   *     description: Ajoute un nouveau joueur dans la base de données
+   *     description: Ajoute un nouveau joueur dans la base de données. Le userId est automatiquement extrait du token JWT.
+   *     security:
+   *       - bearerAuth: []
    *     requestBody:
    *       required: true
    *       content:
@@ -92,7 +94,9 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *     tags:
    *       - Players
    *     summary: Obtenir un joueur par ID
-   *     description: Récupère les informations d'un joueur spécifique
+   *     description: Récupère les informations d'un joueur spécifique. Retourne uniquement si le joueur appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -129,7 +133,9 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *     tags:
    *       - Players
    *     summary: Mettre à jour un joueur
-   *     description: Modifie les informations d'un joueur existant
+   *     description: Modifie les informations d'un joueur existant. Fonctionne uniquement si le joueur appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -193,7 +199,9 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *     tags:
    *       - Players
    *     summary: Supprimer un joueur
-   *     description: Supprime un joueur de la base de données
+   *     description: Supprime un joueur de la base de données. Fonctionne uniquement si le joueur appartient à l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -224,7 +232,9 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *     tags:
    *       - Players
    *     summary: Obtenir tous les joueurs d'une équipe
-   *     description: Récupère la liste de tous les joueurs appartenant à une équipe spécifique
+   *     description: Récupère la liste de tous les joueurs appartenant à une équipe spécifique de l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: teamId
@@ -267,7 +277,9 @@ export const createPlayerRoutes = (playerRepository: IPlayerRepository): Router 
    *     tags:
    *       - Players
    *     summary: Obtenir tous les joueurs
-   *     description: Récupère la liste complète de tous les joueurs
+   *     description: Récupère la liste complète de tous les joueurs de l'utilisateur authentifié.
+   *     security:
+   *       - bearerAuth: []
    *     responses:
    *       200:
    *         description: Liste de tous les joueurs
