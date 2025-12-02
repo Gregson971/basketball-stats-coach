@@ -24,12 +24,14 @@ backend/
 │   │   │   ├── Player.ts          # Entité Joueur
 │   │   │   ├── Team.ts            # Entité Équipe
 │   │   │   ├── Game.ts            # Entité Match
-│   │   │   └── GameStats.ts       # Entité Statistiques de match
+│   │   │   ├── GameStats.ts       # Entité Statistiques de match
+│   │   │   └── User.ts            # Entité Utilisateur
 │   │   └── repositories/          # Interfaces de repositories
 │   │       ├── PlayerRepository.ts
 │   │       ├── TeamRepository.ts
 │   │       ├── GameRepository.ts
-│   │       └── GameStatsRepository.ts
+│   │       ├── GameStatsRepository.ts
+│   │       └── UserRepository.ts
 │   │
 │   ├── application/               # Couche Application (Use Cases)
 │   │   ├── use-cases/
@@ -135,6 +137,16 @@ Représente les statistiques d'un joueur pour un match donné.
 
 - `getTotalPoints()`, `getTotalRebounds()`
 - `getFieldGoalPercentage()`, `getFreeThrowPercentage()`, `getThreePointPercentage()`
+
+### User (Utilisateur)
+
+Représente un utilisateur de l'application avec authentification sécurisée.
+
+**Attributs:**
+
+- `email` - Adresse email unique (utilisée pour la connexion)
+- `password` - Mot de passe hashé avec bcrypt
+- `name` - Nom complet de l'utilisateur
 
 ## 🧪 Tests
 
@@ -310,6 +322,14 @@ cp .env.example .env
 - `PORT`: Port du serveur (défaut: 3000)
 - `NODE_ENV`: Environnement (development/production)
 
+**Authentification:**
+
+- `JWT_SECRET`: Clé secrète pour la génération des tokens JWT (⚠️ À changer en production!)
+
+```env
+JWT_SECRET=your-very-secret-jwt-key-change-this-in-production
+```
+
 **MongoDB (avec Docker):**
 
 ```env
@@ -401,6 +421,68 @@ Le projet dispose de deux configurations Docker:
    - Idéal pour le développement
 
 Voir `docker-compose.yml` pour les détails de configuration.
+
+## 🔐 Authentification JWT
+
+L'API utilise JWT (JSON Web Tokens) pour sécuriser les endpoints.
+
+### Routes publiques
+
+Ces routes ne nécessitent pas d'authentification:
+
+- `POST /api/auth/register` - Créer un compte
+- `POST /api/auth/login` - Se connecter
+- `GET /health` - Health check
+
+### Routes protégées
+
+Toutes les autres routes (`/api/players`, `/api/teams`, `/api/games`, `/api/stats`) nécessitent un token JWT valide.
+
+### Utilisation
+
+**1. Créer un compte:**
+
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password123","name":"John Doe"}'
+```
+
+**Réponse:**
+
+```json
+{
+  "success": true,
+  "user": {
+    "id": "...",
+    "email": "user@example.com",
+    "name": "John Doe"
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**2. Se connecter:**
+
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password123"}'
+```
+
+**3. Utiliser le token pour accéder aux routes protégées:**
+
+```bash
+curl -X GET http://localhost:3000/api/teams \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### Sécurité
+
+- Les mots de passe sont hashés avec **bcrypt** (10 rounds)
+- Les tokens JWT expirent après **7 jours**
+- La clé secrète JWT doit être définie dans la variable d'environnement `JWT_SECRET`
+- ⚠️ **Important**: Changez `JWT_SECRET` en production avec une valeur forte et aléatoire
 
 ## 📱 Support du mode hors-ligne
 
@@ -530,7 +612,16 @@ La documentation Swagger permet de:
 
 ### Endpoints disponibles
 
-**Players (Joueurs)** - `/api/players`
+**🔐 Authentication (Authentification)** - `/api/auth`
+
+Routes **publiques** (pas d'authentification requise):
+
+- `POST /api/auth/register` - Créer un compte utilisateur
+- `POST /api/auth/login` - Se connecter et obtenir un token JWT
+
+> **Note**: Toutes les autres routes sont protégées par JWT et nécessitent un token valide dans l'header `Authorization: Bearer <token>`
+
+**Players (Joueurs)** - `/api/players` 🔒
 
 - `POST /api/players` - Créer un joueur
 - `GET /api/players` - Liste de tous les joueurs
@@ -539,7 +630,7 @@ La documentation Swagger permet de:
 - `DELETE /api/players/:id` - Supprimer un joueur
 - `GET /api/players/team/:teamId` - Joueurs d'une équipe
 
-**Teams (Équipes)** - `/api/teams`
+**Teams (Équipes)** - `/api/teams` 🔒
 
 - `POST /api/teams` - Créer une équipe
 - `GET /api/teams` - Liste de toutes les équipes
@@ -547,7 +638,7 @@ La documentation Swagger permet de:
 - `PUT /api/teams/:id` - Modifier une équipe
 - `DELETE /api/teams/:id` - Supprimer une équipe
 
-**Games (Matchs)** - `/api/games`
+**Games (Matchs)** - `/api/games` 🔒
 
 - `POST /api/games` - Créer un match
 - `GET /api/games/:id` - Détails d'un match
@@ -558,7 +649,7 @@ La documentation Swagger permet de:
 - `POST /api/games/:id/start` - Démarrer un match
 - `POST /api/games/:id/complete` - Terminer un match
 
-**Stats (Statistiques)** - `/api/stats`
+**Stats (Statistiques)** - `/api/stats` 🔒
 
 - `POST /api/stats/games/:gameId/actions` - Enregistrer une action
 - `DELETE /api/stats/games/:gameId/actions/:playerId` - Annuler la dernière action
@@ -624,9 +715,13 @@ Documentation interactive accessible quand le serveur est lancé:
 
 ### Fonctionnalités complètes
 
-- ✅ **23 use cases** implémentés (Player, Team, Game, Stats)
-- ✅ **24 endpoints API REST** avec Swagger
+- ✅ **25 use cases** implémentés (Player, Team, Game, Stats, Auth)
+- ✅ **26 endpoints API REST** avec Swagger
 - ✅ **246 tests** passing (unitaires, intégration, API)
+- ✅ **Authentification JWT** avec bcrypt
+  - Routes publiques: `/api/auth/register` et `/api/auth/login`
+  - Routes protégées: Toutes les autres routes nécessitent un token JWT
+  - Token JWT valide 7 jours
 - ✅ **Clean Architecture** stricte avec 4 couches
 - ✅ **Docker** production et développement
 - ✅ **MongoDB** avec repositories
@@ -638,11 +733,11 @@ Documentation interactive accessible quand le serveur est lancé:
 ### Prochaines étapes
 
 - 🔄 Frontend mobile (React Native / Expo)
-- 🔄 Authentification et autorisation
 - 🔄 Système de synchronisation hors-ligne
 - 🔄 Notifications en temps réel
 - 🔄 Export des statistiques (PDF, Excel)
 - 🔄 Analyse avancée des performances
+- 🔄 Gestion des rôles et permissions (admin/coach/player)
 
 ---
 

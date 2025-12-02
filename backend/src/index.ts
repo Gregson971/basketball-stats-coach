@@ -5,6 +5,7 @@ import { MongoPlayerRepository } from './infrastructure/database/repositories/Mo
 import { MongoTeamRepository } from './infrastructure/database/repositories/MongoTeamRepository';
 import { MongoGameRepository } from './infrastructure/database/repositories/MongoGameRepository';
 import { MongoGameStatsRepository } from './infrastructure/database/repositories/MongoGameStatsRepository';
+import { MongoUserRepository } from './infrastructure/database/repositories/MongoUserRepository';
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,7 @@ async function startServer() {
     const teamRepository = new MongoTeamRepository();
     const gameRepository = new MongoGameRepository();
     const gameStatsRepository = new MongoGameStatsRepository();
+    const userRepository = new MongoUserRepository();
 
     // Create Express app with repositories
     const app = createApp({
@@ -30,6 +32,7 @@ async function startServer() {
       teamRepository,
       gameRepository,
       gameStatsRepository,
+      userRepository,
     });
 
     // Start server

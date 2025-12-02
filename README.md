@@ -29,6 +29,13 @@
 
 ## ✨ Fonctionnalités
 
+### 🔐 Authentification et sécurité
+
+- ✅ **Authentification JWT** avec tokens sécurisés (expiration 7 jours)
+- ✅ **Hachage des mots de passe** avec bcrypt (10 rounds)
+- ✅ **Routes protégées** - Toutes les données nécessitent une authentification
+- ✅ **Inscription et connexion** sécurisées
+
 ### Gestion des équipes et joueurs
 
 - ✅ Création et gestion d'équipes (nom, coach, saison, ligue)
@@ -67,14 +74,15 @@ basketball-stats-coach/
 ├── backend/                    # API Node.js + TypeScript ✅
 │   ├── src/
 │   │   ├── domain/            # Entités et logique métier
-│   │   │   ├── entities/      # Player, Team, Game, GameStats
+│   │   │   ├── entities/      # Player, Team, Game, GameStats, User
 │   │   │   └── repositories/  # Interfaces (DIP)
 │   │   ├── application/       # Use Cases (logique applicative)
 │   │   │   ├── use-cases/
 │   │   │   │   ├── player/    # 6 use cases
 │   │   │   │   ├── team/      # 5 use cases
 │   │   │   │   ├── game/      # 8 use cases
-│   │   │   │   └── stats/     # 4 use cases
+│   │   │   │   ├── stats/     # 4 use cases
+│   │   │   │   └── auth/      # 2 use cases (Register, Login)
 │   │   │   └── dtos/          # Data Transfer Objects
 │   │   ├── infrastructure/    # Implémentations techniques
 │   │   │   ├── database/      # MongoDB + Mongoose
@@ -83,8 +91,8 @@ basketball-stats-coach/
 │   │   │   └── sync/          # Synchronisation (à venir)
 │   │   └── presentation/      # API REST ✅
 │   │       ├── controllers/   # Controllers HTTP
-│   │       ├── routes/        # 24 endpoints REST
-│   │       ├── middlewares/   # Validation, Error handling
+│   │       ├── routes/        # 26 endpoints REST
+│   │       ├── middlewares/   # JWT Auth, Validation, Error handling
 │   │       └── swagger.ts     # OpenAPI 3.0 documentation
 │   ├── tests/
 │   │   ├── unit/              # Tests unitaires (94 tests)

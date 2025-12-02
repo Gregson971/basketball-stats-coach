@@ -5,10 +5,17 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { createApiRoutes, RepositoryDependencies } from './routes';
 import { swaggerSpec } from './swagger';
 
+export interface CreateAppOptions {
+  disableAuth?: boolean;
+}
+
 /**
  * Créer et configurer l'application Express
  */
-export const createApp = (repositories?: RepositoryDependencies): Application => {
+export const createApp = (
+  repositories?: RepositoryDependencies,
+  options: CreateAppOptions = {}
+): Application => {
   const app = express();
 
   // Middleware de base
@@ -55,7 +62,7 @@ export const createApp = (repositories?: RepositoryDependencies): Application =>
 
   // Routes API
   if (repositories) {
-    app.use('/api', createApiRoutes(repositories));
+    app.use('/api', createApiRoutes(repositories, { disableAuth: options.disableAuth }));
   }
 
   // Gestion des erreurs

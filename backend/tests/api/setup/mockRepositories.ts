@@ -2,9 +2,11 @@ import { Player } from '../../../src/domain/entities/Player';
 import { Team } from '../../../src/domain/entities/Team';
 import { Game, GameStatus } from '../../../src/domain/entities/Game';
 import { GameStats } from '../../../src/domain/entities/GameStats';
+import { User } from '../../../src/domain/entities/User';
 import { IPlayerRepository } from '../../../src/domain/repositories/PlayerRepository';
 import { ITeamRepository } from '../../../src/domain/repositories/TeamRepository';
 import { IGameRepository } from '../../../src/domain/repositories/GameRepository';
+import { IUserRepository } from '../../../src/domain/repositories/UserRepository';
 import {
   IGameStatsRepository,
   PlayerAggregateStats,
@@ -209,5 +211,40 @@ export class MockGameStatsRepository implements IGameStatsRepository {
       freeThrowPercentage: 0,
       threePointPercentage: 0,
     };
+  }
+}
+
+export class MockUserRepository implements IUserRepository {
+  users: User[] = [];
+
+  async findById(id: string): Promise<User | null> {
+    return this.users.find((u) => u.id === id) || null;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.users.find((u) => u.email.toLowerCase() === email.toLowerCase()) || null;
+  }
+
+  async save(user: User): Promise<User> {
+    const existingIndex = this.users.findIndex((u) => u.id === user.id);
+    if (existingIndex >= 0) {
+      this.users[existingIndex] = user;
+    } else {
+      this.users.push(user);
+    }
+    return user;
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.users;
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const index = this.users.findIndex((u) => u.id === id);
+    if (index >= 0) {
+      this.users.splice(index, 1);
+      return true;
+    }
+    return false;
   }
 }

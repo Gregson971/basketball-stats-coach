@@ -8,6 +8,7 @@
 - [Gestion des erreurs](#gestion-des-erreurs)
 - [Endpoints](#endpoints)
   - [Health Check](#health-check)
+  - [Authentication](#authentication-authentification)
   - [Players](#players-joueurs)
   - [Teams](#teams-équipes)
   - [Games](#games-matchs)
@@ -33,9 +34,35 @@ Tous les endpoints de l'API retournent des réponses JSON avec un format standar
 
 ## Authentication
 
-Version actuelle: **Aucune authentification requise**
+**Type**: Bearer Token (JWT)
 
-Note: L'authentification sera ajoutée dans une version future pour sécuriser l'accès à l'API.
+**Routes protégées**: Tous les endpoints sauf `/health` et `/api/auth/*` nécessitent un token JWT valide.
+
+### Obtenir un token
+
+Pour accéder aux routes protégées, vous devez :
+
+1. Créer un compte avec `POST /api/auth/register`
+2. Ou vous connecter avec `POST /api/auth/login`
+
+Les deux endpoints retournent un token JWT à inclure dans l'en-tête `Authorization` de vos requêtes.
+
+### Utilisation du token
+
+```bash
+curl -H "Authorization: Bearer <votre-token-jwt>" \
+     http://localhost:3000/api/players
+```
+
+### Durée de validité
+
+Les tokens JWT sont valides pendant **7 jours** après leur émission.
+
+### Sécurité
+
+- Les mots de passe sont hashés avec bcrypt (10 rounds)
+- Les tokens sont signés avec une clé secrète (variable `JWT_SECRET`)
+- Les emails ne sont pas sensibles à la casse
 
 ---
 
@@ -70,6 +97,7 @@ Note: L'authentification sera ajoutée dans une version future pour sécuriser l
 - **200 OK**: Requête réussie
 - **201 Created**: Ressource créée avec succès
 - **400 Bad Request**: Erreur de validation ou paramètres manquants
+- **401 Unauthorized**: Token manquant, invalide ou expiré
 - **404 Not Found**: Ressource non trouvée
 - **500 Internal Server Error**: Erreur serveur
 
@@ -107,7 +135,113 @@ GET /health
 
 ---
 
+## Authentication (Authentification)
+
+### Créer un compte
+
+```
+POST /api/auth/register
+```
+
+**Accès**: Public (pas de token requis)
+
+**Body (required)**:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "name": "John Doe"
+}
+```
+
+**Champs requis**: `email`, `password` (min 6 caractères), `name`
+
+**Réponse (201)**:
+
+```json
+{
+  "success": true,
+  "user": {
+    "id": "user-abc123",
+    "email": "user@example.com",
+    "name": "John Doe",
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "updatedAt": "2024-01-15T10:30:00.000Z"
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Erreur (400)** - Email déjà utilisé:
+
+```json
+{
+  "success": false,
+  "error": "User with this email already exists"
+}
+```
+
+**Erreur (400)** - Validation:
+
+```json
+{
+  "success": false,
+  "error": "Invalid email format"
+}
+```
+
+---
+
+### Se connecter
+
+```
+POST /api/auth/login
+```
+
+**Accès**: Public (pas de token requis)
+
+**Body (required)**:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+**Champs requis**: `email`, `password`
+
+**Réponse (200)**:
+
+```json
+{
+  "success": true,
+  "user": {
+    "id": "user-abc123",
+    "email": "user@example.com",
+    "name": "John Doe",
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "updatedAt": "2024-01-15T10:30:00.000Z"
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Erreur (401)** - Identifiants invalides:
+
+```json
+{
+  "success": false,
+  "error": "Invalid email or password"
+}
+```
+
+---
+
 ## Players (Joueurs)
+
+**🔒 Routes protégées** - Nécessite un token JWT
 
 ### Créer un joueur
 
@@ -325,6 +459,8 @@ DELETE /api/players/:id
 
 ## Teams (Équipes)
 
+**🔒 Routes protégées** - Nécessite un token JWT
+
 ### Créer une équipe
 
 ```
@@ -476,6 +612,8 @@ DELETE /api/teams/:id
 ---
 
 ## Games (Matchs)
+
+**🔒 Routes protégées** - Nécessite un token JWT
 
 ### Créer un match
 
@@ -738,6 +876,8 @@ POST /api/games/:id/complete
 
 ## Stats (Statistiques)
 
+**🔒 Routes protégées** - Nécessite un token JWT
+
 ### Enregistrer une action de jeu
 
 ```
@@ -934,53 +1074,71 @@ GET /api/stats/players/:playerId/career
 ### Workflow complet d'un match
 
 ```bash
-# 1. Créer une équipe
+# 1. S'inscrire ou se connecter
+POST /api/auth/register
+{ "email": "coach@example.com", "password": "password123", "name": "Coach Smith" }
+# Retourne: { "token": "eyJhbGciOi..." }
+
+# 2. Créer une équipe (avec le token)
 POST /api/teams
+Header: Authorization: Bearer eyJhbGciOi...
 { "name": "Bulls", "coach": "Coach Smith" }
 
-# 2. Créer des joueurs
+# 3. Créer des joueurs
 POST /api/players
+Header: Authorization: Bearer eyJhbGciOi...
 { "firstName": "Michael", "lastName": "Jordan", "teamId": "team-123" }
 
-# 3. Créer un match
+# 4. Créer un match
 POST /api/games
+Header: Authorization: Bearer eyJhbGciOi...
 { "teamId": "team-123", "opponent": "Lakers" }
 
-# 4. Démarrer le match
+# 5. Démarrer le match
 POST /api/games/game-abc123/start
+Header: Authorization: Bearer eyJhbGciOi...
 
-# 5. Enregistrer des actions
+# 6. Enregistrer des actions
 POST /api/stats/games/game-abc123/actions
+Header: Authorization: Bearer eyJhbGciOi...
 { "playerId": "player-123", "actionType": "twoPoint", "made": true }
 
 POST /api/stats/games/game-abc123/actions
+Header: Authorization: Bearer eyJhbGciOi...
 { "playerId": "player-123", "actionType": "threePoint", "made": true }
 
-# 6. Voir les stats du joueur
+# 7. Voir les stats du joueur
 GET /api/stats/games/game-abc123/players/player-123
+Header: Authorization: Bearer eyJhbGciOi...
 
-# 7. Terminer le match
+# 8. Terminer le match
 POST /api/games/game-abc123/complete
+Header: Authorization: Bearer eyJhbGciOi...
 
-# 8. Voir les stats de carrière
+# 9. Voir les stats de carrière
 GET /api/stats/players/player-123/career
+Header: Authorization: Bearer eyJhbGciOi...
 ```
 
 ---
 
 ## Notes importantes
 
-1. **Validation**: Tous les champs requis doivent être fournis, sinon l'API retournera une erreur 400 avec les champs manquants.
+1. **Authentification**: Tous les endpoints nécessitent un token JWT valide sauf `/health` et `/api/auth/*`.
 
-2. **ID auto-générés**: Tous les ID sont générés automatiquement par le système.
+2. **Validation**: Tous les champs requis doivent être fournis, sinon l'API retournera une erreur 400 avec les champs manquants.
 
-3. **Timestamps**: Les champs `createdAt` et `updatedAt` sont gérés automatiquement.
+3. **ID auto-générés**: Tous les ID sont générés automatiquement par le système.
 
-4. **Actions de match**: Les actions ne peuvent être enregistrées que lorsque le match est en cours (`status: "in_progress"`).
+4. **Timestamps**: Les champs `createdAt` et `updatedAt` sont gérés automatiquement.
 
-5. **Undo**: La fonction d'annulation ne supprime que la dernière action pour le joueur spécifié.
+5. **Actions de match**: Les actions ne peuvent être enregistrées que lorsque le match est en cours (`status: "in_progress"`).
 
-6. **Stats de carrière**: Les statistiques de carrière sont calculées en temps réel à partir de tous les matchs du joueur.
+6. **Undo**: La fonction d'annulation ne supprime que la dernière action pour le joueur spécifié.
+
+7. **Stats de carrière**: Les statistiques de carrière sont calculées en temps réel à partir de tous les matchs du joueur.
+
+8. **Sécurité des mots de passe**: Les mots de passe ne sont jamais retournés dans les réponses API et sont hashés avant stockage.
 
 ---
 

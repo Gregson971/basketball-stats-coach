@@ -6,6 +6,7 @@ import {
   MockTeamRepository,
   MockGameRepository,
   MockGameStatsRepository,
+  MockUserRepository,
 } from './setup/mockRepositories';
 
 describe('Game API Endpoints', () => {
@@ -17,13 +18,18 @@ describe('Game API Endpoints', () => {
     const teamRepository = new MockTeamRepository();
     gameRepository = new MockGameRepository();
     const gameStatsRepository = new MockGameStatsRepository();
+    const userRepository = new MockUserRepository();
 
-    app = createApp({
-      playerRepository,
-      teamRepository,
-      gameRepository,
-      gameStatsRepository,
-    });
+    app = createApp(
+      {
+        playerRepository,
+        teamRepository,
+        gameRepository,
+        gameStatsRepository,
+        userRepository,
+      },
+      { disableAuth: true }
+    );
   });
 
   beforeEach(() => {

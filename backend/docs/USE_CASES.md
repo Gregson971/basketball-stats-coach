@@ -339,21 +339,93 @@ type ActionType =
 
 ---
 
+## ✅ Auth Use Cases (2/2)
+
+### 1. Register
+
+**Fichier:** `src/application/use-cases/auth/Register.ts`
+**Tests:** `tests/unit/application/use-cases/auth/Register.test.ts`
+**Description:** Créer un nouveau compte utilisateur
+
+**Paramètres:**
+
+- `email` (required) - Format email valide
+- `password` (required) - Minimum 6 caractères
+- `name` (required)
+
+**Comportement:**
+
+- Vérifie que l'email n'existe pas déjà (case-insensitive)
+- Hash le mot de passe avec bcrypt (10 rounds)
+- Crée l'entité User
+- Génère un token JWT valide 7 jours
+- Retourne l'utilisateur (sans password) et le token
+
+**Retour:**
+
+```typescript
+{
+  success: true,
+  user: { id, email, name, createdAt, updatedAt },
+  token: "eyJhbGciOi..."
+}
+```
+
+---
+
+### 2. Login
+
+**Fichier:** `src/application/use-cases/auth/Login.ts`
+**Tests:** `tests/unit/application/use-cases/auth/Login.test.ts`
+**Description:** Authentifier un utilisateur existant
+
+**Paramètres:**
+
+- `email` (required)
+- `password` (required)
+
+**Comportement:**
+
+- Recherche l'utilisateur par email (case-insensitive)
+- Vérifie le mot de passe avec bcrypt.compare
+- Génère un nouveau token JWT valide 7 jours
+- Retourne l'utilisateur (sans password) et le token
+- Message d'erreur générique pour éviter l'énumération d'emails
+
+**Retour:**
+
+```typescript
+{
+  success: true,
+  user: { id, email, name, createdAt, updatedAt },
+  token: "eyJhbGciOi..."
+}
+```
+
+**Sécurité:**
+
+- Le message d'erreur est identique que l'email existe ou non ("Invalid email or password")
+- Empêche l'énumération des emails
+- Les mots de passe ne sont jamais retournés dans les réponses
+
+---
+
 ## 📊 Statistiques
 
-- **Use Cases implémentés:** 23
-- **Endpoints API REST:** 24
-- **Tests totaux:** 246 tests
-  - Tests unitaires (Use Cases): 94 tests
-  - Tests unitaires (Domain): 96 tests
-  - Tests d'intégration (Repositories): 26 tests
-  - Tests API (Supertest): 56 tests
+- **Use Cases implémentés:** 25
+- **Endpoints API REST:** 26
+- **Tests totaux:** 336 tests
+  - Tests unitaires (Use Cases): 121 tests
+  - Tests unitaires (Domain): 123 tests
+  - Tests d'intégration (Repositories): 43 tests
+  - Tests API (Supertest): 75 tests
     - Players API: 12 tests
     - Teams API: 14 tests
     - Games API: 18 tests
     - Stats API: 12 tests
-- **Test Suites:** 32 suites
-- **Coverage:** ~70%
+    - Auth API: 19 tests
+- **Test Suites:** 37 suites
+- **Coverage:** ~72%
 - **Tous les tests:** ✅ **PASSING**
 
 ---
@@ -370,18 +442,21 @@ tests/
 │   │       ├── player/      # Tests use cases Player (18 tests)
 │   │       ├── team/        # Tests use cases Team (18 tests)
 │   │       ├── game/        # Tests use cases Game (33 tests)
-│   │       └── stats/       # Tests use cases Stats (25 tests)
-│   └── domain/              # Tests entités domaine (96 tests)
-├── integration/             # Tests repositories MongoDB (26 tests)
+│   │       ├── stats/       # Tests use cases Stats (25 tests)
+│   │       └── auth/        # Tests use cases Auth (27 tests)
+│   └── domain/              # Tests entités domaine (123 tests)
+├── integration/             # Tests repositories MongoDB (43 tests)
 │   ├── MongoPlayerRepository.test.ts
 │   ├── MongoTeamRepository.test.ts
 │   ├── MongoGameRepository.test.ts
-│   └── MongoGameStatsRepository.test.ts
-└── api/                     # Tests API avec Supertest (56 tests)
+│   ├── MongoGameStatsRepository.test.ts
+│   └── MongoUserRepository.test.ts
+└── api/                     # Tests API avec Supertest (75 tests)
     ├── players.api.test.ts  # Tests endpoints /api/players
     ├── teams.api.test.ts    # Tests endpoints /api/teams
     ├── games.api.test.ts    # Tests endpoints /api/games
     ├── stats.api.test.ts    # Tests endpoints /api/stats
+    ├── auth.api.test.ts     # Tests endpoints /api/auth
     └── setup/               # Mock repositories pour tests API
 ```
 
@@ -426,11 +501,53 @@ Tous les use cases sont exposés via une API REST complète. Voir [API.md](./API
 - `GET /api/stats/games/:gameId/players/:playerId` → GetPlayerGameStats
 - `GET /api/stats/players/:playerId/career` → GetPlayerCareerStats
 
+### Auth - `/api/auth`
+
+- `POST /api/auth/register` → Register (Public)
+- `POST /api/auth/login` → Login (Public)
+
+**Note:** Tous les endpoints nécessitent un token JWT sauf `/health` et `/api/auth/*`
+
 **Documentation interactive:** http://localhost:3000/api-docs (Swagger UI)
 
 ---
 
 ## 🔄 Flux typique d'utilisation
+
+### 0. Authentification
+
+**Via Use Cases:**
+
+```typescript
+// S'inscrire
+const result = await Register({
+  email: 'coach@example.com',
+  password: 'securepass123',
+  name: 'Coach Smith',
+});
+// Retourne { token: "eyJhbGciOi..." }
+
+// Ou se connecter
+const result = await Login({
+  email: 'coach@example.com',
+  password: 'securepass123',
+});
+```
+
+**Via API REST:**
+
+```bash
+# S'inscrire
+POST /api/auth/register
+{ "email": "coach@example.com", "password": "securepass123", "name": "Coach Smith" }
+
+# Ou se connecter
+POST /api/auth/login
+{ "email": "coach@example.com", "password": "securepass123" }
+
+# Utiliser le token pour toutes les requêtes suivantes
+Authorization: Bearer eyJhbGciOi...
+```
 
 ### 1. Configuration initiale
 
@@ -448,12 +565,14 @@ CreatePlayer({ firstName: 'Lilly', lastName: 'Evans', teamId: '...' });
 **Via API REST:**
 
 ```bash
-# Créer une équipe
+# Créer une équipe (avec token JWT)
 POST /api/teams
+Authorization: Bearer eyJhbGciOi...
 { "name": "Wild Cats" }
 
 # Ajouter des joueurs
 POST /api/players
+Authorization: Bearer eyJhbGciOi...
 { "firstName": "Ryan", "lastName": "Evans", "teamId": "team-123" }
 ```
 
