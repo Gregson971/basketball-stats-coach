@@ -31,7 +31,7 @@ export class Login {
 
       // Verify password
       const userData = user.toJSONWithPassword();
-      const isPasswordValid = await bcrypt.compare(input.password, userData.password);
+      const isPasswordValid = await bcrypt.compare(input.password, userData.password as string);
       if (!isPasswordValid) {
         return {
           success: false,

@@ -279,7 +279,7 @@ export class GameStats {
     }
   }
 
-  public toJSON(): Record<string, any> {
+  public toJSON(): Record<string, unknown> {
     return {
       id: this.id,
       userId: this.userId,

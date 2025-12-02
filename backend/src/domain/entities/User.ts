@@ -57,7 +57,7 @@ export class User {
 
     Object.keys(data).forEach((key) => {
       if (!immutableFields.includes(key) && key in this) {
-        (this as any)[key] = (data as any)[key];
+        (this as Record<string, unknown>)[key] = (data as Record<string, unknown>)[key];
       }
     });
 
@@ -74,7 +74,7 @@ export class User {
     }
   }
 
-  public toJSON(): Record<string, any> {
+  public toJSON(): Record<string, unknown> {
     return {
       id: this.id,
       email: this.email,
@@ -85,7 +85,7 @@ export class User {
   }
 
   // Method to get user data with password (for authentication)
-  public toJSONWithPassword(): Record<string, any> {
+  public toJSONWithPassword(): Record<string, unknown> {
     return {
       id: this.id,
       email: this.email,

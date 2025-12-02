@@ -102,7 +102,7 @@ export class Player {
 
     Object.keys(data).forEach((key) => {
       if (!immutableFields.includes(key) && key in this) {
-        (this as any)[key] = (data as any)[key];
+        (this as Record<string, unknown>)[key] = (data as Record<string, unknown>)[key];
       }
     });
 
@@ -119,7 +119,7 @@ export class Player {
     }
   }
 
-  public toJSON(): Record<string, any> {
+  public toJSON(): Record<string, unknown> {
     return {
       id: this.id,
       userId: this.userId,

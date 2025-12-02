@@ -16,12 +16,12 @@ export class UserMapper {
   static toPersistence(user: User): Partial<IUserDocument> {
     const userData = user.toJSONWithPassword();
     return {
-      _id: userData.id,
-      email: userData.email,
-      password: userData.password,
-      name: userData.name,
-      createdAt: userData.createdAt,
-      updatedAt: userData.updatedAt,
+      _id: userData.id as string,
+      email: userData.email as string,
+      password: userData.password as string,
+      name: userData.name as string,
+      createdAt: userData.createdAt as Date,
+      updatedAt: userData.updatedAt as Date,
     };
   }
 }
