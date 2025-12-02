@@ -18,12 +18,24 @@ export default function RootLayout() {
             },
           }}
         >
+          {/* Auth Screens - No header */}
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+          <Stack.Screen name="register" options={{ headerShown: false }} />
+
+          {/* Main App */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+          {/* Player Screens */}
           <Stack.Screen name="players/create" options={{ title: 'Nouveau joueur' }} />
           <Stack.Screen name="players/[id]/index" options={{ title: 'Détails du joueur' }} />
           <Stack.Screen name="players/[id]/stats" options={{ title: 'Stats en carrière' }} />
+
+          {/* Team Screens */}
           <Stack.Screen name="teams/create" options={{ title: 'Nouvelle équipe' }} />
           <Stack.Screen name="teams/[id]" options={{ title: "Détails de l'équipe" }} />
+
+          {/* Game Screens */}
           <Stack.Screen name="games/create" options={{ title: 'Nouveau match' }} />
           <Stack.Screen name="games/[id]/index" options={{ title: 'Détails du match' }} />
           <Stack.Screen name="games/[id]/stats" options={{ title: 'Enregistrement des stats' }} />

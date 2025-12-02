@@ -98,6 +98,31 @@ export interface RecordActionPayload {
   made?: boolean; // For shots only
 }
 
+// User & Auth types
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  name: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  token: string;
+}
+
 // API Response types
 export interface ApiResponse<T> {
   success: boolean;

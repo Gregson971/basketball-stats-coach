@@ -41,6 +41,10 @@ export const API_CONFIG = {
       `/api/stats/games/${gameId}/players/${playerId}`,
     PLAYER_CAREER_STATS: (playerId: string) => `/api/stats/players/${playerId}/career`,
 
+    // Auth
+    REGISTER: '/api/auth/register',
+    LOGIN: '/api/auth/login',
+
     // Health
     HEALTH: '/health',
   },

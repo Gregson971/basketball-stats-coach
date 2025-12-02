@@ -3,8 +3,11 @@
  * Handles all HTTP requests to the backend
  */
 
+import * as SecureStore from 'expo-secure-store';
 import { API_CONFIG } from '../constants/api';
 import type { ApiResponse } from '../types';
+
+const TOKEN_KEY = 'auth_token';
 
 class ApiClient {
   private baseUrl: string;
@@ -14,15 +17,34 @@ class ApiClient {
   }
 
   /**
+   * Get authentication headers
+   */
+  private async getAuthHeaders(): Promise<Record<string, string>> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    try {
+      const token = await SecureStore.getItemAsync(TOKEN_KEY);
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.error('Error getting token for headers:', error);
+    }
+
+    return headers;
+  }
+
+  /**
    * Generic GET request
    */
   async get<T>(endpoint: string): Promise<ApiResponse<T>> {
     try {
+      const headers = await this.getAuthHeaders();
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
       });
 
       const data = await response.json();
@@ -61,11 +83,10 @@ class ApiClient {
    */
   async post<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
     try {
+      const headers = await this.getAuthHeaders();
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(body),
       });
 
@@ -105,11 +126,10 @@ class ApiClient {
    */
   async put<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
     try {
+      const headers = await this.getAuthHeaders();
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(body),
       });
 
@@ -149,11 +169,10 @@ class ApiClient {
    */
   async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
     try {
+      const headers = await this.getAuthHeaders();
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
       });
 
       const data = await response.json();

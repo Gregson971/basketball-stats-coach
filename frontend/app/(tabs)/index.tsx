@@ -1,7 +1,7 @@
-import { View, FlatList } from 'react-native';
+import { View, FlatList, TouchableOpacity, Text, Alert } from 'react-native';
 import { Link, useRouter, useFocusEffect } from 'expo-router';
 import { useState, useCallback } from 'react';
-import { playerService } from '@/services';
+import { playerService, authService } from '@/services';
 import { LoadingScreen, EmptyState, PlayerCard, Button } from '@/components/common';
 import type { Player } from '@/types';
 
@@ -26,19 +26,51 @@ export default function PlayersScreen() {
     setLoading(false);
   };
 
+  const handleLogout = () => {
+    Alert.alert(
+      'Déconnexion',
+      'Voulez-vous vraiment vous déconnecter ?',
+      [
+        {
+          text: 'Annuler',
+          style: 'cancel',
+        },
+        {
+          text: 'Déconnexion',
+          style: 'destructive',
+          onPress: async () => {
+            await authService.logout();
+            router.replace('/login');
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   if (loading) {
     return <LoadingScreen message="Chargement des joueurs..." />;
   }
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header avec bouton d'ajout */}
+      {/* Header avec boutons */}
       <View className="p-4 bg-white border-b border-gray-200">
-        <Link href="/players/create" asChild>
-          <View>
-            <Button title="+ Nouveau joueur" onPress={() => router.push('/players/create')} />
+        <View className="flex-row gap-2">
+          <View className="flex-1">
+            <Link href="/players/create" asChild>
+              <View>
+                <Button title="+ Nouveau joueur" onPress={() => router.push('/players/create')} />
+              </View>
+            </Link>
           </View>
-        </Link>
+          <TouchableOpacity
+            onPress={handleLogout}
+            className="bg-red-600 px-4 py-3 rounded-lg justify-center"
+          >
+            <Text className="text-white font-semibold">Déconnexion</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Liste des joueurs */}
