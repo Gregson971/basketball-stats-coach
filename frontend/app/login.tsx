@@ -13,6 +13,7 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { authService } from '@/services';
@@ -61,7 +62,10 @@ export default function LoginScreen() {
         <View className="flex-1 justify-center px-8">
           {/* Logo/Title */}
           <View className="items-center mb-12">
-            <Text className="text-4xl font-bold text-white mb-2">🏀</Text>
+            <Image
+              source={require('../assets/icon.png')}
+              style={{ width: 64, height: 64, marginBottom: 8 }}
+            />
             <Text className="text-3xl font-bold text-white">StatCoach Pro</Text>
             <Text className="text-white/80 mt-2">Gestion de stats basketball</Text>
           </View>

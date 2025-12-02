@@ -1,14 +1,15 @@
 import { View, Text, ScrollView, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
-import { playerService } from '@/services';
+import { playerService, teamService } from '@/services';
 import { LoadingScreen, EmptyState, InfoRow, Button } from '@/components/common';
-import type { Player } from '@/types';
+import type { Player, Team } from '@/types';
 
 export default function PlayerDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [player, setPlayer] = useState<Player | null>(null);
+  const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadPlayer = useCallback(async () => {
@@ -16,6 +17,14 @@ export default function PlayerDetailScreen() {
     const result = await playerService.getById(id);
     if (result.success && result.data) {
       setPlayer(result.data);
+
+      // Charger l'équipe
+      if (result.data.teamId) {
+        const teamResult = await teamService.getById(result.data.teamId);
+        if (teamResult.success && teamResult.data) {
+          setTeam(teamResult.data);
+        }
+      }
     } else {
       Alert.alert('Erreur', 'Impossible de charger le joueur');
     }
@@ -78,7 +87,7 @@ export default function PlayerDetailScreen() {
           {player.height && <InfoRow label="Taille" value={`${player.height} cm`} />}
           {player.weight && <InfoRow label="Poids" value={`${player.weight} kg`} />}
           {player.age && <InfoRow label="Âge" value={`${player.age} ans`} />}
-          <InfoRow label="Équipe ID" value={player.teamId} />
+          <InfoRow label="Équipe" value={team?.name || 'Chargement...'} />
         </View>
 
         {/* Statistiques */}

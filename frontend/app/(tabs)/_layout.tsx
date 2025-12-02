@@ -32,7 +32,15 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
+        options={{
+          title: 'Accueil',
+          tabBarLabel: 'Accueil',
+          tabBarIcon: ({ color: _color }) => <Text style={{ fontSize: 24 }}>🏠</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="players"
         options={{
           title: 'Joueurs',
           tabBarLabel: 'Joueurs',
@@ -53,6 +61,12 @@ export default function TabsLayout() {
           title: 'Matchs',
           tabBarLabel: 'Matchs',
           tabBarIcon: ({ color: _color }) => <Text style={{ fontSize: 24 }}>🎯</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="index"
+        options={{
+          href: null, // Cache cette tab de la navigation
         }}
       />
     </Tabs>

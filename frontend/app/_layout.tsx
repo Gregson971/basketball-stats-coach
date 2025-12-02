@@ -24,7 +24,7 @@ export default function RootLayout() {
           <Stack.Screen name="register" options={{ headerShown: false }} />
 
           {/* Main App */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Retour' }} />
 
           {/* Player Screens */}
           <Stack.Screen name="players/create" options={{ title: 'Nouveau joueur' }} />
