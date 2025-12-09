@@ -13,10 +13,11 @@ export default function CreateGameScreen() {
   const [loadingTeams, setLoadingTeams] = useState(true);
   const [teams, setTeams] = useState<Team[]>([]);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [opponentMenuVisible, setOpponentMenuVisible] = useState(false);
 
   // Form state
   const [teamId, setTeamId] = useState('');
-  const [opponent, setOpponent] = useState('');
+  const [opponentTeamId, setOpponentTeamId] = useState('');
   const [gameDate, setGameDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [location, setLocation] = useState('');
@@ -39,6 +40,7 @@ export default function CreateGameScreen() {
   };
 
   const selectedTeam = teams.find((t) => t.id === teamId);
+  const selectedOpponentTeam = teams.find((t) => t.id === opponentTeamId);
 
   const handleCreate = async () => {
     // Validation
@@ -47,8 +49,13 @@ export default function CreateGameScreen() {
       return;
     }
 
-    if (!opponent.trim()) {
-      Alert.alert('Erreur', "Le nom de l'adversaire est requis");
+    if (!opponentTeamId.trim()) {
+      Alert.alert('Erreur', "Veuillez sélectionner l'équipe adverse");
+      return;
+    }
+
+    if (teamId === opponentTeamId) {
+      Alert.alert('Erreur', "L'équipe et l'adversaire doivent être différents");
       return;
     }
 
@@ -56,7 +63,7 @@ export default function CreateGameScreen() {
 
     const payload = {
       teamId: teamId.trim(),
-      opponent: opponent.trim(),
+      opponent: selectedOpponentTeam?.name || '',
       ...(gameDate && { gameDate }),
       ...(location && { location: location.trim() }),
       ...(notes && { notes: notes.trim() }),
@@ -82,16 +89,18 @@ export default function CreateGameScreen() {
     return <LoadingScreen message="Chargement des équipes..." />;
   }
 
-  // Si aucune équipe n'existe
-  if (teams.length === 0) {
+  // Si pas assez d'équipes pour créer un match (besoin de 2 équipes minimum)
+  if (teams.length < 2) {
     return (
       <View className="flex-1 bg-gray-50 justify-center items-center p-8">
         <Text className="text-6xl mb-4">🏀</Text>
         <Text className="text-2xl font-bold text-gray-800 text-center mb-2">
-          Aucune équipe disponible
+          {teams.length === 0 ? 'Aucune équipe disponible' : 'Une seule équipe disponible'}
         </Text>
         <Text className="text-gray-600 text-center mb-6">
-          Vous devez d'abord créer une équipe avant de programmer des matchs
+          {teams.length === 0
+            ? 'Vous devez créer au moins 2 équipes pour programmer un match'
+            : 'Vous devez créer une équipe adverse pour programmer un match'}
         </Text>
         <View className="w-full max-w-xs gap-3">
           <Button
@@ -142,14 +151,37 @@ export default function CreateGameScreen() {
             </Menu>
           </View>
 
-          <TextInput
-            label="Adversaire *"
-            value={opponent}
-            onChangeText={setOpponent}
-            mode="outlined"
-            placeholder="ex: Tigers"
-            className="mb-3"
-          />
+          {/* Sélecteur d'équipe adverse */}
+          <View className="mb-3">
+            <Text className="text-sm text-gray-600 mb-2">Équipe adverse *</Text>
+            <Menu
+              visible={opponentMenuVisible}
+              onDismiss={() => setOpponentMenuVisible(false)}
+              anchor={
+                <TouchableOpacity
+                  onPress={() => setOpponentMenuVisible(true)}
+                  className="border border-gray-400 rounded px-4 py-3 bg-white"
+                >
+                  <Text className={opponentTeamId ? 'text-gray-900' : 'text-gray-500'}>
+                    {selectedOpponentTeam ? selectedOpponentTeam.name : "Sélectionner l'équipe adverse"}
+                  </Text>
+                </TouchableOpacity>
+              }
+            >
+              {teams
+                .filter((team) => team.id !== teamId)
+                .map((team) => (
+                  <Menu.Item
+                    key={team.id}
+                    onPress={() => {
+                      setOpponentTeamId(team.id);
+                      setOpponentMenuVisible(false);
+                    }}
+                    title={team.name}
+                  />
+                ))}
+            </Menu>
+          </View>
 
           {/* Date Picker */}
           <TouchableOpacity onPress={() => setShowDatePicker(true)}>
