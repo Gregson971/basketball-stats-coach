@@ -14,6 +14,10 @@ export class GameMapper {
       status: doc.status,
       startedAt: doc.startedAt,
       completedAt: doc.completedAt,
+      currentQuarter: doc.currentQuarter,
+      roster: doc.roster,
+      startingLineup: doc.startingLineup,
+      currentLineup: doc.currentLineup,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });
@@ -31,6 +35,10 @@ export class GameMapper {
       status: game.status,
       startedAt: game.startedAt || undefined,
       completedAt: game.completedAt || undefined,
+      currentQuarter: game.currentQuarter,
+      roster: game.roster,
+      startingLineup: game.startingLineup,
+      currentLineup: game.currentLineup,
       createdAt: game.createdAt,
       updatedAt: game.updatedAt,
     };

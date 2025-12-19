@@ -12,6 +12,10 @@ export interface IGameDocument {
   status: GameStatus;
   startedAt?: Date;
   completedAt?: Date;
+  currentQuarter: number;
+  roster: string[];
+  startingLineup: string[];
+  currentLineup: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,6 +37,10 @@ const GameSchema = new Schema<IGameDocument>(
     },
     startedAt: { type: Date },
     completedAt: { type: Date },
+    currentQuarter: { type: Number, default: 1, min: 1, max: 4 },
+    roster: [{ type: String }],
+    startingLineup: [{ type: String }],
+    currentLineup: [{ type: String }],
   },
   {
     timestamps: true,
