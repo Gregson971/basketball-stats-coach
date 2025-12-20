@@ -3,6 +3,7 @@ import { IPlayerRepository } from '../../domain/repositories/PlayerRepository';
 import { ITeamRepository } from '../../domain/repositories/TeamRepository';
 import { IGameRepository } from '../../domain/repositories/GameRepository';
 import { IGameStatsRepository } from '../../domain/repositories/GameStatsRepository';
+import { ISubstitutionRepository } from '../../domain/repositories/SubstitutionRepository';
 import { IUserRepository } from '../../domain/repositories/UserRepository';
 import { createPlayerRoutes } from './playerRoutes';
 import { createTeamRoutes } from './teamRoutes';
@@ -16,6 +17,7 @@ export interface RepositoryDependencies {
   teamRepository: ITeamRepository;
   gameRepository: IGameRepository;
   gameStatsRepository: IGameStatsRepository;
+  substitutionRepository: ISubstitutionRepository;
   userRepository: IUserRepository;
 }
 
@@ -37,7 +39,15 @@ export const createApiRoutes = (
 
   router.use('/players', ...middleware, createPlayerRoutes(repositories.playerRepository));
   router.use('/teams', ...middleware, createTeamRoutes(repositories.teamRepository));
-  router.use('/games', ...middleware, createGameRoutes(repositories.gameRepository));
+  router.use(
+    '/games',
+    ...middleware,
+    createGameRoutes(
+      repositories.gameRepository,
+      repositories.playerRepository,
+      repositories.substitutionRepository
+    )
+  );
   router.use(
     '/stats',
     ...middleware,

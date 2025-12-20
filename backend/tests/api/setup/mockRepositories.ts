@@ -3,10 +3,12 @@ import { Team } from '../../../src/domain/entities/Team';
 import { Game, GameStatus } from '../../../src/domain/entities/Game';
 import { GameStats } from '../../../src/domain/entities/GameStats';
 import { User } from '../../../src/domain/entities/User';
+import { Substitution } from '../../../src/domain/entities/Substitution';
 import { IPlayerRepository } from '../../../src/domain/repositories/PlayerRepository';
 import { ITeamRepository } from '../../../src/domain/repositories/TeamRepository';
 import { IGameRepository } from '../../../src/domain/repositories/GameRepository';
 import { IUserRepository } from '../../../src/domain/repositories/UserRepository';
+import { ISubstitutionRepository } from '../../../src/domain/repositories/SubstitutionRepository';
 import {
   IGameStatsRepository,
   PlayerAggregateStats,

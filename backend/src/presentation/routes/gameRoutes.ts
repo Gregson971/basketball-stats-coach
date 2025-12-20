@@ -1,12 +1,18 @@
 import { Router } from 'express';
 import { GameController } from '../controllers/GameController';
 import { IGameRepository } from '../../domain/repositories/GameRepository';
+import { IPlayerRepository } from '../../domain/repositories/PlayerRepository';
+import { ISubstitutionRepository } from '../../domain/repositories/SubstitutionRepository';
 import { asyncHandler } from '../middleware/asyncHandler';
 import { validateRequiredFields, validateParam } from '../middleware/validateRequest';
 
-export const createGameRoutes = (gameRepository: IGameRepository): Router => {
+export const createGameRoutes = (
+  gameRepository: IGameRepository,
+  playerRepository: IPlayerRepository,
+  substitutionRepository: ISubstitutionRepository
+): Router => {
   const router = Router();
-  const controller = new GameController(gameRepository);
+  const controller = new GameController(gameRepository, playerRepository, substitutionRepository);
 
   /**
    * @swagger
@@ -368,6 +374,37 @@ export const createGameRoutes = (gameRepository: IGameRepository): Router => {
     '/:id/complete',
     validateParam('id'),
     asyncHandler(controller.complete.bind(controller))
+  );
+
+  // Roster management
+  router.put(
+    '/:id/roster',
+    validateParam('id'),
+    validateRequiredFields(['playerIds']),
+    asyncHandler(controller.setRoster.bind(controller))
+  );
+
+  // Starting lineup management
+  router.put(
+    '/:id/starting-lineup',
+    validateParam('id'),
+    validateRequiredFields(['playerIds']),
+    asyncHandler(controller.setLineup.bind(controller))
+  );
+
+  // Quarter management
+  router.post(
+    '/:id/next-quarter',
+    validateParam('id'),
+    asyncHandler(controller.nextQuarterHandler.bind(controller))
+  );
+
+  // Substitution
+  router.post(
+    '/:id/substitution',
+    validateParam('id'),
+    validateRequiredFields(['playerOut', 'playerIn']),
+    asyncHandler(controller.substitution.bind(controller))
   );
 
   return router;

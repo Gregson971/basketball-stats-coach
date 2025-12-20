@@ -5,6 +5,7 @@ import { MongoPlayerRepository } from './infrastructure/database/repositories/Mo
 import { MongoTeamRepository } from './infrastructure/database/repositories/MongoTeamRepository';
 import { MongoGameRepository } from './infrastructure/database/repositories/MongoGameRepository';
 import { MongoGameStatsRepository } from './infrastructure/database/repositories/MongoGameStatsRepository';
+import { MongoSubstitutionRepository } from './infrastructure/database/repositories/MongoSubstitutionRepository';
 import { MongoUserRepository } from './infrastructure/database/repositories/MongoUserRepository';
 
 // Load environment variables
@@ -24,6 +25,7 @@ async function startServer() {
     const teamRepository = new MongoTeamRepository();
     const gameRepository = new MongoGameRepository();
     const gameStatsRepository = new MongoGameStatsRepository();
+    const substitutionRepository = new MongoSubstitutionRepository();
     const userRepository = new MongoUserRepository(
       playerRepository,
       teamRepository,
@@ -37,6 +39,7 @@ async function startServer() {
       teamRepository,
       gameRepository,
       gameStatsRepository,
+      substitutionRepository,
       userRepository,
     });
 

@@ -42,6 +42,14 @@ export class RecordGameAction {
         };
       }
 
+      // Verify player is currently on the court
+      if (!game.currentLineup.includes(playerId)) {
+        return {
+          success: false,
+          error: 'Player is not currently on the court',
+        };
+      }
+
       // Get or create game stats for this player
       let gameStats = await this.gameStatsRepository.findByGameAndPlayer(gameId, playerId, userId);
 
