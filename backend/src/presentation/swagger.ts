@@ -229,6 +229,33 @@ const options: swaggerJsdoc.Options = {
               enum: ['not_started', 'in_progress', 'completed'],
               description: 'Statut du match',
             },
+            roster: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description: 'Liste des joueurs convoqués pour le match (5-15 joueurs)',
+            },
+            startingLineup: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description: 'Composition de départ (exactement 5 joueurs)',
+            },
+            currentLineup: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+              description: 'Composition actuelle sur le terrain (exactement 5 joueurs)',
+            },
+            currentQuarter: {
+              type: 'number',
+              description: 'Quart-temps en cours (1-4)',
+              minimum: 1,
+              maximum: 4,
+            },
             startedAt: {
               type: 'string',
               format: 'date-time',
@@ -238,6 +265,47 @@ const options: swaggerJsdoc.Options = {
               type: 'string',
               format: 'date-time',
               description: 'Date de fin du match',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+            },
+          },
+        },
+        Substitution: {
+          type: 'object',
+          required: ['gameId', 'quarter', 'playerOut', 'playerIn'],
+          properties: {
+            id: {
+              type: 'string',
+              description: 'Identifiant unique de la substitution',
+            },
+            gameId: {
+              type: 'string',
+              description: 'Identifiant du match',
+            },
+            quarter: {
+              type: 'number',
+              description: 'Quart-temps de la substitution (1-4)',
+              minimum: 1,
+              maximum: 4,
+            },
+            playerOut: {
+              type: 'string',
+              description: 'Identifiant du joueur sortant',
+            },
+            playerIn: {
+              type: 'string',
+              description: 'Identifiant du joueur entrant',
+            },
+            timestamp: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Horodatage de la substitution',
             },
             createdAt: {
               type: 'string',

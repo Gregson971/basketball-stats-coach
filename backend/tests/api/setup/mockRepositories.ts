@@ -290,3 +290,50 @@ export class MockUserRepository implements IUserRepository {
     return false;
   }
 }
+
+export class MockSubstitutionRepository implements ISubstitutionRepository {
+  substitutions: Substitution[] = [];
+
+  async findById(id: string, _userId?: string): Promise<Substitution | null> {
+    return this.substitutions.find((s) => s.id === id) || null;
+  }
+
+  async findByGameId(_gameId: string, _userId?: string): Promise<Substitution[]> {
+    return this.substitutions.filter((s) => s.gameId === _gameId);
+  }
+
+  async findByUserId(_userId: string): Promise<Substitution[]> {
+    return this.substitutions;
+  }
+
+  async save(substitution: Substitution): Promise<Substitution> {
+    const existingIndex = this.substitutions.findIndex((s) => s.id === substitution.id);
+    if (existingIndex >= 0) {
+      this.substitutions[existingIndex] = substitution;
+    } else {
+      this.substitutions.push(substitution);
+    }
+    return substitution;
+  }
+
+  async delete(id: string, _userId?: string): Promise<boolean> {
+    const index = this.substitutions.findIndex((s) => s.id === id);
+    if (index >= 0) {
+      this.substitutions.splice(index, 1);
+      return true;
+    }
+    return false;
+  }
+
+  async deleteByUserId(_userId: string): Promise<number> {
+    const count = this.substitutions.length;
+    this.substitutions = [];
+    return count;
+  }
+
+  async deleteByGameId(_gameId: string, _userId?: string): Promise<number> {
+    const beforeCount = this.substitutions.length;
+    this.substitutions = this.substitutions.filter((s) => s.gameId !== _gameId);
+    return beforeCount - this.substitutions.length;
+  }
+}

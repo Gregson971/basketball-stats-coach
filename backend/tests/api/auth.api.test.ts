@@ -7,6 +7,7 @@ import {
   MockGameRepository,
   MockGameStatsRepository,
   MockUserRepository,
+  MockSubstitutionRepository,
 } from './setup/mockRepositories';
 import * as jwt from 'jsonwebtoken';
 
@@ -19,6 +20,7 @@ describe('Auth API Endpoints', () => {
     const teamRepository = new MockTeamRepository();
     const gameRepository = new MockGameRepository();
     const gameStatsRepository = new MockGameStatsRepository();
+    const substitutionRepository = new MockSubstitutionRepository();
     userRepository = new MockUserRepository();
 
     app = createApp({
@@ -26,6 +28,7 @@ describe('Auth API Endpoints', () => {
       teamRepository,
       gameRepository,
       gameStatsRepository,
+      substitutionRepository,
       userRepository,
     });
   });

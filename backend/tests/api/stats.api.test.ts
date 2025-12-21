@@ -7,18 +7,54 @@ import {
   MockGameRepository,
   MockGameStatsRepository,
   MockUserRepository,
+  MockSubstitutionRepository,
 } from './setup/mockRepositories';
 
 describe('Stats API Endpoints', () => {
   let app: Application;
   let gameRepository: MockGameRepository;
   let gameStatsRepository: MockGameStatsRepository;
+  let playerRepository: MockPlayerRepository;
+
+  // Helper to create and start a game properly
+  const createAndStartGame = async () => {
+    // Create players first
+    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P1', lastName: 'Player', jerseyNumber: 1, position: 'Guard' });
+    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P2', lastName: 'Player', jerseyNumber: 2, position: 'Guard' });
+    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P3', lastName: 'Player', jerseyNumber: 3, position: 'Forward' });
+    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P4', lastName: 'Player', jerseyNumber: 4, position: 'Forward' });
+    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P5', lastName: 'Player', jerseyNumber: 5, position: 'Center' });
+
+    // Get player IDs from repository
+    const players = playerRepository.players;
+    const playerIds = players.slice(0, 5).map(p => p.id);
+
+    const gameResponse = await request(app)
+      .post('/api/games')
+      .send({ teamId: 'team-1', opponent: 'Test' });
+
+    const gameId = gameResponse.body.game.id;
+
+    // Set roster and lineup before starting
+    await request(app)
+      .put(`/api/games/${gameId}/roster`)
+      .send({ playerIds });
+
+    await request(app)
+      .put(`/api/games/${gameId}/starting-lineup`)
+      .send({ playerIds });
+
+    await request(app).post(`/api/games/${gameId}/start`);
+
+    return { gameId, playerIds };
+  };
 
   beforeAll(() => {
-    const playerRepository = new MockPlayerRepository();
+    playerRepository = new MockPlayerRepository();
     const teamRepository = new MockTeamRepository();
     gameRepository = new MockGameRepository();
     gameStatsRepository = new MockGameStatsRepository();
+    const substitutionRepository = new MockSubstitutionRepository();
     const userRepository = new MockUserRepository();
 
     app = createApp(
@@ -27,6 +63,7 @@ describe('Stats API Endpoints', () => {
         teamRepository,
         gameRepository,
         gameStatsRepository,
+        substitutionRepository,
         userRepository,
       },
       { disableAuth: true }
@@ -36,20 +73,15 @@ describe('Stats API Endpoints', () => {
   beforeEach(() => {
     gameRepository.games = [];
     gameStatsRepository.stats = [];
+    playerRepository.players = [];
   });
 
   describe('POST /api/stats/games/:gameId/actions', () => {
     it('should record a game action', async () => {
-      // Créer et démarrer un match
-      const gameResponse = await request(app)
-        .post('/api/games')
-        .send({ teamId: 'team-1', opponent: 'Test' });
-
-      const gameId = gameResponse.body.game.id;
-      await request(app).post(`/api/games/${gameId}/start`);
+      const { gameId, playerIds } = await createAndStartGame();
 
       const actionData = {
-        playerId: 'player-1',
+        playerId: playerIds[0],
         actionType: 'twoPoint',
         made: true,
       };
@@ -76,24 +108,19 @@ describe('Stats API Endpoints', () => {
     });
 
     it('should record multiple actions for same player', async () => {
-      const gameResponse = await request(app)
-        .post('/api/games')
-        .send({ teamId: 'team-1', opponent: 'Test' });
-
-      const gameId = gameResponse.body.game.id;
-      await request(app).post(`/api/games/${gameId}/start`);
+      const { gameId, playerIds } = await createAndStartGame();
 
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'twoPoint', made: true });
+        .send({ playerId: playerIds[0], actionType: 'twoPoint', made: true });
 
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'threePoint', made: true });
+        .send({ playerId: playerIds[0], actionType: 'threePoint', made: true });
 
       const response = await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'assist' })
+        .send({ playerId: playerIds[0], actionType: 'assist' })
         .expect(201);
 
       expect(response.body.gameStats.twoPointsMade).toBe(1);
@@ -102,16 +129,11 @@ describe('Stats API Endpoints', () => {
     });
 
     it('should record missed shots', async () => {
-      const gameResponse = await request(app)
-        .post('/api/games')
-        .send({ teamId: 'team-1', opponent: 'Test' });
-
-      const gameId = gameResponse.body.game.id;
-      await request(app).post(`/api/games/${gameId}/start`);
+      const { gameId, playerIds } = await createAndStartGame();
 
       const response = await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'twoPoint', made: false })
+        .send({ playerId: playerIds[0], actionType: 'twoPoint', made: false })
         .expect(201);
 
       expect(response.body.gameStats.twoPointsMade).toBe(0);
@@ -136,23 +158,18 @@ describe('Stats API Endpoints', () => {
 
   describe('DELETE /api/stats/games/:gameId/actions/:playerId', () => {
     it('should undo last game action', async () => {
-      const gameResponse = await request(app)
-        .post('/api/games')
-        .send({ teamId: 'team-1', opponent: 'Test' });
-
-      const gameId = gameResponse.body.game.id;
-      await request(app).post(`/api/games/${gameId}/start`);
+      const { gameId, playerIds } = await createAndStartGame();
 
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'twoPoint', made: true });
+        .send({ playerId: playerIds[0], actionType: 'twoPoint', made: true });
 
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'assist' });
+        .send({ playerId: playerIds[0], actionType: 'assist' });
 
       const response = await request(app)
-        .delete(`/api/stats/games/${gameId}/actions/player-1`)
+        .delete(`/api/stats/games/${gameId}/actions/${playerIds[0]}`)
         .expect(200);
 
       expect(response.body.success).toBe(true);
@@ -169,24 +186,19 @@ describe('Stats API Endpoints', () => {
     });
 
     it('should return error when no actions to undo', async () => {
-      const gameResponse = await request(app)
-        .post('/api/games')
-        .send({ teamId: 'team-1', opponent: 'Test' });
-
-      const gameId = gameResponse.body.game.id;
-      await request(app).post(`/api/games/${gameId}/start`);
+      const { gameId, playerIds } = await createAndStartGame();
 
       // Créer les stats sans actions
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'assist' });
+        .send({ playerId: playerIds[0], actionType: 'assist' });
 
       // Undo la seule action
-      await request(app).delete(`/api/stats/games/${gameId}/actions/player-1`);
+      await request(app).delete(`/api/stats/games/${gameId}/actions/${playerIds[0]}`);
 
       // Essayer d'undo à nouveau
       const response = await request(app)
-        .delete(`/api/stats/games/${gameId}/actions/player-1`)
+        .delete(`/api/stats/games/${gameId}/actions/${playerIds[0]}`)
         .expect(400);
 
       expect(response.body.success).toBe(false);
@@ -195,23 +207,18 @@ describe('Stats API Endpoints', () => {
 
   describe('GET /api/stats/games/:gameId/players/:playerId', () => {
     it('should get player game stats', async () => {
-      const gameResponse = await request(app)
-        .post('/api/games')
-        .send({ teamId: 'team-1', opponent: 'Test' });
-
-      const gameId = gameResponse.body.game.id;
-      await request(app).post(`/api/games/${gameId}/start`);
+      const { gameId, playerIds } = await createAndStartGame();
 
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'twoPoint', made: true });
+        .send({ playerId: playerIds[0], actionType: 'twoPoint', made: true });
 
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'threePoint', made: true });
+        .send({ playerId: playerIds[0], actionType: 'threePoint', made: true });
 
       const response = await request(app)
-        .get(`/api/stats/games/${gameId}/players/player-1`)
+        .get(`/api/stats/games/${gameId}/players/${playerIds[0]}`)
         .expect(200);
 
       expect(response.body.success).toBe(true);
@@ -229,27 +236,22 @@ describe('Stats API Endpoints', () => {
     });
 
     it('should calculate total points correctly', async () => {
-      const gameResponse = await request(app)
-        .post('/api/games')
-        .send({ teamId: 'team-1', opponent: 'Test' });
-
-      const gameId = gameResponse.body.game.id;
-      await request(app).post(`/api/games/${gameId}/start`);
+      const { gameId, playerIds } = await createAndStartGame();
 
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'freeThrow', made: true });
+        .send({ playerId: playerIds[0], actionType: 'freeThrow', made: true });
 
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'twoPoint', made: true });
+        .send({ playerId: playerIds[0], actionType: 'twoPoint', made: true });
 
       await request(app)
         .post(`/api/stats/games/${gameId}/actions`)
-        .send({ playerId: 'player-1', actionType: 'threePoint', made: true });
+        .send({ playerId: playerIds[0], actionType: 'threePoint', made: true });
 
       const response = await request(app)
-        .get(`/api/stats/games/${gameId}/players/player-1`)
+        .get(`/api/stats/games/${gameId}/players/${playerIds[0]}`)
         .expect(200);
 
       expect(response.body.gameStats.freeThrowsMade).toBe(1);
@@ -262,37 +264,27 @@ describe('Stats API Endpoints', () => {
   describe('GET /api/stats/players/:playerId/career', () => {
     it('should get player career stats', async () => {
       // Créer 2 matchs avec des stats
-      const game1Response = await request(app)
-        .post('/api/games')
-        .send({ teamId: 'team-1', opponent: 'Test 1' });
-
-      const game1Id = game1Response.body.game.id;
-      await request(app).post(`/api/games/${game1Id}/start`);
+      const { gameId: game1Id, playerIds: playerIds1 } = await createAndStartGame();
 
       await request(app)
         .post(`/api/stats/games/${game1Id}/actions`)
-        .send({ playerId: 'player-1', actionType: 'twoPoint', made: true });
+        .send({ playerId: playerIds1[0], actionType: 'twoPoint', made: true });
 
       await request(app)
         .post(`/api/stats/games/${game1Id}/actions`)
-        .send({ playerId: 'player-1', actionType: 'assist' });
+        .send({ playerId: playerIds1[0], actionType: 'assist' });
 
-      const game2Response = await request(app)
-        .post('/api/games')
-        .send({ teamId: 'team-1', opponent: 'Test 2' });
-
-      const game2Id = game2Response.body.game.id;
-      await request(app).post(`/api/games/${game2Id}/start`);
+      const { gameId: game2Id, playerIds: playerIds2 } = await createAndStartGame();
 
       await request(app)
         .post(`/api/stats/games/${game2Id}/actions`)
-        .send({ playerId: 'player-1', actionType: 'threePoint', made: true });
+        .send({ playerId: playerIds2[0], actionType: 'threePoint', made: true });
 
       await request(app)
         .post(`/api/stats/games/${game2Id}/actions`)
-        .send({ playerId: 'player-1', actionType: 'assist' });
+        .send({ playerId: playerIds2[0], actionType: 'assist' });
 
-      const response = await request(app).get('/api/stats/players/player-1/career').expect(200);
+      const response = await request(app).get(`/api/stats/players/${playerIds1[0]}/career`).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.stats).toBeDefined();

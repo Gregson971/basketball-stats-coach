@@ -78,6 +78,12 @@ describe('Game Entity', () => {
   });
 
   describe('Status Management', () => {
+    // Helper to prepare a game for starting
+    const prepareGameForStart = (game: Game) => {
+      game.setRoster(['p1', 'p2', 'p3', 'p4', 'p5']);
+      game.setStartingLineup(['p1', 'p2', 'p3', 'p4', 'p5']);
+    };
+
     test('should start a game', () => {
       const game = new Game({
         userId: 'user-123',
@@ -85,6 +91,7 @@ describe('Game Entity', () => {
         opponent: 'Tigers',
       });
 
+      prepareGameForStart(game);
       game.start();
 
       expect(game.status).toBe('in_progress');
@@ -98,6 +105,7 @@ describe('Game Entity', () => {
         opponent: 'Tigers',
       });
 
+      prepareGameForStart(game);
       game.start();
 
       expect(() => game.start()).toThrow('Game is already in progress or completed');
@@ -110,6 +118,7 @@ describe('Game Entity', () => {
         opponent: 'Tigers',
       });
 
+      prepareGameForStart(game);
       game.start();
       game.complete();
 
@@ -136,6 +145,7 @@ describe('Game Entity', () => {
 
       expect(game.isInProgress()).toBe(false);
 
+      prepareGameForStart(game);
       game.start();
       expect(game.isInProgress()).toBe(true);
 
@@ -152,6 +162,7 @@ describe('Game Entity', () => {
 
       expect(game.isCompleted()).toBe(false);
 
+      prepareGameForStart(game);
       game.start();
       expect(game.isCompleted()).toBe(false);
 

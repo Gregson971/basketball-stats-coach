@@ -56,6 +56,12 @@ describe('GetGamesByStatus Use Case', () => {
   let getGamesByStatus: GetGamesByStatus;
   const userId = 'user-123';
 
+  // Helper to prepare a game for starting
+  const prepareGameForStart = (game: Game) => {
+    game.setRoster(['p1', 'p2', 'p3', 'p4', 'p5']);
+    game.setStartingLineup(['p1', 'p2', 'p3', 'p4', 'p5']);
+  };
+
   beforeEach(() => {
     mockRepository = new MockGameRepository();
     getGamesByStatus = new GetGamesByStatus(mockRepository);
@@ -65,6 +71,7 @@ describe('GetGamesByStatus Use Case', () => {
     const game1 = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
     const game2 = new Game({ userId, teamId: 'team-123', opponent: 'Panthers' });
     const game3 = new Game({ userId, teamId: 'team-123', opponent: 'Lions' });
+    prepareGameForStart(game3);
     game3.start();
     mockRepository.games.push(game1, game2, game3);
 
@@ -79,7 +86,9 @@ describe('GetGamesByStatus Use Case', () => {
     const game1 = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
     const game2 = new Game({ userId, teamId: 'team-123', opponent: 'Panthers' });
     const game3 = new Game({ userId, teamId: 'team-123', opponent: 'Lions' });
+    prepareGameForStart(game1);
     game1.start();
+    prepareGameForStart(game2);
     game2.start();
     mockRepository.games.push(game1, game2, game3);
 
@@ -94,8 +103,10 @@ describe('GetGamesByStatus Use Case', () => {
     const game1 = new Game({ userId, teamId: 'team-123', opponent: 'Tigers' });
     const game2 = new Game({ userId, teamId: 'team-123', opponent: 'Panthers' });
     const game3 = new Game({ userId, teamId: 'team-123', opponent: 'Lions' });
+    prepareGameForStart(game1);
     game1.start();
     game1.complete();
+    prepareGameForStart(game2);
     game2.start();
     mockRepository.games.push(game1, game2, game3);
 

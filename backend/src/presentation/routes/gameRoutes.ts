@@ -376,7 +376,60 @@ export const createGameRoutes = (
     asyncHandler(controller.complete.bind(controller))
   );
 
-  // Roster management
+  /**
+   * @swagger
+   * /api/games/{id}/roster:
+   *   put:
+   *     tags:
+   *       - Games
+   *     summary: Définir le roster du match
+   *     description: Définit la liste des joueurs convoqués pour le match (entre 5 et 15 joueurs). Le match doit être dans le statut "not_started".
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: ID du match
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - playerIds
+   *             properties:
+   *               playerIds:
+   *                 type: array
+   *                 items:
+   *                   type: string
+   *                 minItems: 5
+   *                 maxItems: 15
+   *                 description: Liste des identifiants des joueurs convoqués
+   *                 example: ["player-1", "player-2", "player-3", "player-4", "player-5"]
+   *     responses:
+   *       200:
+   *         description: Roster défini avec succès
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 game:
+   *                   $ref: '#/components/schemas/Game'
+   *       400:
+   *         description: Erreur de validation ou match déjà démarré
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   router.put(
     '/:id/roster',
     validateParam('id'),
@@ -384,7 +437,60 @@ export const createGameRoutes = (
     asyncHandler(controller.setRoster.bind(controller))
   );
 
-  // Starting lineup management
+  /**
+   * @swagger
+   * /api/games/{id}/starting-lineup:
+   *   put:
+   *     tags:
+   *       - Games
+   *     summary: Définir la composition de départ
+   *     description: Définit les 5 joueurs qui démarreront le match. Le roster doit être défini au préalable et le match doit être dans le statut "not_started".
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: ID du match
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - playerIds
+   *             properties:
+   *               playerIds:
+   *                 type: array
+   *                 items:
+   *                   type: string
+   *                 minItems: 5
+   *                 maxItems: 5
+   *                 description: Liste exacte de 5 joueurs du roster
+   *                 example: ["player-1", "player-2", "player-3", "player-4", "player-5"]
+   *     responses:
+   *       200:
+   *         description: Composition de départ définie avec succès
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 game:
+   *                   $ref: '#/components/schemas/Game'
+   *       400:
+   *         description: Erreur de validation ou match déjà démarré
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   router.put(
     '/:id/starting-lineup',
     validateParam('id'),
@@ -392,14 +498,106 @@ export const createGameRoutes = (
     asyncHandler(controller.setLineup.bind(controller))
   );
 
-  // Quarter management
+  /**
+   * @swagger
+   * /api/games/{id}/next-quarter:
+   *   post:
+   *     tags:
+   *       - Games
+   *     summary: Passer au quart-temps suivant
+   *     description: Incrémente le quart-temps en cours (de 1 à 4). Le match doit être en cours ("in_progress").
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: ID du match
+   *     responses:
+   *       200:
+   *         description: Quart-temps incrémenté avec succès
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 game:
+   *                   $ref: '#/components/schemas/Game'
+   *       400:
+   *         description: Erreur - match non en cours ou déjà au 4ème quart-temps
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   router.post(
     '/:id/next-quarter',
     validateParam('id'),
     asyncHandler(controller.nextQuarterHandler.bind(controller))
   );
 
-  // Substitution
+  /**
+   * @swagger
+   * /api/games/{id}/substitution:
+   *   post:
+   *     tags:
+   *       - Games
+   *     summary: Effectuer un changement de joueur
+   *     description: Remplace un joueur sur le terrain par un joueur du banc. Le match doit être en cours. Le joueur sortant doit être sur le terrain et le joueur entrant doit être dans le roster mais pas sur le terrain.
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: ID du match
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - playerOut
+   *               - playerIn
+   *             properties:
+   *               playerOut:
+   *                 type: string
+   *                 description: ID du joueur qui sort du terrain
+   *                 example: player-3
+   *               playerIn:
+   *                 type: string
+   *                 description: ID du joueur qui entre sur le terrain
+   *                 example: player-6
+   *     responses:
+   *       200:
+   *         description: Substitution effectuée avec succès
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                   example: true
+   *                 game:
+   *                   $ref: '#/components/schemas/Game'
+   *                 substitution:
+   *                   $ref: '#/components/schemas/Substitution'
+   *       400:
+   *         description: Erreur - match non en cours, joueur déjà sur le terrain, etc.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   router.post(
     '/:id/substitution',
     validateParam('id'),

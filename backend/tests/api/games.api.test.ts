@@ -7,17 +7,40 @@ import {
   MockGameRepository,
   MockGameStatsRepository,
   MockUserRepository,
+  MockSubstitutionRepository,
 } from './setup/mockRepositories';
 
 describe('Game API Endpoints', () => {
   let app: Application;
   let gameRepository: MockGameRepository;
+  let playerRepository: MockPlayerRepository;
+
+  // Helper to prepare a game for starting
+  const prepareGameForStart = async (gameId: string, teamId: string = 'team-1') => {
+    // Create players first
+    const p1 = await request(app).post('/api/players').send({ teamId, firstName: 'P1', lastName: 'Player', jerseyNumber: 1, position: 'Guard' });
+    const p2 = await request(app).post('/api/players').send({ teamId, firstName: 'P2', lastName: 'Player', jerseyNumber: 2, position: 'Guard' });
+    const p3 = await request(app).post('/api/players').send({ teamId, firstName: 'P3', lastName: 'Player', jerseyNumber: 3, position: 'Forward' });
+    const p4 = await request(app).post('/api/players').send({ teamId, firstName: 'P4', lastName: 'Player', jerseyNumber: 4, position: 'Forward' });
+    const p5 = await request(app).post('/api/players').send({ teamId, firstName: 'P5', lastName: 'Player', jerseyNumber: 5, position: 'Center' });
+
+    const playerIds = [p1.body.player.id, p2.body.player.id, p3.body.player.id, p4.body.player.id, p5.body.player.id];
+
+    await request(app)
+      .put(`/api/games/${gameId}/roster`)
+      .send({ playerIds });
+
+    await request(app)
+      .put(`/api/games/${gameId}/starting-lineup`)
+      .send({ playerIds });
+  };
 
   beforeAll(() => {
-    const playerRepository = new MockPlayerRepository();
+    playerRepository = new MockPlayerRepository();
     const teamRepository = new MockTeamRepository();
     gameRepository = new MockGameRepository();
     const gameStatsRepository = new MockGameStatsRepository();
+    const substitutionRepository = new MockSubstitutionRepository();
     const userRepository = new MockUserRepository();
 
     app = createApp(
@@ -26,6 +49,7 @@ describe('Game API Endpoints', () => {
         teamRepository,
         gameRepository,
         gameStatsRepository,
+        substitutionRepository,
         userRepository,
       },
       { disableAuth: true }
@@ -34,6 +58,7 @@ describe('Game API Endpoints', () => {
 
   beforeEach(() => {
     gameRepository.games = [];
+    playerRepository.players = [];
   });
 
   describe('POST /api/games', () => {
@@ -195,6 +220,7 @@ describe('Game API Endpoints', () => {
 
       const gameId = createResponse.body.game.id;
 
+      await prepareGameForStart(gameId);
       await request(app).post(`/api/games/${gameId}/start`);
 
       const response = await request(app).get('/api/games/status/in_progress').expect(200);
@@ -220,6 +246,7 @@ describe('Game API Endpoints', () => {
 
       const gameId = createResponse.body.game.id;
 
+      await prepareGameForStart(gameId);
       const response = await request(app).post(`/api/games/${gameId}/start`).expect(200);
 
       expect(response.body.success).toBe(true);
@@ -240,6 +267,7 @@ describe('Game API Endpoints', () => {
 
       const gameId = createResponse.body.game.id;
 
+      await prepareGameForStart(gameId);
       await request(app).post(`/api/games/${gameId}/start`);
 
       const response = await request(app).post(`/api/games/${gameId}/start`).expect(400);
@@ -256,6 +284,7 @@ describe('Game API Endpoints', () => {
 
       const gameId = createResponse.body.game.id;
 
+      await prepareGameForStart(gameId);
       await request(app).post(`/api/games/${gameId}/start`);
 
       const response = await request(app).post(`/api/games/${gameId}/complete`).expect(200);

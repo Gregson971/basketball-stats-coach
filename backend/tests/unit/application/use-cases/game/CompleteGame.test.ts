@@ -58,6 +58,12 @@ describe('CompleteGame Use Case', () => {
   let game: Game;
   const userId = 'user-123';
 
+  // Helper to prepare a game for starting
+  const prepareGameForStart = (game: Game) => {
+    game.setRoster(['p1', 'p2', 'p3', 'p4', 'p5']);
+    game.setStartingLineup(['p1', 'p2', 'p3', 'p4', 'p5']);
+  };
+
   beforeEach(() => {
     mockRepository = new MockGameRepository();
     completeGame = new CompleteGame(mockRepository);
@@ -67,6 +73,7 @@ describe('CompleteGame Use Case', () => {
       teamId: 'team-123',
       opponent: 'Tigers',
     });
+    prepareGameForStart(game);
     game.start();
     mockRepository.games.push(game);
   });

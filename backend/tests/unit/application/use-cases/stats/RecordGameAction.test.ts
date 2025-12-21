@@ -154,6 +154,9 @@ describe('RecordGameAction Use Case', () => {
       teamId: 'team-123',
       opponent: 'Tigers',
     });
+    // Set roster and lineup before starting
+    game.setRoster(['player-123', 'player-2', 'player-3', 'player-4', 'player-5']);
+    game.setStartingLineup(['player-123', 'player-2', 'player-3', 'player-4', 'player-5']);
     game.start();
     mockGameRepository.games.push(game);
   });
@@ -241,7 +244,7 @@ describe('RecordGameAction Use Case', () => {
   test('should create new stats if none exist for player and game', async () => {
     const actionData = {
       gameId: game.id,
-      playerId: 'player-new',
+      playerId: 'player-2', // Must be a player in the current lineup
       userId,
       actionType: 'steal' as const,
     };

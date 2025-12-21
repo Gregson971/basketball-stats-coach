@@ -58,6 +58,12 @@ describe('StartGame Use Case', () => {
   let startGame: StartGame;
   const userId = 'user-123';
 
+  // Helper to prepare a game for starting
+  const prepareGameForStart = (game: Game) => {
+    game.setRoster(['p1', 'p2', 'p3', 'p4', 'p5']);
+    game.setStartingLineup(['p1', 'p2', 'p3', 'p4', 'p5']);
+  };
+
   beforeEach(() => {
     mockRepository = new MockGameRepository();
     startGame = new StartGame(mockRepository);
@@ -69,6 +75,7 @@ describe('StartGame Use Case', () => {
       teamId: 'team-123',
       opponent: 'Tigers',
     });
+    prepareGameForStart(game);
     await mockRepository.save(game);
 
     const result = await startGame.execute(game.id, userId);
@@ -92,6 +99,7 @@ describe('StartGame Use Case', () => {
       teamId: 'team-123',
       opponent: 'Tigers',
     });
+    prepareGameForStart(game);
     game.start();
     await mockRepository.save(game);
 
@@ -107,6 +115,7 @@ describe('StartGame Use Case', () => {
       teamId: 'team-123',
       opponent: 'Tigers',
     });
+    prepareGameForStart(game);
     await mockRepository.save(game);
 
     await startGame.execute(game.id, userId);
@@ -122,6 +131,7 @@ describe('StartGame Use Case', () => {
       teamId: 'team-123',
       opponent: 'Tigers',
     });
+    prepareGameForStart(game);
     await mockRepository.save(game);
 
     const result = await startGame.execute(game.id, 'different-user-id');
