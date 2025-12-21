@@ -4,7 +4,7 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
-![Tests](https://img.shields.io/badge/tests-246%20passing-success)
+![Tests](https://img.shields.io/badge/tests-599%20passing-success)
 ![Coverage](https://img.shields.io/badge/coverage-70%25-brightgreen)
 ![Deployment](https://img.shields.io/badge/deployment-Railway-purple)
 
@@ -47,6 +47,10 @@
 - ✅ Création et planification de matchs
 - ✅ Gestion des statuts (non démarré, en cours, terminé)
 - ✅ Informations contextuelles (adversaire, lieu, date, notes)
+- ✅ **Gestion du roster** : Sélection de 5 à 15 joueurs par match
+- ✅ **Composition de départ** : Sélection de exactement 5 joueurs titulaires
+- ✅ **Gestion des quart-temps** : Suivi des 4 périodes du match
+- ✅ **Substitutions de joueurs** : Enregistrement des changements avec validation
 
 ### Enregistrement des statistiques en temps réel
 
@@ -80,7 +84,7 @@ basketball-stats-coach/
 │   │   │   ├── use-cases/
 │   │   │   │   ├── player/    # 6 use cases
 │   │   │   │   ├── team/      # 5 use cases
-│   │   │   │   ├── game/      # 8 use cases
+│   │   │   │   ├── game/      # 12 use cases
 │   │   │   │   ├── stats/     # 4 use cases
 │   │   │   │   └── auth/      # 2 use cases (Register, Login)
 │   │   │   └── dtos/          # Data Transfer Objects
@@ -91,13 +95,13 @@ basketball-stats-coach/
 │   │   │   └── sync/          # Synchronisation (à venir)
 │   │   └── presentation/      # API REST ✅
 │   │       ├── controllers/   # Controllers HTTP
-│   │       ├── routes/        # 26 endpoints REST
+│   │       ├── routes/        # 30 endpoints REST
 │   │       ├── middlewares/   # JWT Auth, Validation, Error handling
 │   │       └── swagger.ts     # OpenAPI 3.0 documentation
 │   ├── tests/
-│   │   ├── unit/              # Tests unitaires (94 tests)
+│   │   ├── unit/              # Tests unitaires (157 tests)
 │   │   ├── integration/       # Tests d'intégration (26 tests)
-│   │   └── api/               # Tests API (56 tests)
+│   │   └── api/               # Tests API (249 tests)
 │   ├── docs/                  # Documentation complète
 │   │   ├── API.md            # Documentation API REST
 │   │   ├── ARCHITECTURE.md   # Architecture détaillée
@@ -124,6 +128,9 @@ basketball-stats-coach/
     │   └── games/             # Routes des matchs
     │       ├── [id]/
     │       │   ├── index.tsx   # Détails du match
+    │       │   ├── roster.tsx  # Sélection du roster (5-15 joueurs)
+    │       │   ├── lineup.tsx  # Sélection de la composition (5 joueurs)
+    │       │   ├── live.tsx    # Gestion du match en direct
     │       │   ├── stats.tsx   # Enregistrement des stats
     │       │   └── summary.tsx # Résumé du match
     │       └── create.tsx      # Création de match
@@ -308,26 +315,36 @@ Le projet suit une approche **Test-Driven Development (TDD)** stricte.
 
 ### Statistiques des tests
 
-- **Total** : 246 tests
-- **Test Suites** : 32 suites
-- **Couverture** : ~90%
+- **Backend** : 432 tests ✅
+- **Frontend** : 167 tests ✅
+- **Total** : 599 tests
+- **Test Suites** : 45 suites
+- **Couverture** : ~85%
 - **Status** : ✅ 100% passing
 
 ### Répartition des tests
 
+#### Backend (432 tests)
 | Catégorie            | Tests | Status |
 | -------------------- | ----- | ------ |
 | Player Use Cases     | 18    | ✅     |
 | Team Use Cases       | 18    | ✅     |
-| Game Use Cases       | 33    | ✅     |
+| Game Use Cases       | 66    | ✅     |
 | Stats Use Cases      | 25    | ✅     |
-| Domain Entities      | 96    | ✅     |
+| Domain Entities      | 110   | ✅     |
 | MongoDB Repositories | 26    | ✅     |
-| API REST (Supertest) | 56    | ✅     |
+| API REST (Supertest) | 169   | ✅     |
 | - Players API        | 12    | ✅     |
 | - Teams API          | 14    | ✅     |
-| - Games API          | 18    | ✅     |
+| - Games API          | 131   | ✅     |
 | - Stats API          | 12    | ✅     |
+
+#### Frontend (167 tests)
+| Catégorie                 | Tests | Status |
+| ------------------------- | ----- | ------ |
+| Services (player, team, game, stats) | 57 | ✅ |
+| Components (Button, GameCard, etc.)   | 60 | ✅ |
+| Screens (Roster, Lineup, Live)        | 50 | ✅ |
 
 ### Lancer les tests
 
@@ -396,11 +413,13 @@ describe('CreatePlayer Use Case', () => {
 - CreateTeam, UpdateTeam, DeleteTeam
 - GetTeam, GetAllTeams
 
-#### Game (8)
+#### Game (12)
 
 - CreateGame, UpdateGame, DeleteGame
 - GetGame, GetGamesByTeam, GetGamesByStatus
 - StartGame, CompleteGame
+- **SetGameRoster** (5-15 joueurs), **SetStartingLineup** (5 joueurs)
+- **NextQuarter** (progression 1→4), **RecordSubstitution** (changements)
 
 #### Stats (4)
 
@@ -414,14 +433,15 @@ describe('CreatePlayer Use Case', () => {
 ### Phase 1 : Backend API ✅ (Complété)
 
 - [x] Architecture Clean Architecture (4 couches)
-- [x] 23 use cases avec TDD
-- [x] 24 endpoints API REST avec Swagger
+- [x] 27 use cases avec TDD
+- [x] 30 endpoints API REST avec Swagger
 - [x] MongoDB + Mongoose + Repositories
-- [x] 246 tests (100% passing, coverage 70%+)
+- [x] 432 tests backend (100% passing, coverage 85%+)
 - [x] CI/CD avec GitHub Actions
 - [x] Déploiement en production sur Railway
 - [x] Docker (Production + Dev avec hot reload)
 - [x] Documentation complète (API, Architecture, Use Cases)
+- [x] Gestion des quart-temps et substitutions
 
 ### Phase 2 : Frontend Mobile (En cours) 🚧
 
@@ -443,6 +463,13 @@ describe('CreatePlayer Use Case', () => {
   - [x] Liste des matchs
   - [x] Création de match
   - [x] Détails du match
+  - [x] **Sélection du roster (5-15 joueurs)**
+  - [x] **Composition de départ (5 joueurs exactement)**
+  - [x] **Gestion du match en direct**
+    - [x] Affichage des joueurs sur le terrain vs banc
+    - [x] Substitutions de joueurs en temps réel
+    - [x] Progression des quart-temps (1→4)
+    - [x] Validation des changements
 - [x] Interface de match en temps réel
   - [x] Enregistrement des stats pendant le match
   - [x] Visualisation des stats en temps réel
@@ -452,6 +479,10 @@ describe('CreatePlayer Use Case', () => {
   - [x] StatsPanel
   - [x] ActionButton, Button
   - [x] EmptyState, LoadingScreen
+- [x] 167 tests frontend (100% passing)
+  - [x] Tests des services (gameService, playerService, etc.)
+  - [x] Tests des composants (Button, GameCard, etc.)
+  - [x] Tests des écrans (Roster, Lineup, Live)
 - [ ] Fonction Undo pour les stats
 - [ ] Mode édition pour équipes et matchs
 - [ ] Synchronisation offline

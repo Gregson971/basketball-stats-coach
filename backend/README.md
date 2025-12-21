@@ -4,8 +4,8 @@ Backend API pour **StatCoach Pro**, l'application mobile professionnelle de suiv
 
 [![Backend CI](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Gregson971/basketball-stats-coach/actions/workflows/backend-ci.yml)
 [![codecov](https://codecov.io/github/Gregson971/basketball-stats-coach/graph/badge.svg?token=RH60FEVC1C)](https://codecov.io/github/Gregson971/basketball-stats-coach)
-![Tests](https://img.shields.io/badge/tests-369%20passing-success)
-![Coverage](https://img.shields.io/badge/coverage-72%25-brightgreen)
+![Tests](https://img.shields.io/badge/tests-432%20passing-success)
+![Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)
 ![Deployment](https://img.shields.io/badge/deployment-Railway-purple)
 
 **🚀 API en production :** [https://basketball-stats-coach-production.up.railway.app/api-docs](https://basketball-stats-coach-production.up.railway.app/api-docs)
@@ -118,7 +118,7 @@ Représente une équipe de basketball.
 
 ### Game (Match)
 
-Représente un match de basketball.
+Représente un match de basketball avec gestion complète du roster, lineup et quart-temps.
 
 **Sécurité:** Chaque match est lié à un `userId` pour l'isolation des données.
 
@@ -126,7 +126,25 @@ Représente un match de basketball.
 
 - `teamId`, `opponent`, `gameDate`, `location`
 - `status`: `not_started` | `in_progress` | `completed`
+- `roster`: Tableau de 5-15 player IDs convoqués pour le match
+- `startingLineup`: Tableau de exactement 5 player IDs titulaires
+- `currentLineup`: Tableau de exactement 5 player IDs sur le terrain
+- `currentQuarter`: Numéro du quart-temps en cours (1-4)
 - `startedAt`, `completedAt`
+
+### Substitution (Changement de joueur)
+
+Représente un changement de joueur pendant un match.
+
+**Sécurité:** Chaque substitution est liée à un `userId` pour l'isolation des données.
+
+**Attributs:**
+
+- `gameId`: Match concerné
+- `quarter`: Quart-temps du changement (1-4)
+- `playerOut`: Player ID sortant du terrain
+- `playerIn`: Player ID entrant sur le terrain
+- `timestamp`: Horodatage du changement
 
 ### GameStats (Statistiques de match)
 
@@ -162,18 +180,18 @@ Ce projet suit une approche TDD (Test Driven Development) stricte avec une couve
 
 ### Résultats des tests
 
-- **Tests totaux**: 369 tests passing
-- **Test Suites**: 37 suites
-- **Coverage**: ~72%
+- **Tests totaux**: 432 tests passing
+- **Test Suites**: 41 suites
+- **Coverage**: ~85%
 - **Statut**: ✅ Tous les tests passent
 - **Isolation des données**: ✅ Tous les tests vérifient l'isolation par `userId`
 
 ### Types de tests
 
-**Tests unitaires** (145 tests) - Tests des use cases et entités du domaine
+**Tests unitaires** (183 tests) - Tests des use cases et entités du domaine
 
 - Tests isolés des use cases (Player, Team, Game, Stats, Auth)
-- Tests des entités et de la logique métier (123 tests)
+- Tests des entités et de la logique métier (Substitution, Game quarters, etc.)
 - Tests d'isolation des données par utilisateur
 - Mock des dépendances
 
@@ -183,17 +201,17 @@ Ce projet suit une approche TDD (Test Driven Development) stricte avec une couve
 - Validation de la persistance des données
 - Tests des requêtes complexes avec filtrage par `userId`
 - Tests de cascade delete
-- 5 repository test suites
+- 6 repository test suites (ajout SubstitutionRepository)
 
-**Tests API** (75 tests) - Tests des endpoints Express avec Supertest
+**Tests API** (200 tests) - Tests des endpoints Express avec Supertest
 
-- Tests de toutes les routes REST (26 endpoints)
+- Tests de toutes les routes REST (30 endpoints)
 - Validation des codes HTTP et réponses JSON
 - Tests des middlewares et gestion d'erreurs
 - Tests d'authentification JWT
 - Players API: 12 tests
 - Teams API: 14 tests
-- Games API: 18 tests
+- Games API: 143 tests (ajout roster, lineup, quarters, substitutions)
 - Stats API: 12 tests
 - Auth API: 19 tests
 
@@ -698,8 +716,12 @@ Routes **publiques** (pas d'authentification requise):
 - `DELETE /api/games/:id` - Supprimer un match
 - `GET /api/games/team/:teamId` - Matchs d'une équipe
 - `GET /api/games/status/:status` - Matchs par statut
+- `PUT /api/games/:id/roster` - Définir le roster (5-15 joueurs)
+- `PUT /api/games/:id/starting-lineup` - Définir la composition de départ (5 joueurs)
 - `POST /api/games/:id/start` - Démarrer un match
 - `POST /api/games/:id/complete` - Terminer un match
+- `POST /api/games/:id/next-quarter` - Passer au quart-temps suivant
+- `POST /api/games/:id/substitution` - Enregistrer un changement de joueur
 
 **Stats (Statistiques)** - `/api/stats` 🔒
 
@@ -766,9 +788,10 @@ Documentation interactive accessible quand le serveur est lancé:
 
 ### Fonctionnalités complètes
 
-- ✅ **25 use cases** implémentés (Player, Team, Game, Stats, Auth)
-- ✅ **26 endpoints API REST** avec Swagger
-- ✅ **246 tests** passing (unitaires, intégration, API)
+- ✅ **29 use cases** implémentés (Player, Team, Game, Stats, Auth)
+- ✅ **30 endpoints API REST** avec Swagger
+- ✅ **432 tests** passing (unitaires, intégration, API)
+- ✅ **Gestion complète des matchs**: Roster (5-15 joueurs), Lineup (5 joueurs), Quart-temps (1-4), Substitutions
 - ✅ **Authentification JWT** avec bcrypt
   - Routes publiques: `/api/auth/register` et `/api/auth/login`
   - Routes protégées: Toutes les autres routes nécessitent un token JWT

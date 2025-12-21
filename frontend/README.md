@@ -6,6 +6,7 @@ Application mobile React Native pour le suivi statistique de basketball en temps
 ![Expo](https://img.shields.io/badge/Expo-54-000020)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
 ![NativeWind](https://img.shields.io/badge/NativeWind-4.2-38bdf8)
+![Tests](https://img.shields.io/badge/tests-167%20passing-success)
 
 ---
 
@@ -115,6 +116,9 @@ frontend/
 │   └── games/                  # Routes des matchs
 │       ├── [id]/
 │       │   ├── index.tsx       # Détails du match
+│       │   ├── roster.tsx      # Sélection du roster (5-15 joueurs)
+│       │   ├── lineup.tsx      # Sélection de la composition (5 joueurs)
+│       │   ├── live.tsx        # Gestion du match en direct
 │       │   ├── stats.tsx       # Enregistrement des stats
 │       │   └── summary.tsx     # Résumé du match
 │       └── create.tsx          # Création de match
@@ -327,31 +331,51 @@ export default function LoginForm() {
 - [ ] Modification d'équipe
 - [ ] Suppression d'équipe
 
-#### Écrans - Matchs (En cours)
+#### Écrans - Matchs ✅
 
 - [x] Liste des matchs (tab)
 - [x] Création de match
 - [x] Détails du match
+- [x] **Sélection du roster (5-15 joueurs)**
+- [x] **Sélection de la composition de départ (5 joueurs)**
+- [x] **Gestion du match en direct**
+  - [x] Affichage des joueurs sur le terrain vs banc
+  - [x] Substitutions de joueurs en temps réel
+  - [x] Progression des quart-temps (1→4)
+  - [x] Validation des changements
 - [x] Enregistrement des stats en temps réel
 - [x] Résumé du match
 - [ ] Modification de match
 - [ ] Suppression de match
 
-### Phase 3 (Match en temps réel) - En cours
+### Phase 3 (Match en temps réel) ✅
 
 - [x] Écran de match actif
+- [x] **Écran de gestion du roster**
+- [x] **Écran de composition de départ**
+- [x] **Écran de match en direct (live)**
+  - [x] Gestion des quart-temps (1-4)
+  - [x] Substitutions de joueurs
+  - [x] Affichage joueurs terrain vs banc
 - [x] Interface d'enregistrement de stats
 - [x] Visualisation des stats en temps réel
 - [ ] Fonction Undo
 
-### Phase 4 (Statistiques) - En cours
+### Phase 4 (Tests) ✅
+
+- [x] Tests des services (playerService, teamService, gameService, statsService)
+- [x] Tests des composants (Button, GameCard, StatsPanel, etc.)
+- [x] Tests des écrans (Roster, Lineup, Live)
+- [x] **167 tests frontend** - 100% passing
+
+### Phase 5 (Statistiques) - En cours
 
 - [x] Écran des stats d'un joueur
 - [x] Affichage des stats de match
 - [ ] Écran des stats d'équipe
 - [ ] Graphiques et visualisations
 
-### Phase 5 (Offline & Sync)
+### Phase 6 (Offline & Sync)
 
 - [ ] Mode hors-ligne
 - [ ] Synchronisation automatique

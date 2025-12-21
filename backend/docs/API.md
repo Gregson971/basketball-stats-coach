@@ -884,6 +884,270 @@ POST /api/games/:id/complete
 
 ---
 
+### Définir le roster du match
+
+```
+PUT /api/games/:id/roster
+```
+
+**Paramètres URL**:
+
+- `id` (string): ID du match
+
+**Body (required)**:
+
+```json
+{
+  "playerIds": ["player-1", "player-2", "player-3", "player-4", "player-5", "player-6"]
+}
+```
+
+**Description**: Définit la liste des joueurs convoqués pour le match (entre 5 et 15 joueurs). Le match doit être au statut `not_started`.
+
+**Règles de validation**:
+- Minimum 5 joueurs requis
+- Maximum 15 joueurs autorisés
+- Tous les joueurs doivent appartenir à l'équipe du match
+- Pas de doublons dans la liste
+- Le match ne doit pas être démarré
+
+**Réponse (200)**:
+
+```json
+{
+  "success": true,
+  "game": {
+    "id": "game-abc123",
+    "teamId": "team-123",
+    "roster": ["player-1", "player-2", "player-3", "player-4", "player-5", "player-6"],
+    "status": "not_started",
+    ...
+  }
+}
+```
+
+**Erreurs**:
+
+```json
+// 400 - Nombre de joueurs invalide
+{
+  "success": false,
+  "error": "Roster must have between 5 and 15 players"
+}
+
+// 400 - Match déjà démarré
+{
+  "success": false,
+  "error": "Cannot modify roster of a game that has started"
+}
+
+// 400 - Joueur n'appartient pas à l'équipe
+{
+  "success": false,
+  "error": "All players must belong to the team"
+}
+```
+
+---
+
+### Définir la composition de départ
+
+```
+PUT /api/games/:id/starting-lineup
+```
+
+**Paramètres URL**:
+
+- `id` (string): ID du match
+
+**Body (required)**:
+
+```json
+{
+  "playerIds": ["player-1", "player-2", "player-3", "player-4", "player-5"]
+}
+```
+
+**Description**: Définit les 5 joueurs titulaires qui démarreront le match. Le match doit avoir un roster défini et être au statut `not_started`.
+
+**Règles de validation**:
+- Exactement 5 joueurs requis
+- Tous les joueurs doivent faire partie du roster
+- Pas de doublons dans la liste
+- Le roster doit être défini au préalable
+- Le match ne doit pas être démarré
+
+**Réponse (200)**:
+
+```json
+{
+  "success": true,
+  "game": {
+    "id": "game-abc123",
+    "roster": ["player-1", "player-2", "player-3", "player-4", "player-5", "player-6"],
+    "startingLineup": ["player-1", "player-2", "player-3", "player-4", "player-5"],
+    "status": "not_started",
+    ...
+  }
+}
+```
+
+**Erreurs**:
+
+```json
+// 400 - Nombre de joueurs invalide
+{
+  "success": false,
+  "error": "Starting lineup must have exactly 5 players"
+}
+
+// 400 - Roster non défini
+{
+  "success": false,
+  "error": "Roster must be set before starting lineup"
+}
+
+// 400 - Joueur pas dans le roster
+{
+  "success": false,
+  "error": "All starting lineup players must be in the roster"
+}
+```
+
+---
+
+### Passer au quart-temps suivant
+
+```
+POST /api/games/:id/next-quarter
+```
+
+**Paramètres URL**:
+
+- `id` (string): ID du match
+
+**Description**: Incrémente le numéro du quart-temps en cours (1 → 2 → 3 → 4). Le match doit être en cours (`in_progress`).
+
+**Règles de validation**:
+- Le match doit être en cours
+- Le quart-temps actuel doit être inférieur à 4
+- Progression automatique: currentQuarter + 1
+
+**Réponse (200)**:
+
+```json
+{
+  "success": true,
+  "game": {
+    "id": "game-abc123",
+    "status": "in_progress",
+    "currentQuarter": 2,
+    "currentLineup": ["player-1", "player-2", "player-3", "player-4", "player-5"],
+    ...
+  }
+}
+```
+
+**Erreurs**:
+
+```json
+// 400 - Match non démarré
+{
+  "success": false,
+  "error": "Game not in progress"
+}
+
+// 400 - Déjà au 4ème quart-temps
+{
+  "success": false,
+  "error": "Already at final quarter"
+}
+```
+
+---
+
+### Enregistrer une substitution
+
+```
+POST /api/games/:id/substitution
+```
+
+**Paramètres URL**:
+
+- `id` (string): ID du match
+
+**Body (required)**:
+
+```json
+{
+  "playerOut": "player-1",
+  "playerIn": "player-6"
+}
+```
+
+**Description**: Enregistre un changement de joueur pendant le match. Le joueur sortant doit être sur le terrain, le joueur entrant doit être sur le banc (dans le roster mais pas dans currentLineup).
+
+**Règles de validation**:
+- Le match doit être en cours (`in_progress`)
+- `playerOut` doit être dans `currentLineup`
+- `playerIn` doit être dans `roster` mais pas dans `currentLineup`
+- `playerOut` et `playerIn` doivent être différents
+- Les deux joueurs doivent exister dans l'équipe
+
+**Réponse (200)**:
+
+```json
+{
+  "success": true,
+  "game": {
+    "id": "game-abc123",
+    "currentLineup": ["player-6", "player-2", "player-3", "player-4", "player-5"],
+    "currentQuarter": 2,
+    ...
+  },
+  "substitution": {
+    "id": "sub-xyz789",
+    "gameId": "game-abc123",
+    "quarter": 2,
+    "playerOut": "player-1",
+    "playerIn": "player-6",
+    "timestamp": "2024-01-15T19:45:00.000Z",
+    "createdAt": "2024-01-15T19:45:00.000Z",
+    "updatedAt": "2024-01-15T19:45:00.000Z"
+  }
+}
+```
+
+**Erreurs**:
+
+```json
+// 400 - Match non démarré
+{
+  "success": false,
+  "error": "Game not in progress"
+}
+
+// 400 - Joueur sortant pas sur le terrain
+{
+  "success": false,
+  "error": "Player out is not in current lineup"
+}
+
+// 400 - Joueur entrant déjà sur le terrain
+{
+  "success": false,
+  "error": "Player in is already in current lineup"
+}
+
+// 400 - Joueur entrant pas dans le roster
+{
+  "success": false,
+  "error": "Player in is not in the roster"
+}
+```
+
+---
+
 ## Stats (Statistiques)
 
 **🔒 Routes protégées** - Nécessite un token JWT

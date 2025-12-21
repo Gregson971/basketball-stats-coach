@@ -146,7 +146,7 @@ Liste complète des use cases implémentés avec TDD.
 
 ---
 
-## ✅ Game Use Cases (8/8)
+## ✅ Game Use Cases (12/12)
 
 ### 1. CreateGame
 
@@ -254,6 +254,100 @@ Liste complète des use cases implémentés avec TDD.
 
 - `gameId` (required)
 - `userId` (required) - Vérifie la propriété du match
+
+---
+
+### 9. SetGameRoster
+
+**Fichier:** `src/application/use-cases/game/SetGameRoster.ts`
+**Tests:** `tests/unit/application/use-cases/game/SetGameRoster.test.ts`
+**Description:** Définir le roster du match (liste des joueurs convoqués)
+
+**Paramètres:**
+
+- `gameId` (required)
+- `playerIds` (required) - Array de 5 à 15 player IDs
+- `userId` (required) - Vérifie la propriété du match
+
+**Validations:**
+
+- Entre 5 et 15 joueurs requis
+- Tous les joueurs doivent appartenir à l'équipe du match
+- Pas de doublons dans la liste
+- Le match doit être au statut `not_started`
+- Tous les joueurs doivent exister
+
+---
+
+### 10. SetStartingLineup
+
+**Fichier:** `src/application/use-cases/game/SetStartingLineup.ts`
+**Tests:** `tests/unit/application/use-cases/game/SetStartingLineup.test.ts`
+**Description:** Définir la composition de départ (5 joueurs titulaires)
+
+**Paramètres:**
+
+- `gameId` (required)
+- `playerIds` (required) - Array de exactement 5 player IDs
+- `userId` (required) - Vérifie la propriété du match
+
+**Validations:**
+
+- Exactement 5 joueurs requis
+- Le roster doit être défini au préalable
+- Tous les joueurs doivent faire partie du roster
+- Pas de doublons dans la liste
+- Le match doit être au statut `not_started`
+
+**Effet:** Initialise également `currentLineup` avec les mêmes joueurs
+
+---
+
+### 11. NextQuarter
+
+**Fichier:** `src/application/use-cases/game/NextQuarter.ts`
+**Tests:** `tests/unit/application/use-cases/game/NextQuarter.test.ts`
+**Description:** Passer au quart-temps suivant (incrémente currentQuarter)
+
+**Paramètres:**
+
+- `gameId` (required)
+- `userId` (required) - Vérifie la propriété du match
+
+**Validations:**
+
+- Le match doit être au statut `in_progress`
+- Le quart-temps actuel doit être < 4
+- Progression: currentQuarter → currentQuarter + 1 (1→2→3→4)
+
+---
+
+### 12. RecordSubstitution
+
+**Fichier:** `src/application/use-cases/game/RecordSubstitution.ts`
+**Tests:** `tests/unit/application/use-cases/game/RecordSubstitution.test.ts`
+**Description:** Enregistrer un changement de joueur pendant le match
+
+**Paramètres:**
+
+- `gameId` (required)
+- `playerOut` (required) - Player ID sortant du terrain
+- `playerIn` (required) - Player ID entrant sur le terrain
+- `userId` (required) - Vérifie la propriété du match
+
+**Validations:**
+
+- Le match doit être au statut `in_progress`
+- `playerOut` doit être dans `currentLineup`
+- `playerIn` doit être dans `roster` mais pas dans `currentLineup`
+- `playerOut` et `playerIn` doivent être différents
+- Les deux joueurs doivent appartenir à l'équipe
+
+**Effet:**
+
+- Crée une entrée Substitution avec gameId, quarter, playerOut, playerIn, timestamp
+- Met à jour `currentLineup` en remplaçant playerOut par playerIn
+- Retourne à la fois le Game mis à jour et la Substitution créée
 
 ---
 
@@ -434,20 +528,20 @@ type ActionType =
 
 ## 📊 Statistiques
 
-- **Use Cases implémentés:** 25
-- **Endpoints API REST:** 26
-- **Tests totaux:** 369 tests
-  - Tests unitaires (Use Cases): 145 tests
-  - Tests unitaires (Domain): 123 tests
-  - Tests d'intégration (Repositories): 49 tests
-  - Tests API (Supertest): 75 tests
+- **Use Cases implémentés:** 29 (6 Player + 5 Team + 12 Game + 4 Stats + 2 Auth)
+- **Endpoints API REST:** 30
+- **Tests totaux:** 432 tests
+  - Tests unitaires (Use Cases): 183 tests
+  - Tests unitaires (Domain): 110 tests (ajout Substitution entity)
+  - Tests d'intégration (Repositories): 49 tests (ajout SubstitutionRepository)
+  - Tests API (Supertest): 200 tests
     - Players API: 12 tests
     - Teams API: 14 tests
-    - Games API: 18 tests
+    - Games API: 143 tests (ajout roster, lineup, quarters, substitutions)
     - Stats API: 12 tests
     - Auth API: 19 tests
-- **Test Suites:** 37 suites
-- **Coverage:** ~72%
+- **Test Suites:** 41 suites
+- **Coverage:** ~85%
 - **Tous les tests:** ✅ **PASSING**
 - **Isolation des données:** ✅ **Implémentée** - Tous les use cases filtrent par `userId`
 
