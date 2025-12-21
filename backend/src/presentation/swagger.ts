@@ -68,7 +68,7 @@ const options: swaggerJsdoc.Options = {
           properties: {
             id: {
               type: 'string',
-              description: 'Identifiant unique de l\'utilisateur',
+              description: "Identifiant unique de l'utilisateur",
             },
             email: {
               type: 'string',
@@ -77,7 +77,7 @@ const options: swaggerJsdoc.Options = {
             },
             name: {
               type: 'string',
-              description: 'Nom complet de l\'utilisateur',
+              description: "Nom complet de l'utilisateur",
             },
             createdAt: {
               type: 'string',
@@ -99,7 +99,7 @@ const options: swaggerJsdoc.Options = {
             },
             userId: {
               type: 'string',
-              description: 'Identifiant de l\'utilisateur propriétaire (automatiquement ajouté)',
+              description: "Identifiant de l'utilisateur propriétaire (automatiquement ajouté)",
             },
             firstName: {
               type: 'string',
@@ -163,7 +163,7 @@ const options: swaggerJsdoc.Options = {
             },
             userId: {
               type: 'string',
-              description: 'Identifiant de l\'utilisateur propriétaire (automatiquement ajouté)',
+              description: "Identifiant de l'utilisateur propriétaire (automatiquement ajouté)",
             },
             name: {
               type: 'string',
@@ -201,7 +201,7 @@ const options: swaggerJsdoc.Options = {
             },
             userId: {
               type: 'string',
-              description: 'Identifiant de l\'utilisateur propriétaire (automatiquement ajouté)',
+              description: "Identifiant de l'utilisateur propriétaire (automatiquement ajouté)",
             },
             teamId: {
               type: 'string',
@@ -330,7 +330,7 @@ const options: swaggerJsdoc.Options = {
             },
             userId: {
               type: 'string',
-              description: 'Identifiant de l\'utilisateur propriétaire (automatiquement ajouté)',
+              description: "Identifiant de l'utilisateur propriétaire (automatiquement ajouté)",
             },
             freeThrowsMade: {
               type: 'number',

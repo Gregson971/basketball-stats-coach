@@ -330,9 +330,19 @@ describe('LiveGameScreen', () => {
     });
 
     it('should not allow confirm without selecting both players', async () => {
+      const mockSubstitution = {
+        id: '',
+        gameId: '',
+        quarter: 0,
+        playerOut: '',
+        playerIn: '',
+        timestamp: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
       mockGameService.recordSubstitution.mockResolvedValue({
         success: true,
-        data: { game: mockGame, substitution: {} as any },
+        data: { game: mockGame, substitution: mockSubstitution },
       });
 
       const { getByText } = render(<LiveGameScreen />);

@@ -117,7 +117,7 @@ export default function SetRosterScreen() {
           <EmptyState
             icon="👥"
             title="Aucun joueur"
-            subtitle="Ajoutez des joueurs à votre équipe avant de définir le roster"
+            description="Ajoutez des joueurs à votre équipe avant de définir le roster"
           />
         </View>
       </ScrollView>
@@ -160,7 +160,9 @@ export default function SetRosterScreen() {
                 }`}
               >
                 <View className="flex-1">
-                  <Text className={`text-lg font-semibold ${isSelected ? 'text-blue-600' : 'text-gray-800'}`}>
+                  <Text
+                    className={`text-lg font-semibold ${isSelected ? 'text-blue-600' : 'text-gray-800'}`}
+                  >
                     {player.firstName} {player.lastName}
                   </Text>
                   {player.position && (

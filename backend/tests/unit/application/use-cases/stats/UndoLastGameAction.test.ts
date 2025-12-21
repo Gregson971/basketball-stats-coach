@@ -163,7 +163,11 @@ describe('UndoLastGameAction Use Case', () => {
   });
 
   test('should return error when game stats not found', async () => {
-    const result = await undoLastGameAction.execute('non-existent-game', 'non-existent-player', userId);
+    const result = await undoLastGameAction.execute(
+      'non-existent-game',
+      'non-existent-player',
+      userId
+    );
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('Game stats not found');

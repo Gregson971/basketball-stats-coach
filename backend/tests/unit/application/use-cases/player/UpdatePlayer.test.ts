@@ -7,7 +7,9 @@ class MockPlayerRepository implements IPlayerRepository {
   private players: Player[] = [];
 
   async save(player: Player): Promise<Player> {
-    const existingIndex = this.players.findIndex((p) => p.id === player.id && p.userId === player.userId);
+    const existingIndex = this.players.findIndex(
+      (p) => p.id === player.id && p.userId === player.userId
+    );
     if (existingIndex >= 0) {
       this.players[existingIndex] = player;
     } else {
@@ -96,7 +98,9 @@ describe('UpdatePlayer Use Case', () => {
   });
 
   test('should not update player from different user', async () => {
-    const result = await updatePlayer.execute(existingPlayer.id, 'different-user-id', { nickname: 'Test' });
+    const result = await updatePlayer.execute(existingPlayer.id, 'different-user-id', {
+      nickname: 'Test',
+    });
 
     expect(result.success).toBe(false);
     expect(result.error).toBe('Player not found');

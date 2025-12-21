@@ -231,7 +231,10 @@ describe('gameService', () => {
 
     it('should handle errors when setting starting lineup', async () => {
       const playerIds = ['player-1', 'player-2', 'player-3'];
-      mockApiClientPut.mockResolvedValue({ success: false, error: 'Must select exactly 5 players' });
+      mockApiClientPut.mockResolvedValue({
+        success: false,
+        error: 'Must select exactly 5 players',
+      });
 
       const result = await gameService.setStartingLineup('game-1', playerIds);
 
@@ -274,7 +277,10 @@ describe('gameService', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      const gameAfterSub = { ...mockGame, currentLineup: ['player-6', 'player-2', 'player-3', 'player-4', 'player-5'] };
+      const gameAfterSub = {
+        ...mockGame,
+        currentLineup: ['player-6', 'player-2', 'player-3', 'player-4', 'player-5'],
+      };
       mockApiClientPost.mockResolvedValue({
         success: true,
         data: { game: gameAfterSub, substitution: mockSubstitution },

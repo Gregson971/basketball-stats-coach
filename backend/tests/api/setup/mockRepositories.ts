@@ -172,7 +172,11 @@ export class MockGameStatsRepository implements IGameStatsRepository {
     return this.stats.filter((s) => s.playerId === playerId);
   }
 
-  async findByGameAndPlayer(gameId: string, playerId: string, _userId?: string): Promise<GameStats | null> {
+  async findByGameAndPlayer(
+    gameId: string,
+    playerId: string,
+    _userId?: string
+  ): Promise<GameStats | null> {
     return this.stats.find((s) => s.gameId === gameId && s.playerId === playerId) || null;
   }
 

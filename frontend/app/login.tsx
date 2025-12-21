@@ -42,7 +42,7 @@ export default function LoginScreen() {
       } else {
         Alert.alert('Erreur de connexion', result.error || 'Email ou mot de passe invalide');
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Erreur', 'Une erreur est survenue lors de la connexion');
     } finally {
       setLoading(false);

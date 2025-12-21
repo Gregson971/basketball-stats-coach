@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { Tabs, useRouter } from 'expo-router';
 import { Text } from 'react-native';
 import { authService } from '@/services';
@@ -6,16 +6,16 @@ import { authService } from '@/services';
 export default function TabsLayout() {
   const router = useRouter();
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     const isAuthenticated = await authService.isAuthenticated();
     if (!isAuthenticated) {
       router.replace('/login');
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   return (
     <Tabs

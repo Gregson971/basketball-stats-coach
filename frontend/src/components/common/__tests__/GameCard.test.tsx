@@ -13,6 +13,10 @@ describe('GameCard', () => {
     teamId: 'team-1',
     opponent: 'Test Opponent',
     status: 'not_started',
+    roster: [],
+    startingLineup: [],
+    currentLineup: [],
+    currentQuarter: 1,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -134,6 +138,10 @@ describe('GameCard', () => {
         teamId: 'team-1',
         opponent: 'Simple Opponent',
         status: 'not_started',
+        roster: [],
+        startingLineup: [],
+        currentLineup: [],
+        currentQuarter: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
       };

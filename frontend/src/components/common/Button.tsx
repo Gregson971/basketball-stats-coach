@@ -6,6 +6,7 @@ interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'danger';
   disabled?: boolean;
   loading?: boolean;
+  size?: 'small' | 'medium' | 'large';
 }
 
 export function Button({
@@ -14,6 +15,7 @@ export function Button({
   variant = 'primary',
   disabled = false,
   loading = false,
+  size = 'medium',
 }: ButtonProps) {
   const getVariantStyles = () => {
     if (disabled || loading) return 'bg-gray-400';
@@ -39,11 +41,23 @@ export function Button({
     }
   };
 
+  const getSizeStyles = () => {
+    switch (size) {
+      case 'small':
+        return 'py-2 px-4';
+      case 'large':
+        return 'py-4 px-8';
+      case 'medium':
+      default:
+        return 'py-3 px-6';
+    }
+  };
+
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled || loading}
-      className={`py-3 px-6 rounded-lg ${getVariantStyles()}`}
+      className={`rounded-lg ${getSizeStyles()} ${getVariantStyles()}`}
     >
       <Text className={`text-center font-semibold ${getTextStyles()}`}>
         {loading ? 'Chargement...' : title}

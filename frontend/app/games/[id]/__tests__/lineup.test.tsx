@@ -149,7 +149,9 @@ describe('SetLineupScreen', () => {
       await waitFor(() => {
         expect(getByText('Roster non défini')).toBeTruthy();
         expect(
-          getByText("Vous devez d'abord définir le roster avant de choisir la composition de départ")
+          getByText(
+            "Vous devez d'abord définir le roster avant de choisir la composition de départ"
+          )
         ).toBeTruthy();
       });
     });
@@ -173,7 +175,7 @@ describe('SetLineupScreen', () => {
     });
 
     it('should display only players from roster', async () => {
-      const { getByText, queryByText } = render(<SetLineupScreen />);
+      const { getByText } = render(<SetLineupScreen />);
 
       await waitFor(() => {
         expect(getByText('John Doe')).toBeTruthy();

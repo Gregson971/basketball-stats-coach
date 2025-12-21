@@ -1,11 +1,10 @@
 import { View, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { TextInput, RadioButton, Menu } from 'react-native-paper';
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { playerService, teamService } from '@/services';
 import { Button, LoadingScreen } from '@/components/common';
 import type { Position, Team } from '@/types';
-import { useCallback } from 'react';
 
 export default function CreatePlayerScreen() {
   const router = useRouter();

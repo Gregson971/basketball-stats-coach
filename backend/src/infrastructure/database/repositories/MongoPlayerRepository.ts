@@ -24,11 +24,15 @@ export class MongoPlayerRepository implements IPlayerRepository {
   async save(player: Player): Promise<Player> {
     const data = PlayerMapper.toPersistence(player);
 
-    const doc = await PlayerModel.findOneAndUpdate({ _id: player.id, userId: player.userId }, data, {
-      upsert: true,
-      new: true,
-      setDefaultsOnInsert: true,
-    }).exec();
+    const doc = await PlayerModel.findOneAndUpdate(
+      { _id: player.id, userId: player.userId },
+      data,
+      {
+        upsert: true,
+        new: true,
+        setDefaultsOnInsert: true,
+      }
+    ).exec();
 
     if (!doc) {
       throw new Error('Failed to save player');

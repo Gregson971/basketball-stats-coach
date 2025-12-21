@@ -9,7 +9,6 @@ export default function SetLineupScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [game, setGame] = useState<Game | null>(null);
-  const [players, setPlayers] = useState<Player[]>([]);
   const [rosterPlayers, setRosterPlayers] = useState<Player[]>([]);
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,13 +37,9 @@ export default function SetLineupScreen() {
     }
 
     if (playersResult.success && playersResult.data) {
-      setPlayers(playersResult.data);
-
       // Filter players to show only those in the roster
       if (gameResult.success && gameResult.data) {
-        const filtered = playersResult.data.filter((p) =>
-          gameResult.data!.roster.includes(p.id)
-        );
+        const filtered = playersResult.data.filter((p) => gameResult.data!.roster.includes(p.id));
         setRosterPlayers(filtered);
       }
     }
@@ -119,16 +114,11 @@ export default function SetLineupScreen() {
     return (
       <View className="flex-1 bg-gray-50 items-center justify-center p-4">
         <Text className="text-6xl mb-4">👥</Text>
-        <Text className="text-xl font-bold text-gray-800 mb-2 text-center">
-          Roster non défini
-        </Text>
+        <Text className="text-xl font-bold text-gray-800 mb-2 text-center">Roster non défini</Text>
         <Text className="text-gray-600 text-center mb-4">
           Vous devez d'abord définir le roster avant de choisir la composition de départ
         </Text>
-        <Button
-          title="Définir le roster"
-          onPress={() => router.push(`/games/${id}/roster`)}
-        />
+        <Button title="Définir le roster" onPress={() => router.push(`/games/${id}/roster`)} />
       </View>
     );
   }
@@ -140,7 +130,7 @@ export default function SetLineupScreen() {
           <EmptyState
             icon="👥"
             title="Aucun joueur dans le roster"
-            subtitle="Le roster est vide"
+            description="Le roster est vide"
           />
         </View>
       </ScrollView>
@@ -152,9 +142,7 @@ export default function SetLineupScreen() {
       <View className="p-4">
         {/* Header */}
         <View className="bg-white p-6 rounded-lg mb-4">
-          <Text className="text-2xl font-bold text-gray-800 mb-2">
-            Composition de départ
-          </Text>
+          <Text className="text-2xl font-bold text-gray-800 mb-2">Composition de départ</Text>
           <Text className="text-gray-600 mb-4">{game.opponent}</Text>
           <View className="bg-blue-50 p-4 rounded-lg">
             <Text className="text-sm text-gray-700">
@@ -168,9 +156,7 @@ export default function SetLineupScreen() {
               {selectedPlayers.length} / 5 joueurs sélectionnés
             </Text>
             {selectedPlayers.length < 5 && (
-              <Text className="text-sm text-red-600 mt-1">
-                Il faut exactement 5 joueurs
-              </Text>
+              <Text className="text-sm text-red-600 mt-1">Il faut exactement 5 joueurs</Text>
             )}
             {selectedPlayers.length === 5 && (
               <Text className="text-sm text-green-600 mt-1">✓ Composition complète</Text>
@@ -185,7 +171,7 @@ export default function SetLineupScreen() {
               Joueurs du roster ({rosterPlayers.length})
             </Text>
           </View>
-          {rosterPlayers.map((player, index) => {
+          {rosterPlayers.map((player) => {
             const isSelected = selectedPlayers.includes(player.id);
             const selectionOrder = selectedPlayers.indexOf(player.id) + 1;
 
@@ -201,9 +187,7 @@ export default function SetLineupScreen() {
                   <View className="flex-row items-center">
                     {isSelected && (
                       <View className="bg-blue-500 rounded-full w-6 h-6 items-center justify-center mr-2">
-                        <Text className="text-white text-xs font-bold">
-                          {selectionOrder}
-                        </Text>
+                        <Text className="text-white text-xs font-bold">{selectionOrder}</Text>
                       </View>
                     )}
                     <View>
@@ -215,9 +199,7 @@ export default function SetLineupScreen() {
                         {player.firstName} {player.lastName}
                       </Text>
                       {player.position && (
-                        <Text className="text-sm text-gray-600 mt-1">
-                          {player.position}
-                        </Text>
+                        <Text className="text-sm text-gray-600 mt-1">{player.position}</Text>
                       )}
                     </View>
                   </View>

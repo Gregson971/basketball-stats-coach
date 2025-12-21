@@ -18,21 +18,33 @@ describe('Game API Endpoints', () => {
   // Helper to prepare a game for starting
   const prepareGameForStart = async (gameId: string, teamId: string = 'team-1') => {
     // Create players first
-    const p1 = await request(app).post('/api/players').send({ teamId, firstName: 'P1', lastName: 'Player', jerseyNumber: 1, position: 'Guard' });
-    const p2 = await request(app).post('/api/players').send({ teamId, firstName: 'P2', lastName: 'Player', jerseyNumber: 2, position: 'Guard' });
-    const p3 = await request(app).post('/api/players').send({ teamId, firstName: 'P3', lastName: 'Player', jerseyNumber: 3, position: 'Forward' });
-    const p4 = await request(app).post('/api/players').send({ teamId, firstName: 'P4', lastName: 'Player', jerseyNumber: 4, position: 'Forward' });
-    const p5 = await request(app).post('/api/players').send({ teamId, firstName: 'P5', lastName: 'Player', jerseyNumber: 5, position: 'Center' });
+    const p1 = await request(app)
+      .post('/api/players')
+      .send({ teamId, firstName: 'P1', lastName: 'Player', jerseyNumber: 1, position: 'Guard' });
+    const p2 = await request(app)
+      .post('/api/players')
+      .send({ teamId, firstName: 'P2', lastName: 'Player', jerseyNumber: 2, position: 'Guard' });
+    const p3 = await request(app)
+      .post('/api/players')
+      .send({ teamId, firstName: 'P3', lastName: 'Player', jerseyNumber: 3, position: 'Forward' });
+    const p4 = await request(app)
+      .post('/api/players')
+      .send({ teamId, firstName: 'P4', lastName: 'Player', jerseyNumber: 4, position: 'Forward' });
+    const p5 = await request(app)
+      .post('/api/players')
+      .send({ teamId, firstName: 'P5', lastName: 'Player', jerseyNumber: 5, position: 'Center' });
 
-    const playerIds = [p1.body.player.id, p2.body.player.id, p3.body.player.id, p4.body.player.id, p5.body.player.id];
+    const playerIds = [
+      p1.body.player.id,
+      p2.body.player.id,
+      p3.body.player.id,
+      p4.body.player.id,
+      p5.body.player.id,
+    ];
 
-    await request(app)
-      .put(`/api/games/${gameId}/roster`)
-      .send({ playerIds });
+    await request(app).put(`/api/games/${gameId}/roster`).send({ playerIds });
 
-    await request(app)
-      .put(`/api/games/${gameId}/starting-lineup`)
-      .send({ playerIds });
+    await request(app).put(`/api/games/${gameId}/starting-lineup`).send({ playerIds });
   };
 
   beforeAll(() => {

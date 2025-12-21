@@ -3,7 +3,7 @@
  * Entry point - redirects to login or main app based on auth status
  */
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { authService } from '@/services';
@@ -11,11 +11,7 @@ import { authService } from '@/services';
 export default function WelcomeScreen() {
   const router = useRouter();
 
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
     const isAuthenticated = await authService.isAuthenticated();
 
     if (isAuthenticated) {
@@ -25,7 +21,11 @@ export default function WelcomeScreen() {
       // User not logged in, go to login
       router.replace('/login');
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   return (
     <View className="flex-1 items-center justify-center bg-sky-600">

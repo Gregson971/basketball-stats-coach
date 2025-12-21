@@ -163,7 +163,9 @@ export default function CreateGameScreen() {
                   className="border border-gray-400 rounded px-4 py-3 bg-white"
                 >
                   <Text className={opponentTeamId ? 'text-gray-900' : 'text-gray-500'}>
-                    {selectedOpponentTeam ? selectedOpponentTeam.name : "Sélectionner l'équipe adverse"}
+                    {selectedOpponentTeam
+                      ? selectedOpponentTeam.name
+                      : "Sélectionner l'équipe adverse"}
                   </Text>
                 </TouchableOpacity>
               }

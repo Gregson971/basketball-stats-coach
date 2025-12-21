@@ -45,10 +45,7 @@ describe('Auth API Endpoints', () => {
         name: 'John Doe',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(201);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(201);
 
       expect(response.body.success).toBe(true);
       expect(response.body.user).toBeDefined();
@@ -68,10 +65,7 @@ describe('Auth API Endpoints', () => {
         name: 'Jane Smith',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(201);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(201);
 
       expect(response.body.token).toBeDefined();
 
@@ -90,10 +84,7 @@ describe('Auth API Endpoints', () => {
         name: 'John Doe',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toContain('Missing required fields');
@@ -106,10 +97,7 @@ describe('Auth API Endpoints', () => {
         name: 'John Doe',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toContain('Invalid email format');
@@ -121,10 +109,7 @@ describe('Auth API Endpoints', () => {
         name: 'John Doe',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toContain('Missing required fields');
@@ -136,10 +121,7 @@ describe('Auth API Endpoints', () => {
         password: 'password123',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toContain('Missing required fields');
@@ -184,10 +166,7 @@ describe('Auth API Endpoints', () => {
         name: 'Another User',
       };
 
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send(userData2)
-        .expect(400);
+      const response = await request(app).post('/api/auth/register').send(userData2).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('User with this email already exists');
@@ -226,10 +205,7 @@ describe('Auth API Endpoints', () => {
         password: 'testpassword123',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(200);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.user).toBeDefined();
@@ -247,10 +223,7 @@ describe('Auth API Endpoints', () => {
         password: 'testpassword123',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(200);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(200);
 
       expect(response.body.token).toBeDefined();
 
@@ -268,10 +241,7 @@ describe('Auth API Endpoints', () => {
         password: 'anypassword',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(401);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(401);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Invalid email or password');
@@ -285,10 +255,7 @@ describe('Auth API Endpoints', () => {
         password: 'wrongpassword',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(401);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(401);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe('Invalid email or password');
@@ -302,10 +269,7 @@ describe('Auth API Endpoints', () => {
         password: 'testpassword123',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(200);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.user).toBeDefined();
@@ -316,10 +280,7 @@ describe('Auth API Endpoints', () => {
         password: 'testpassword123',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toContain('required');
@@ -330,10 +291,7 @@ describe('Auth API Endpoints', () => {
         email: 'testuser@example.com',
       };
 
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(400);
+      const response = await request(app).post('/api/auth/login').send(loginData).expect(400);
 
       expect(response.body.success).toBe(false);
       expect(response.body.error).toContain('required');
@@ -365,15 +323,9 @@ describe('Auth API Endpoints', () => {
         password: 'testpassword123',
       };
 
-      const response1 = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(200);
+      const response1 = await request(app).post('/api/auth/login').send(loginData).expect(200);
 
-      const response2 = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(200);
+      const response2 = await request(app).post('/api/auth/login').send(loginData).expect(200);
 
       expect(response1.body.success).toBe(true);
       expect(response2.body.success).toBe(true);
@@ -405,10 +357,7 @@ describe('Auth API Endpoints', () => {
         password: 'flowpassword123',
       };
 
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send(loginData)
-        .expect(200);
+      const loginResponse = await request(app).post('/api/auth/login').send(loginData).expect(200);
 
       expect(loginResponse.body.success).toBe(true);
       const loginToken = loginResponse.body.token;

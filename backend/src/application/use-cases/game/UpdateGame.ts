@@ -10,7 +10,11 @@ export interface UpdateGameResult {
 export class UpdateGame {
   constructor(private readonly gameRepository: IGameRepository) {}
 
-  async execute(gameId: string, userId: string, updateData: Partial<GameData>): Promise<UpdateGameResult> {
+  async execute(
+    gameId: string,
+    userId: string,
+    updateData: Partial<GameData>
+  ): Promise<UpdateGameResult> {
     try {
       const game = await this.gameRepository.findById(gameId, userId);
 

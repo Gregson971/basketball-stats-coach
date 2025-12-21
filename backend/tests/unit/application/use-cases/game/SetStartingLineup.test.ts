@@ -200,7 +200,13 @@ describe('SetStartingLineup Use Case', () => {
   });
 
   test('should return error when lineup contains duplicate players', async () => {
-    const duplicatePlayerIds = [playerIds[0], playerIds[1], playerIds[2], playerIds[3], playerIds[0]];
+    const duplicatePlayerIds = [
+      playerIds[0],
+      playerIds[1],
+      playerIds[2],
+      playerIds[3],
+      playerIds[0],
+    ];
 
     const result = await setStartingLineup.execute({
       gameId: game.id,

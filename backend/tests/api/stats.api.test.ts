@@ -19,15 +19,45 @@ describe('Stats API Endpoints', () => {
   // Helper to create and start a game properly
   const createAndStartGame = async () => {
     // Create players first
-    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P1', lastName: 'Player', jerseyNumber: 1, position: 'Guard' });
-    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P2', lastName: 'Player', jerseyNumber: 2, position: 'Guard' });
-    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P3', lastName: 'Player', jerseyNumber: 3, position: 'Forward' });
-    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P4', lastName: 'Player', jerseyNumber: 4, position: 'Forward' });
-    await request(app).post('/api/players').send({ teamId: 'team-1', firstName: 'P5', lastName: 'Player', jerseyNumber: 5, position: 'Center' });
+    await request(app).post('/api/players').send({
+      teamId: 'team-1',
+      firstName: 'P1',
+      lastName: 'Player',
+      jerseyNumber: 1,
+      position: 'Guard',
+    });
+    await request(app).post('/api/players').send({
+      teamId: 'team-1',
+      firstName: 'P2',
+      lastName: 'Player',
+      jerseyNumber: 2,
+      position: 'Guard',
+    });
+    await request(app).post('/api/players').send({
+      teamId: 'team-1',
+      firstName: 'P3',
+      lastName: 'Player',
+      jerseyNumber: 3,
+      position: 'Forward',
+    });
+    await request(app).post('/api/players').send({
+      teamId: 'team-1',
+      firstName: 'P4',
+      lastName: 'Player',
+      jerseyNumber: 4,
+      position: 'Forward',
+    });
+    await request(app).post('/api/players').send({
+      teamId: 'team-1',
+      firstName: 'P5',
+      lastName: 'Player',
+      jerseyNumber: 5,
+      position: 'Center',
+    });
 
     // Get player IDs from repository
     const players = playerRepository.players;
-    const playerIds = players.slice(0, 5).map(p => p.id);
+    const playerIds = players.slice(0, 5).map((p) => p.id);
 
     const gameResponse = await request(app)
       .post('/api/games')
@@ -36,13 +66,9 @@ describe('Stats API Endpoints', () => {
     const gameId = gameResponse.body.game.id;
 
     // Set roster and lineup before starting
-    await request(app)
-      .put(`/api/games/${gameId}/roster`)
-      .send({ playerIds });
+    await request(app).put(`/api/games/${gameId}/roster`).send({ playerIds });
 
-    await request(app)
-      .put(`/api/games/${gameId}/starting-lineup`)
-      .send({ playerIds });
+    await request(app).put(`/api/games/${gameId}/starting-lineup`).send({ playerIds });
 
     await request(app).post(`/api/games/${gameId}/start`);
 
@@ -284,7 +310,9 @@ describe('Stats API Endpoints', () => {
         .post(`/api/stats/games/${game2Id}/actions`)
         .send({ playerId: playerIds2[0], actionType: 'assist' });
 
-      const response = await request(app).get(`/api/stats/players/${playerIds1[0]}/career`).expect(200);
+      const response = await request(app)
+        .get(`/api/stats/players/${playerIds1[0]}/career`)
+        .expect(200);
 
       expect(response.body.success).toBe(true);
       expect(response.body.stats).toBeDefined();

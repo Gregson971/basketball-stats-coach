@@ -46,28 +46,24 @@ export default function LiveGameScreen() {
   const handleNextQuarter = async () => {
     if (!game) return;
 
-    Alert.alert(
-      'Confirmer',
-      `Passer au quart-temps ${game.currentQuarter + 1} ?`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Confirmer',
-          onPress: async () => {
-            setProcessingAction(true);
-            const result = await gameService.nextQuarter(id);
-            setProcessingAction(false);
+    Alert.alert('Confirmer', `Passer au quart-temps ${game.currentQuarter + 1} ?`, [
+      { text: 'Annuler', style: 'cancel' },
+      {
+        text: 'Confirmer',
+        onPress: async () => {
+          setProcessingAction(true);
+          const result = await gameService.nextQuarter(id);
+          setProcessingAction(false);
 
-            if (result.success && result.data) {
-              setGame(result.data);
-              Alert.alert('Succès', `Passage au quart-temps ${result.data.currentQuarter}`);
-            } else {
-              Alert.alert('Erreur', result.error || 'Impossible de passer au quart-temps suivant');
-            }
-          },
+          if (result.success && result.data) {
+            setGame(result.data);
+            Alert.alert('Succès', `Passage au quart-temps ${result.data.currentQuarter}`);
+          } else {
+            Alert.alert('Erreur', result.error || 'Impossible de passer au quart-temps suivant');
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleSubstitution = async () => {
@@ -101,7 +97,7 @@ export default function LiveGameScreen() {
               setSelectedPlayerIn(null);
               Alert.alert('Succès', 'Changement enregistré');
             } else {
-              Alert.alert('Erreur', result.error || 'Impossible d\'enregistrer le changement');
+              Alert.alert('Erreur', result.error || "Impossible d'enregistrer le changement");
             }
           },
         },
@@ -151,9 +147,7 @@ export default function LiveGameScreen() {
     return (
       <View className="flex-1 bg-gray-50 items-center justify-center p-4">
         <Text className="text-6xl mb-4">⚠️</Text>
-        <Text className="text-xl font-bold text-gray-800 mb-2 text-center">
-          Match non démarré
-        </Text>
+        <Text className="text-xl font-bold text-gray-800 mb-2 text-center">Match non démarré</Text>
         <Text className="text-gray-600 text-center mb-4">
           Ce match n'est pas en cours. Démarrez le match pour accéder à cette page.
         </Text>
@@ -180,9 +174,7 @@ export default function LiveGameScreen() {
           <View className="bg-blue-50 p-4 rounded-lg mb-4">
             <Text className="text-sm text-gray-700 mb-2">Quart-temps</Text>
             <View className="flex-row items-center justify-between">
-              <Text className="text-3xl font-bold text-blue-600">
-                {game.currentQuarter} / 4
-              </Text>
+              <Text className="text-3xl font-bold text-blue-600">{game.currentQuarter} / 4</Text>
               <Button
                 title="Quart-temps suivant"
                 onPress={handleNextQuarter}
@@ -268,7 +260,9 @@ export default function LiveGameScreen() {
           </View>
           {playersOnBench.length === 0 ? (
             <View className="p-4">
-              <Text className="text-gray-500 text-center">Tous les joueurs sont sur le terrain</Text>
+              <Text className="text-gray-500 text-center">
+                Tous les joueurs sont sur le terrain
+              </Text>
             </View>
           ) : (
             playersOnBench.map((player) => {

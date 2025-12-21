@@ -58,7 +58,7 @@ export default function RegisterScreen() {
       } else {
         Alert.alert("Erreur d'inscription", result.error || 'Impossible de créer le compte');
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Erreur', "Une erreur est survenue lors de l'inscription");
     } finally {
       setLoading(false);

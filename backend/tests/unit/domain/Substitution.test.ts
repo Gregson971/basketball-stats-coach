@@ -75,9 +75,7 @@ describe('Substitution Entity', () => {
         playerIn: 'player-2',
       };
 
-      expect(() => new Substitution(substitutionData)).toThrow(
-        'Quarter must be between 1 and 4'
-      );
+      expect(() => new Substitution(substitutionData)).toThrow('Quarter must be between 1 and 4');
     });
 
     test('should throw error if quarter is greater than 4', () => {
@@ -88,9 +86,7 @@ describe('Substitution Entity', () => {
         playerIn: 'player-2',
       };
 
-      expect(() => new Substitution(substitutionData)).toThrow(
-        'Quarter must be between 1 and 4'
-      );
+      expect(() => new Substitution(substitutionData)).toThrow('Quarter must be between 1 and 4');
     });
 
     test('should throw error if playerOut is missing', () => {

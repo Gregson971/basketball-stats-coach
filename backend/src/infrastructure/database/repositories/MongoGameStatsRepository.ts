@@ -22,7 +22,11 @@ export class MongoGameStatsRepository implements IGameStatsRepository {
     return docs.map((doc) => GameStatsMapper.toDomain(doc));
   }
 
-  async findByGameAndPlayer(gameId: string, playerId: string, userId: string): Promise<GameStats | null> {
+  async findByGameAndPlayer(
+    gameId: string,
+    playerId: string,
+    userId: string
+  ): Promise<GameStats | null> {
     const doc = await GameStatsModel.findOne({ gameId, playerId, userId }).exec();
     return doc ? GameStatsMapper.toDomain(doc) : null;
   }

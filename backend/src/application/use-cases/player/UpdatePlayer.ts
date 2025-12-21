@@ -10,7 +10,11 @@ export interface UpdatePlayerResult {
 export class UpdatePlayer {
   constructor(private readonly playerRepository: IPlayerRepository) {}
 
-  async execute(playerId: string, userId: string, updateData: Partial<PlayerData>): Promise<UpdatePlayerResult> {
+  async execute(
+    playerId: string,
+    userId: string,
+    updateData: Partial<PlayerData>
+  ): Promise<UpdatePlayerResult> {
     try {
       // Find the player
       const player = await this.playerRepository.findById(playerId, userId);

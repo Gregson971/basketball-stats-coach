@@ -123,10 +123,7 @@ describe('RecordSubstitution Use Case', () => {
   beforeEach(() => {
     mockGameRepository = new MockGameRepository();
     mockSubstitutionRepository = new MockSubstitutionRepository();
-    recordSubstitution = new RecordSubstitution(
-      mockGameRepository,
-      mockSubstitutionRepository
-    );
+    recordSubstitution = new RecordSubstitution(mockGameRepository, mockSubstitutionRepository);
 
     // Create and start a game
     game = createAndStartGame();

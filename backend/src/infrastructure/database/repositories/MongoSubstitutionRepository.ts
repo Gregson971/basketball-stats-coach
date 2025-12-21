@@ -2,6 +2,7 @@ import { Substitution } from '../../../domain/entities/Substitution';
 import { ISubstitutionRepository } from '../../../domain/repositories/SubstitutionRepository';
 import { SubstitutionModel } from '../mongodb/models/SubstitutionModel';
 import { SubstitutionMapper } from '../mongodb/mappers/SubstitutionMapper';
+import { GameModel } from '../mongodb/models/GameModel';
 
 export class MongoSubstitutionRepository implements ISubstitutionRepository {
   async findById(id: string, userId: string): Promise<Substitution | null> {
@@ -10,7 +11,6 @@ export class MongoSubstitutionRepository implements ISubstitutionRepository {
     if (!doc) return null;
 
     // Verify the substitution belongs to a game owned by the user
-    const GameModel = require('../mongodb/models/GameModel').GameModel;
     const game = await GameModel.findOne({ _id: doc.gameId, userId }).exec();
     if (!game) return null;
 
@@ -19,20 +19,16 @@ export class MongoSubstitutionRepository implements ISubstitutionRepository {
 
   async findByGameId(gameId: string, userId: string): Promise<Substitution[]> {
     // Verify the game belongs to the user
-    const GameModel = require('../mongodb/models/GameModel').GameModel;
     const game = await GameModel.findOne({ _id: gameId, userId }).exec();
     if (!game) return [];
 
-    const docs = await SubstitutionModel.find({ gameId })
-      .sort({ timestamp: 1 })
-      .exec();
+    const docs = await SubstitutionModel.find({ gameId }).sort({ timestamp: 1 }).exec();
 
     return docs.map((doc) => SubstitutionMapper.toDomain(doc));
   }
 
   async findByUserId(userId: string): Promise<Substitution[]> {
     // Get all games for this user
-    const GameModel = require('../mongodb/models/GameModel').GameModel;
     const games = await GameModel.find({ userId }).select('_id').exec();
     const gameIds = games.map((g) => g._id);
 
@@ -46,15 +42,11 @@ export class MongoSubstitutionRepository implements ISubstitutionRepository {
   async save(substitution: Substitution): Promise<Substitution> {
     const data = SubstitutionMapper.toPersistence(substitution);
 
-    const doc = await SubstitutionModel.findByIdAndUpdate(
-      substitution.id,
-      data,
-      {
-        upsert: true,
-        new: true,
-        setDefaultsOnInsert: true,
-      }
-    ).exec();
+    const doc = await SubstitutionModel.findByIdAndUpdate(substitution.id, data, {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+    }).exec();
 
     if (!doc) {
       throw new Error('Failed to save substitution');
@@ -68,7 +60,6 @@ export class MongoSubstitutionRepository implements ISubstitutionRepository {
     const doc = await SubstitutionModel.findById(id).exec();
     if (!doc) return false;
 
-    const GameModel = require('../mongodb/models/GameModel').GameModel;
     const game = await GameModel.findOne({ _id: doc.gameId, userId }).exec();
     if (!game) return false;
 
@@ -78,7 +69,6 @@ export class MongoSubstitutionRepository implements ISubstitutionRepository {
 
   async deleteByUserId(userId: string): Promise<number> {
     // Get all games for this user
-    const GameModel = require('../mongodb/models/GameModel').GameModel;
     const games = await GameModel.find({ userId }).select('_id').exec();
     const gameIds = games.map((g) => g._id);
 
@@ -88,7 +78,6 @@ export class MongoSubstitutionRepository implements ISubstitutionRepository {
 
   async deleteByGameId(gameId: string, userId: string): Promise<number> {
     // Verify game ownership
-    const GameModel = require('../mongodb/models/GameModel').GameModel;
     const game = await GameModel.findOne({ _id: gameId, userId }).exec();
     if (!game) return 0;
 

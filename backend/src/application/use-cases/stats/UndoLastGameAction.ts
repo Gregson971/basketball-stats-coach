@@ -10,9 +10,17 @@ export interface UndoLastGameActionResult {
 export class UndoLastGameAction {
   constructor(private readonly gameStatsRepository: IGameStatsRepository) {}
 
-  async execute(gameId: string, playerId: string, userId: string): Promise<UndoLastGameActionResult> {
+  async execute(
+    gameId: string,
+    playerId: string,
+    userId: string
+  ): Promise<UndoLastGameActionResult> {
     try {
-      const gameStats = await this.gameStatsRepository.findByGameAndPlayer(gameId, playerId, userId);
+      const gameStats = await this.gameStatsRepository.findByGameAndPlayer(
+        gameId,
+        playerId,
+        userId
+      );
 
       if (!gameStats) {
         return {

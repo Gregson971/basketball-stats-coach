@@ -188,9 +188,7 @@ export class Game {
 
   public canStart(): boolean {
     return (
-      this.status === 'not_started' &&
-      this.roster.length >= 5 &&
-      this.startingLineup.length === 5
+      this.status === 'not_started' && this.roster.length >= 5 && this.startingLineup.length === 5
     );
   }
 

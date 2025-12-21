@@ -151,9 +151,7 @@ describe('User Entity', () => {
         if (password.trim() === '') {
           expect(() => new User(userData)).toThrow('Password is required');
         } else {
-          expect(() => new User(userData)).toThrow(
-            'Password must be at least 6 characters long'
-          );
+          expect(() => new User(userData)).toThrow('Password must be at least 6 characters long');
         }
       });
     });
