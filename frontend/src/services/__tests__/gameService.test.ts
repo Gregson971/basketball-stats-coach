@@ -15,6 +15,10 @@ describe('gameService', () => {
     teamId: 'team-1',
     opponent: 'Test Opponent',
     status: 'not_started',
+    roster: [],
+    startingLineup: [],
+    currentLineup: [],
+    currentQuarter: 1,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -183,6 +187,117 @@ describe('gameService', () => {
       expect(result.success).toBe(true);
       expect(result.data).toEqual(completedGame);
       expect(mockApiClientPost).toHaveBeenCalledWith('/api/games/game-1/complete', {});
+    });
+  });
+
+  describe('setRoster', () => {
+    it('should set roster for a game', async () => {
+      const playerIds = ['player-1', 'player-2', 'player-3', 'player-4', 'player-5'];
+      const gameWithRoster = { ...mockGame, roster: playerIds };
+      mockApiClientPut.mockResolvedValue({ success: true, data: gameWithRoster });
+
+      const result = await gameService.setRoster('game-1', playerIds);
+
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual(gameWithRoster);
+      expect(mockApiClientPut).toHaveBeenCalledWith('/api/games/game-1/roster', { playerIds });
+    });
+
+    it('should handle errors when setting roster', async () => {
+      const playerIds = ['player-1', 'player-2'];
+      mockApiClientPut.mockResolvedValue({ success: false, error: 'Invalid roster size' });
+
+      const result = await gameService.setRoster('game-1', playerIds);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Invalid roster size');
+    });
+  });
+
+  describe('setStartingLineup', () => {
+    it('should set starting lineup for a game', async () => {
+      const playerIds = ['player-1', 'player-2', 'player-3', 'player-4', 'player-5'];
+      const gameWithLineup = { ...mockGame, startingLineup: playerIds };
+      mockApiClientPut.mockResolvedValue({ success: true, data: gameWithLineup });
+
+      const result = await gameService.setStartingLineup('game-1', playerIds);
+
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual(gameWithLineup);
+      expect(mockApiClientPut).toHaveBeenCalledWith('/api/games/game-1/starting-lineup', {
+        playerIds,
+      });
+    });
+
+    it('should handle errors when setting starting lineup', async () => {
+      const playerIds = ['player-1', 'player-2', 'player-3'];
+      mockApiClientPut.mockResolvedValue({ success: false, error: 'Must select exactly 5 players' });
+
+      const result = await gameService.setStartingLineup('game-1', playerIds);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Must select exactly 5 players');
+    });
+  });
+
+  describe('nextQuarter', () => {
+    it('should move to next quarter', async () => {
+      const gameNextQuarter = { ...mockGame, currentQuarter: 2 };
+      mockApiClientPost.mockResolvedValue({ success: true, data: gameNextQuarter });
+
+      const result = await gameService.nextQuarter('game-1');
+
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual(gameNextQuarter);
+      expect(mockApiClientPost).toHaveBeenCalledWith('/api/games/game-1/next-quarter', {});
+    });
+
+    it('should handle errors when moving to next quarter', async () => {
+      mockApiClientPost.mockResolvedValue({ success: false, error: 'Already at final quarter' });
+
+      const result = await gameService.nextQuarter('game-1');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Already at final quarter');
+    });
+  });
+
+  describe('recordSubstitution', () => {
+    it('should record a player substitution', async () => {
+      const mockSubstitution = {
+        id: 'sub-1',
+        gameId: 'game-1',
+        quarter: 2,
+        playerOut: 'player-1',
+        playerIn: 'player-6',
+        timestamp: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const gameAfterSub = { ...mockGame, currentLineup: ['player-6', 'player-2', 'player-3', 'player-4', 'player-5'] };
+      mockApiClientPost.mockResolvedValue({
+        success: true,
+        data: { game: gameAfterSub, substitution: mockSubstitution },
+      });
+
+      const result = await gameService.recordSubstitution('game-1', 'player-1', 'player-6');
+
+      expect(result.success).toBe(true);
+      expect(result.data?.game).toEqual(gameAfterSub);
+      expect(result.data?.substitution).toEqual(mockSubstitution);
+      expect(mockApiClientPost).toHaveBeenCalledWith('/api/games/game-1/substitution', {
+        playerOut: 'player-1',
+        playerIn: 'player-6',
+      });
+    });
+
+    it('should handle errors when recording substitution', async () => {
+      mockApiClientPost.mockResolvedValue({ success: false, error: 'Player not on court' });
+
+      const result = await gameService.recordSubstitution('game-1', 'player-1', 'player-6');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Player not on court');
     });
   });
 });

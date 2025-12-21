@@ -5,7 +5,7 @@
 
 import { apiClient } from '@/api/client';
 import { API_CONFIG } from '@/constants/api';
-import type { Game, ApiResponse, GameStatus } from '@/types';
+import type { Game, ApiResponse, GameStatus, Substitution } from '@/types';
 
 export const gameService = {
   /**
@@ -91,5 +91,40 @@ export const gameService = {
    */
   async complete(id: string): Promise<ApiResponse<Game>> {
     return apiClient.post<Game>(API_CONFIG.ENDPOINTS.COMPLETE_GAME(id), {});
+  },
+
+  /**
+   * Set the roster for a game (5-15 players)
+   */
+  async setRoster(id: string, playerIds: string[]): Promise<ApiResponse<Game>> {
+    return apiClient.put<Game>(API_CONFIG.ENDPOINTS.SET_ROSTER(id), { playerIds });
+  },
+
+  /**
+   * Set the starting lineup for a game (exactly 5 players)
+   */
+  async setStartingLineup(id: string, playerIds: string[]): Promise<ApiResponse<Game>> {
+    return apiClient.put<Game>(API_CONFIG.ENDPOINTS.SET_STARTING_LINEUP(id), { playerIds });
+  },
+
+  /**
+   * Move to the next quarter (1-4)
+   */
+  async nextQuarter(id: string): Promise<ApiResponse<Game>> {
+    return apiClient.post<Game>(API_CONFIG.ENDPOINTS.NEXT_QUARTER(id), {});
+  },
+
+  /**
+   * Record a player substitution
+   */
+  async recordSubstitution(
+    id: string,
+    playerOut: string,
+    playerIn: string
+  ): Promise<ApiResponse<{ game: Game; substitution: Substitution }>> {
+    return apiClient.post<{ game: Game; substitution: Substitution }>(
+      API_CONFIG.ENDPOINTS.RECORD_SUBSTITUTION(id),
+      { playerOut, playerIn }
+    );
   },
 };

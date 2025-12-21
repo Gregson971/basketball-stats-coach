@@ -32,6 +32,10 @@ export const API_CONFIG = {
     GAMES_BY_STATUS: (status: string) => `/api/games/status/${status}`,
     START_GAME: (id: string) => `/api/games/${id}/start`,
     COMPLETE_GAME: (id: string) => `/api/games/${id}/complete`,
+    SET_ROSTER: (id: string) => `/api/games/${id}/roster`,
+    SET_STARTING_LINEUP: (id: string) => `/api/games/${id}/starting-lineup`,
+    NEXT_QUARTER: (id: string) => `/api/games/${id}/next-quarter`,
+    RECORD_SUBSTITUTION: (id: string) => `/api/games/${id}/substitution`,
 
     // Stats
     RECORD_ACTION: (gameId: string) => `/api/stats/games/${gameId}/actions`,

@@ -41,8 +41,23 @@ export interface Game {
   location?: string;
   notes?: string;
   status: GameStatus;
+  roster: string[]; // Player IDs (5-15 players)
+  startingLineup: string[]; // Player IDs (exactly 5 players)
+  currentLineup: string[]; // Player IDs currently on court (exactly 5 players)
+  currentQuarter: number; // 1-4
   startedAt?: Date;
   completedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Substitution {
+  id: string;
+  gameId: string;
+  quarter: number; // 1-4
+  playerOut: string; // Player ID leaving the court
+  playerIn: string; // Player ID entering the court
+  timestamp: Date;
   createdAt: Date;
   updatedAt: Date;
 }
